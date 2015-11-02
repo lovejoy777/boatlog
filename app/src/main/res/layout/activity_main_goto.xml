@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/Base.Theme.Test" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:layout_marginTop="3dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GoTo"
+        android:textSize="25sp"
+        android:textColor="@color/white"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="12dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+    <TextView
+        android:id="@+id/textViewGoTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GoTo Waypoint Name"
+        android:textSize="16sp"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:padding="12dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/MLL1"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/textViewGoTo"
+        android:baselineAligned="false">
+
+
+
+        <LinearLayout
+            android:id="@+id/LL1"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/LLG"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textViewDest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewLat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="dest Lat"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:id="@+id/textViewLon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="dest Long"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_below="@id/textViewLat"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG3"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LLG1"
+            android:orientation="horizontal"
+            android:layout_width="2dp"
+            android:layout_height="120dp"
+            android:background="@color/material_blue_grey_800">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL2"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/LLG0"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textViewSped"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Speed"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No GPS"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG4"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/MLL2"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/MLL1"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:id="@+id/LL3"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="0.9">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textViewHead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Heading"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Heading"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG5"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LLG2"
+            android:orientation="horizontal"
+            android:layout_width="2dp"
+            android:layout_height="120dp"
+            android:background="@color/material_blue_grey_800">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL4"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="0.9">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <TextView
+                    android:id="@+id/textViewComp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bearing"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewCompass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No Compass"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG6"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/MLL3"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/MLL2"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:id="@+id/LL5"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="0.9">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textViewCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Course"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewCourseTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To Steer"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG7"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LLG8"
+            android:orientation="horizontal"
+            android:layout_width="2dp"
+            android:layout_height="120dp"
+            android:background="@color/material_blue_grey_800">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LL6"
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_weight="0.9">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <TextView
+                    android:id="@+id/textViewDist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Distance"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/textViewDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="To Waypoint"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color_secondary"
+                    android:layout_gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true" />
+
+                <LinearLayout
+                    android:id="@+id/LLG9"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/material_blue_grey_800"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true">
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+    </LinearLayout>
+
+</RelativeLayout>

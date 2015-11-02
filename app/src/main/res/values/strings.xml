@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">BoatLog</string>
+    <string name="Settings">Settings</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="BoatLog">BoatLog</string>
+    <string name="About">About</string>
+    <string name="More">More</string>
+    <string name="Tutorial">Tutorial</string>
+    <string name="Home">Home</string>
+    <string name="surname">Surname</string>
+    <string name="developedby">Developed by</string>
+    <string name="usefullinks">Useful links</string>
+    <string name="stevelovejoy">Steve Lovejoy</string>
+    <string name="General">General</string>
+    <string name="version">Version</string>
+
+    <string name="Add_New_trip">Add New Trip</string>
+    <string name="Add_New_entry">Add New Entry</string>
+    <string name="Add_New_waypoint">Add New Waypoint</string>
+    <string name="edit">Edit</string>
+    <string name="editTrip">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="deleteTrip">Delete</string>
+    <string name="deleteWaypoint">Delete</string>
+    <string name="gotoWaypoint">GoTo</string>
+    <string name="save">Save</string>
+    <string name="saveTrip">Save</string>
+    <string name="saveWaypoint">Save</string>
+
+    <string name="name">Name</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="location">Location</string>
+    <string name="departure">Departure</string>
+    <string name="destination">Destination</string>
+    <string name="description">Description</string>
+
+
+    <string name="deleteEntry">Confirm entry deletion.</string>
+    <string name="deleteTrips">Confirm trip deletion.</string>
+    <string name="yes">Confirm</string>
+    <string name="no">Cancel</string>
+    <string name="title_edit_trips">Edit trip</string>
+    <string name="title_edit_entries">Edit entry</string>
+
+</resources>

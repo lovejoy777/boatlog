@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lovejoy777.boatlog" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Base.Theme.Toolbar" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.AboutActivity"
+            android:label=""
+            android:theme="@style/Toolbar2"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.ABOUT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Settings"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
+        <activity
+            android:name=".MainActivityTrips"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINTRIPS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivityEntries"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivityTrips">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINENTRIES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivityWaypoint"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINwaypoint" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivityNavAids"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINNAVAIDS" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivityLog"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINLOG" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".CreateOrEditTripsActivity"
+            android:label="Edit/Add"
+            android:parentActivityName=".MainActivityTrips" >
+        </activity>
+
+        <activity
+            android:name=".CreateOrEditEntriesActivity"
+            android:label="Edit/Add"
+            android:parentActivityName=".MainActivityEntries" >
+        </activity>
+
+        <activity
+            android:name=".CreateOrEditWaypointActivity"
+            android:label="Edit/Add"
+            android:parentActivityName=".MainActivityWaypoint" >
+        </activity>
+
+        <activity
+            android:name=".GoToWaypoint"
+            android:label="Edit/Add"
+            android:parentActivityName=".MainActivityWaypoint" >
+        </activity>
+
+
+    </application>
+
+</manifest>
