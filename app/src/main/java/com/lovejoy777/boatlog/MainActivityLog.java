@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     ImageView image;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewHead = (TextView) findViewById(R.id.textViewHead);
         textViewComp = (TextView) findViewById(R.id.textViewComp);
         image = (ImageView) findViewById(R.id.imageViewCompass);
+
+
 
 
 

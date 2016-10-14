@@ -2,6 +2,14 @@
 <resources>
 
     <!-- Primary & Accent colors -->
+
+    <color name="main">#0277BD</color>
+    <color name="colorPrimary">#0277BD</color>
+    <color name="colorPrimaryDark">#0277BD</color>
+    <color name="colorPrimaryBackground">#263238</color>
+    <color name="colorPrimaryText">#FFFFFF</color>
+    <color name="colorAccent">#FF4081</color>
+
     <color name="primary">#ff3F51B5</color>
     <color name="primary_dark">#ff303F9F</color>
     <color name="accent">#ffFF5252</color>

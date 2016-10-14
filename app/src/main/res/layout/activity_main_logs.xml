@@ -37,7 +37,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/MLL1"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="80dp"
     android:orientation="horizontal"
     android:layout_below="@+id/toolbar"
     android:baselineAligned="false">
@@ -46,7 +46,7 @@
         android:id="@+id/LL1"
         android:orientation="horizontal"
         android:layout_width="0dp"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:layout_weight="1">
 
         <RelativeLayout
@@ -107,7 +107,7 @@
         android:id="@+id/LLG1"
         android:orientation="horizontal"
         android:layout_width="2dp"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:background="@color/material_blue_grey_800">
         </LinearLayout>
 
@@ -115,7 +115,7 @@
         android:id="@+id/LL2"
         android:orientation="horizontal"
         android:layout_width="0dp"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:layout_weight="1">
 
         <RelativeLayout
@@ -165,7 +165,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/MLL2"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:layout_below="@+id/MLL1"
         android:baselineAligned="false">
@@ -174,7 +174,7 @@
             android:id="@+id/LL3"
             android:orientation="horizontal"
             android:layout_width="0dp"
-            android:layout_height="120dp"
+            android:layout_height="80dp"
             android:layout_weight="0.9">
 
             <RelativeLayout
@@ -223,7 +223,7 @@
             android:id="@+id/LLG2"
             android:orientation="horizontal"
             android:layout_width="2dp"
-            android:layout_height="120dp"
+            android:layout_height="80dp"
             android:background="@color/material_blue_grey_800">
         </LinearLayout>
 
@@ -231,7 +231,7 @@
             android:id="@+id/LL4"
             android:orientation="horizontal"
             android:layout_width="0dp"
-            android:layout_height="120dp"
+            android:layout_height="80dp"
             android:layout_weight="0.9">
 
             <RelativeLayout
@@ -291,23 +291,10 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imageViewCompassMark"
-                    android:layout_width="3dp"
-                    android:layout_height="4dp"
-                    android:src="@drawable/red"
-                    android:elevation="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_centerHorizontal="true" />
-
-        <ImageView
-            android:id="@+id/imageViewCompass"
-            android:layout_width="320dp"
-            android:layout_height="320dp"
-            android:src="@drawable/compassblack1"
-            android:layout_below="@+id/imageViewCompassMark"
-            android:layout_marginTop="4dp"
-            android:layout_centerHorizontal="true" />
+                <fragment
+                    android:id="@+id/map"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
 
 
