@@ -291,10 +291,23 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <fragment
-                    android:id="@+id/map"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                <ImageView
+                                    android:id="@+id/imageViewCompassMark"
+                                    android:layout_width="3dp"
+                                    android:layout_height="4dp"
+                                    android:src="@drawable/red"
+                                    android:elevation="2dp"
+                                    android:layout_marginTop="2dp"
+                                    android:layout_centerHorizontal="true" />
+
+                        <ImageView
+                            android:id="@+id/imageViewCompass"
+                            android:layout_width="320dp"
+                            android:layout_height="320dp"
+                            android:src="@drawable/compassblack1"
+                            android:layout_below="@+id/imageViewCompassMark"
+                            android:layout_marginTop="4dp"
+                            android:layout_centerHorizontal="true" />
 
 
 

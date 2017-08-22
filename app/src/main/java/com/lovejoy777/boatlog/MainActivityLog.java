@@ -1,7 +1,9 @@
 package com.lovejoy777.boatlog;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -13,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
@@ -63,7 +66,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     ImageView image;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +93,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         image = (ImageView) findViewById(R.id.imageViewCompass);
 
 
-
-
-
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
@@ -101,7 +100,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
             NightMode();
         }
 
-        Boolean ScreenOn = myPrefs.getBoolean("switch2",false);
+        Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
 
         if (ScreenOn) {
             screenOn();
@@ -116,6 +115,16 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // Define the criteria how to select the location provider -> use default
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Location location = locationManager.getLastKnownLocation(provider);
         // Initialize the location fields
         if (location != null) {
@@ -124,8 +133,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         } else {
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
-            //  Toast.makeText(getApplicationContext(), "" + formattedLocation, Toast.LENGTH_SHORT).show();
-        }
+        //  Toast.makeText(getApplicationContext(), "" + formattedLocation, Toast.LENGTH_SHORT).show();
+    }
 
     private void NightMode() {
 
@@ -149,7 +158,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewComp.setTextColor(Color.RED);
         image.setImageResource(R.drawable.compassred);
 
-       // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
 
@@ -159,8 +168,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
-
-
 
 
     public static String FormattedLocationLat(double latitude) {
@@ -200,7 +207,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     }
 
     // convert from meters per second to knots per hour
-    public static float FormattedSpeed(float mps)  {
+    public static float FormattedSpeed(float mps) {
         int mpsSped = (int) Math.abs(mps * 1.943844f);
         return Math.abs(mpsSped);
     }
@@ -209,6 +216,16 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     @Override
     protected void onResume() {
         super.onResume();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         locationManager.requestLocationUpdates(provider, 500, 1, this);
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
@@ -218,6 +235,16 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     @Override
     protected void onPause() {
         super.onPause();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         locationManager.removeUpdates(this);
         // to stop the listener and save battery
         mSensorManager.unregisterListener(this);
