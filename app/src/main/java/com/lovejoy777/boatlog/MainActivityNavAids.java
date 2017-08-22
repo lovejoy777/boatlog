@@ -3,30 +3,22 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lovejoy777.boatlog.activities.AboutActivity;
-import com.lovejoy777.boatlog.activities.SettingsActivity;
 
 /**
  * Created by lovejoy777 on 13/10/15.
  */
 public class MainActivityNavAids extends AppCompatActivity {
-
-    private DrawerLayout mDrawerLayout;
 
 
     Toolbar toolBar;
