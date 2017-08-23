@@ -25,16 +25,36 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 
 /**
  * Created by lovejoy777 on 07/10/15.
  */
-public class MainActivityLog extends AppCompatActivity implements LocationListener, SensorEventListener {
+public class MainActivityLog extends AppCompatActivity implements LocationListener, SensorEventListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     // GPS location
     private LocationManager locationManager;
     private String provider;
+
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+
+    LatLng latLng;
+    LatLng latLng1;
+    GoogleMap mGoogleMap;
+    SupportMapFragment mFragment;
+    Marker currLocationMarker;
 
     // compass heading
     private float currentDegree = 0f;
@@ -86,7 +106,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewSped = (TextView) findViewById(R.id.textViewSped);
         textViewHead = (TextView) findViewById(R.id.textViewHead);
         textViewComp = (TextView) findViewById(R.id.textViewComp);
-        image = (ImageView) findViewById(R.id.imageViewCompass);
+        //image = (ImageView) findViewById(R.id.imageViewCompass);
 
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -130,6 +150,9 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
         //  Toast.makeText(getApplicationContext(), "" + formattedLocation, Toast.LENGTH_SHORT).show();
+
+        mFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mFragment.getMapAsync(this);
     }
 
     private void NightMode() {
@@ -329,7 +352,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-        textViewCompass.setText("" + Float.toString(degree) + "     (M)");
+      //  textViewCompass.setText("" + Float.toString(degree) + "     (M)");
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(
@@ -346,8 +369,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         ra.setFillAfter(true);
 
         // Start the animation
-        image.startAnimation(ra);
-        currentDegree = -degree;
+      //  image.startAnimation(ra);
+     //   currentDegree = -degree;
 
     }
 
@@ -355,4 +378,87 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
     }
+
+    @Override
+    public void onMapReady(GoogleMap gMap) {
+        mGoogleMap = gMap;
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mGoogleMap.setMyLocationEnabled(true);
+        buildGoogleApiClient();
+        mGoogleApiClient.connect();
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //place marker at current position
+            mGoogleMap.clear();
+            latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            //  MarkerOptions markerOptions = new MarkerOptions();
+            //  markerOptions.position(latLng);
+            //  markerOptions.title("You");
+            //  markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            //  currLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(latLng).zoom(18).build();
+            mGoogleMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+        }
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(5000); //5 seconds
+        mLocationRequest.setFastestInterval(3000); //3 seconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(this, "ConnectionSuspended", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "ConnectionFailed", Toast.LENGTH_SHORT).show();
+    }
+
+
 }
