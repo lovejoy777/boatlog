@@ -96,9 +96,9 @@ public class MainActivityNavAids extends AppCompatActivity {
             textView2.setText("test1");
             textView3.setText("test2");
 
-            img_thumbnail1.setImageResource(R.drawable.book);
-            img_thumbnail2.setImageResource(R.drawable.log);
-            img_thumbnail3.setImageResource(R.drawable.navaids);
+            img_thumbnail1.setImageResource(R.drawable.waypoints);
+            img_thumbnail2.setImageResource(R.drawable.test1);
+            img_thumbnail3.setImageResource(R.drawable.test2);
 
         }
 
@@ -148,9 +148,9 @@ public class MainActivityNavAids extends AppCompatActivity {
         textView2.setTextColor(Color.RED);
         textView3.setTextColor(Color.RED);
 
-        img_thumbnail1.setImageResource(R.drawable.bookblack);
-        img_thumbnail2.setImageResource(R.drawable.logblack);
-        img_thumbnail3.setImageResource(R.drawable.navaidsblack);
+        img_thumbnail1.setImageResource(R.drawable.waypoints);
+        img_thumbnail2.setImageResource(R.drawable.test1);
+        img_thumbnail3.setImageResource(R.drawable.test2);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 

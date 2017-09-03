@@ -175,7 +175,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewSped.setTextColor(Color.RED);
         textViewHead.setTextColor(Color.RED);
         textViewComp.setTextColor(Color.RED);
-        image.setImageResource(R.drawable.compassred);
+     //   image.setImageResource(R.drawable.compassred);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
@@ -352,7 +352,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-      //  textViewCompass.setText("" + Float.toString(degree) + "     (M)");
+        textViewCompass.setText("" + Float.toString(degree) + "     (M)");
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(

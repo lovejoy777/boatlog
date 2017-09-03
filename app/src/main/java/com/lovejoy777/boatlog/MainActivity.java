@@ -1,14 +1,20 @@
 package com.lovejoy777.boatlog;
 
+import android.Manifest;
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -26,7 +32,9 @@ import com.lovejoy777.boatlog.activities.SettingsActivity;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-
+    private int ACCESS_FINE_LOCATION_CODE=23;
+    private int ACCESS_COARSE_LOCATION_CODE=24;
+    private int WRITE_EXTERNAL_STORAGE_CODE=25;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -47,9 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
        // setContentView(R.layout.activity_main);
-
        // loadToolbarNavDrawer();
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -109,13 +115,9 @@ public class MainActivity extends AppCompatActivity {
             img_thumbnail2.setImageResource(R.drawable.log);
             img_thumbnail3.setImageResource(R.drawable.navaids);
 
+
+
         }
-
-
-
-
-
-
 
 
 
@@ -160,11 +162,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(bootanimactivity, bndlanimation);
             }
         });
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
+        }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_COARSE_LOCATION_CODE);
+        }
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+        }
     }
 
+
+   // }
+
     private void NightMode() {
-
-
         toolBar.setBackgroundColor(Color.BLACK);
        // titleTextView.setTextColor(Color.RED);
 
@@ -181,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
         textView2.setTextColor(Color.RED);
         textView3.setTextColor(Color.RED);
 
-        img_thumbnail1.setImageResource(R.drawable.bookblack);
-        img_thumbnail2.setImageResource(R.drawable.logblack);
-        img_thumbnail3.setImageResource(R.drawable.navaidsblack);
+        img_thumbnail1.setImageResource(R.drawable.book);
+        img_thumbnail2.setImageResource(R.drawable.log);
+        img_thumbnail3.setImageResource(R.drawable.navaids);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 

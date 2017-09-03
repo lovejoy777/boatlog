@@ -112,6 +112,7 @@ public class MainActivityTrips extends AppCompatActivity {
         int [] widgets = new int[] {R.id.tripID, R.id.tripName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.trips_info, cursor, columns, widgets, 0);
         listView = (ListView)findViewById(R.id.listViewTrips);
+
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);

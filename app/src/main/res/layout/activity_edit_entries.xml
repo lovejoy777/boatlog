@@ -54,7 +54,8 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="text"
-            android:textSize="20sp" >
+            android:textSize="20sp"
+            >
             <requestFocus />
         </EditText>
 
@@ -104,7 +105,10 @@
             android:layout_toEndOf="@+id/editTextName"
             android:layout_alignParentStart="true"
             android:text="@string/name"
-            android:textSize="25sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/textViewTime"
@@ -114,7 +118,10 @@
             android:layout_toEndOf="@+id/editTextTime"
             android:layout_alignParentStart="true"
             android:text="@string/time"
-            android:textSize="25sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/textViewDate"
@@ -124,7 +131,10 @@
             android:layout_toEndOf="@+id/editTextDate"
             android:layout_alignParentStart="true"
             android:text="@string/date"
-            android:textSize="20sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/textViewLocation"
@@ -134,7 +144,10 @@
             android:layout_toEndOf="@+id/editTextLocation"
             android:layout_alignParentStart="true"
             android:text="@string/location"
-            android:textSize="25sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <Button
             android:id="@+id/saveButton"

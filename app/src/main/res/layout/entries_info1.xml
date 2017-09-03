@@ -19,7 +19,7 @@
         android:layout_weight="1"
         android:textColor="@color/red"
         android:gravity="center_horizontal"
-        android:textSize="25sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/entryDate"

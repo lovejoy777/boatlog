@@ -87,7 +87,10 @@
             android:layout_toEndOf="@+id/editTextName"
             android:layout_alignParentStart="true"
             android:text="@string/name"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/textViewDeparture"
@@ -97,7 +100,10 @@
             android:layout_toEndOf="@+id/editTextDeparture"
             android:layout_alignParentStart="true"
             android:text="@string/departure"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <TextView
             android:id="@+id/textViewDestination"
@@ -107,7 +113,10 @@
             android:layout_toEndOf="@+id/editTextDestination"
             android:layout_alignParentStart="true"
             android:text="@string/destination"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:textStyle="italic"
+            android:typeface="serif"
+            android:textColor="@color/colorAccent"/>
 
         <Button
             android:id="@+id/saveButton"
@@ -147,6 +156,16 @@
                 android:padding="@dimen/activity_vertical_margin"
                 android:layout_margin="@dimen/activity_vertical_margin"
                 android:text="@string/editTrip"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/printButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/activity_vertical_margin"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:text="Print Trip"
                 android:textSize="16sp"/>
 
         </LinearLayout>
