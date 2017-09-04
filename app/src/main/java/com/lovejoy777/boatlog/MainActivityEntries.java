@@ -5,15 +5,34 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by lovejoy777 on 03/10/15.
@@ -27,10 +46,12 @@ public class MainActivityEntries extends AppCompatActivity {
     ExampleDBHelper dbHelper;
 
     RelativeLayout MRL1;
+    LinearLayout buttonLayout;
+
     Toolbar toolBar;
     ListView listViewEntries;
 
-    Button button;
+    Button addnewButton,printButton;
 
     TextView titleTextView;
 
@@ -56,8 +77,10 @@ public class MainActivityEntries extends AppCompatActivity {
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
         titleTextView.setText("" + tripName);
 
-        button = (Button) findViewById(R.id.addNew);
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
+
+        addnewButton = (Button) findViewById(R.id.addNew);
+        addnewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivityEntries.this, CreateOrEditEntriesActivity.class);
@@ -65,6 +88,14 @@ public class MainActivityEntries extends AppCompatActivity {
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
                 startActivity(intent);
+            }
+        });
+
+        printButton = (Button) findViewById(R.id.print);
+        printButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createPDF();
             }
         });
 
@@ -171,12 +202,135 @@ public class MainActivityEntries extends AppCompatActivity {
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
-        button.setBackgroundResource(R.color.card_background);
-        button.setTextColor(Color.RED);
+        buttonLayout.setBackgroundColor(Color.BLACK);
+        addnewButton.setBackgroundResource(R.color.card_background);
+        addnewButton.setTextColor(Color.RED);
+        printButton.setBackgroundResource(R.color.card_background);
+        printButton.setTextColor(Color.RED);
 
         listViewEntries.setBackgroundColor(Color.BLACK);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+
+    }
+
+    public void createPDF()
+    {
+
+        Cursor rs = dbHelper.getTrip(tripID);
+        rs.moveToFirst();
+        String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
+        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
+        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        Document doc = new Document();
+        try {
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
+            File dir = new File(path);
+            if(!dir.exists())
+                dir.mkdirs();
+            Log.d("PDFCreator", "PDF Path: " + path);
+
+            File file = new File(dir, "" + tripName + ".pdf" );
+            FileOutputStream fOut = new FileOutputStream(file);
+            PdfWriter.getInstance(doc, fOut);
+
+            //open the document
+            doc.open();
+
+
+            //R.color.accent
+            //Font myFont = FontFactory.getFont(FUTURA_LIGHT, BaseFont.IDENTITY_H);
+            Font paraFont= new Font(Font.COURIER,16.0f,Color.RED);
+            Paragraph p1 = new Paragraph("" + tripName,paraFont);
+            p1.setAlignment(Paragraph.ALIGN_CENTER);
+            //add paragraph 1 to document
+            doc.add(p1);
+
+            Paragraph p2 = new Paragraph("From " + tripDeparture + "To " + tripDestination);
+            Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
+            p2.setAlignment(Paragraph.ALIGN_LEFT);
+            p2.setFont(paraFont2);
+            //add paragraph 2 to document
+            doc.add(p2);
+
+            // SPACE
+            Paragraph p3 = new Paragraph(" ");
+            Font paraFont3= new Font(Font.BOLDITALIC,16.0f,R.color.accent);
+            p3.setAlignment(Paragraph.ALIGN_CENTER);
+            p3.setFont(paraFont3);
+            //add space to document
+            doc.add(p3);
+
+            // TABLE
+            final Cursor cursor = dbHelper.getTripEntry(tripID);
+
+            // define table
+            PdfPTable table = new PdfPTable(4);
+            table.setHorizontalAlignment(0);
+
+            // add cells to table
+            table.addCell("Description");
+            table.addCell("Time");
+            table.addCell("Date");
+            table.addCell("Location");
+
+            while (cursor.moveToNext()) {
+
+                // get strings for table cells
+                String description = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_NAME));
+                String time = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
+                String date = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
+                String location = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
+               // String description = cursor.getString(3);
+               // String time = cursor.getString(1);
+               // String date = cursor.getString(2);
+               // String location = cursor.getString(4);
+
+                // input data into table cells
+                table.addCell(description);
+                table.addCell(time);
+                table.addCell(date);
+                table.addCell(location);
+            }
+
+            if (!cursor.isClosed()) {
+                cursor.close();
+            }
+
+            //add table to document
+            doc.add(table);
+
+
+            // ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            // Bitmap bitmap = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.android);
+            // bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , stream);
+            // Image myImg = Image.getInstance(stream.toByteArray());
+            //myImg.setAlignment(Image.MIDDLE);
+
+            //add image to document
+            //doc.add(myImg);
+
+            //set footer
+           // Phrase footerText = new Phrase("This is an example of a footer");
+           // HeaderFooter pdfFooter = new HeaderFooter(footerText, false);
+            //doc.setFooter(pdfFooter);
+
+
+
+        } catch (DocumentException de) {
+            Log.e("PDFCreator", "DocumentException:" + de);
+        } catch (IOException e) {
+            Log.e("PDFCreator", "ioException:" + e);
+        }
+        finally
+        {
+            doc.close();
+        }
+
+        Toast.makeText(getApplicationContext(), "" + tripName + ".pdf saved to sdcard/boatLog", Toast.LENGTH_LONG).show();
 
     }
 

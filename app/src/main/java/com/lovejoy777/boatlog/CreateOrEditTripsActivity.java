@@ -95,8 +95,7 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
         editButton.setOnClickListener(this);
         deleteButton = (Button) findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(this);
-        printButton = (Button) findViewById(R.id.printButton);
-        printButton.setOnClickListener(this);
+
 
         dbHelper = new ExampleDBHelper(this);
 
@@ -181,85 +180,11 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
                 d.show();
                 return;
 
-            case R.id.printButton:
-                createPDF();
-                return;
+
         }
     }
 
-    public void createPDF()
-    {
-        Cursor rs = dbHelper.getTrip(tripID);
-        rs.moveToFirst();
-        String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
-        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
-        if (!rs.isClosed()) {
-            rs.close();
-        }
-        Document doc = new Document();
-        try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
-            File dir = new File(path);
-            if(!dir.exists())
-                dir.mkdirs();
-            Log.d("PDFCreator", "PDF Path: " + path);
 
-            File file = new File(dir, "" + tripName + ".pdf" );
-            FileOutputStream fOut = new FileOutputStream(file);
-            PdfWriter.getInstance(doc, fOut);
-
-            //open the document
-            doc.open();
-
-            Paragraph p1 = new Paragraph("" + tripName);
-            Font paraFont= new Font(Font.BOLDITALIC,16.0f,R.color.accent);
-
-            p1.setAlignment(Paragraph.ALIGN_CENTER);
-            p1.setFont(paraFont);
-
-            //add paragraph to document
-            doc.add(p1);
-
-            Paragraph p2 = new Paragraph("example of boatlog data");
-            Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
-            p2.setAlignment(Paragraph.ALIGN_CENTER);
-            p2.setFont(paraFont2);
-
-            doc.add(p2);
-
-            // table
-            PdfPTable table = new PdfPTable(4);
-
-           // ByteArrayOutputStream stream = new ByteArrayOutputStream();
-           // Bitmap bitmap = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.android);
-           // bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , stream);
-           // Image myImg = Image.getInstance(stream.toByteArray());
-            //myImg.setAlignment(Image.MIDDLE);
-
-            //add image to document
-            //doc.add(myImg);
-
-            //set footer
-            Phrase footerText = new Phrase("This is an example of a footer");
-            HeaderFooter pdfFooter = new HeaderFooter(footerText, false);
-            doc.setFooter(pdfFooter);
-
-
-
-        } catch (DocumentException de) {
-            Log.e("PDFCreator", "DocumentException:" + de);
-        } catch (IOException e) {
-            Log.e("PDFCreator", "ioException:" + e);
-        }
-        finally
-        {
-            doc.close();
-        }
-
-        Toast.makeText(getApplicationContext(), "" + tripName + ".pdf saved to sdcard/boatLog", Toast.LENGTH_LONG).show();
-
-    }
 
     public void persistTrip() {
         if(tripID > 0) {
@@ -314,8 +239,7 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
         editButton.setTextColor(Color.RED);
         deleteButton.setBackgroundResource(R.color.card_background);
         deleteButton.setTextColor(Color.RED);
-        printButton.setBackgroundResource(R.color.card_background);
-        printButton.setTextColor(Color.RED);
+
 
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
