@@ -129,9 +129,8 @@ public class MainActivityEntries extends AppCompatActivity {
                                 createPDF();
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIcon(android.R.drawable.ic_menu_gallery)
                         .show();
-                //createPDF();
             }
         });
 
@@ -447,12 +446,9 @@ public class MainActivityEntries extends AppCompatActivity {
             Image myImg = Image.getInstance(stream.toByteArray());
             myImg.setAlignment(Image.MIDDLE);
             myImg.scaleAbsolute(100, 100);
-
             //add image to document
             doc.add(myImg);
 
-            //R.color.accent
-            //Font myFont = FontFactory.getFont(FUTURA_LIGHT, BaseFont.IDENTITY_H);
             Font paraFont= new Font(Font.COURIER,16.0f,Color.RED);
             Paragraph p1 = new Paragraph("" + tripName,paraFont);
             p1.setAlignment(Paragraph.ALIGN_CENTER);
