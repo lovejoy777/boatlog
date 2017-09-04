@@ -76,8 +76,6 @@ public class MainActivityTrips extends AppCompatActivity {
             public void onItemClick(AdapterView<?> listView, View view,
                                     int position, long id) {
 
-
-
                 Cursor itemCursor = (Cursor) MainActivityTrips.this.listView.getItemAtPosition(position);
                 int tripID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_ID));
                 String tripName = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));

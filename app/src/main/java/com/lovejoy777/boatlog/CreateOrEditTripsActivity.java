@@ -51,6 +51,7 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
     TextView textViewName;
     TextView textViewDeparture;
     TextView textViewDestination;
+    TextView textViewImage_Path;
 
     EditText nameEditText;
     EditText departureEditText;
