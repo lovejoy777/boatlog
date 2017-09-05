@@ -10,7 +10,16 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColor="@color/red"
-        android:textSize="25sp"/>
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/waypointLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/red"
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/waypointID"
