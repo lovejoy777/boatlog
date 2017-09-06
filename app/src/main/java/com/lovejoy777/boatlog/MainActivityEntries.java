@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -53,8 +54,11 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
-    String image_path = "abcx";
 
+    private boolean fabExpanded = false;
+    private FloatingActionButton fabEntries; //fabMain
+    private LinearLayout layoutFabPrintPdf;
+    private LinearLayout layoutFabFabAddNew;
 
     private ListView listView;
     ExampleDBHelper dbHelper;
@@ -65,8 +69,6 @@ public class MainActivityEntries extends AppCompatActivity {
     Toolbar toolBar;
     ListView listViewEntries;
 
-    Button addnewButton,printButton;
-
     TextView titleTextView;
 
     int tripID;
@@ -76,6 +78,71 @@ public class MainActivityEntries extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
+
+        fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
+        layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
+        layoutFabFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
+        //layoutFabSettings = (LinearLayout) this.findViewById(R.id.layoutFabSettings);
+
+        //When main Fab (Settings) is clicked, it expands if not expanded already.
+        //Collapses if main FAB was open already.
+        //This gives FAB (Settings) open/close behavior
+        fabEntries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabExpanded == true){
+                    closeSubMenusFab();
+                } else {
+                    openSubMenusFab();
+                }
+            }
+        });
+
+        // PRINT PDF subFab button
+        layoutFabPrintPdf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(MainActivityEntries.this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(MainActivityEntries.this);
+                }
+                builder.setTitle("Add an Image")
+                        .setMessage("do you want to add an image to your trip?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // creat pdf with image
+                                loadImagefromGallery();
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // create pdf no image
+                                createPDF();
+                            }
+                        })
+                        .setIcon(R.drawable.ic_photo_white)
+                        .show();
+                closeSubMenusFab();
+            }
+        });
+
+        // ADD NEW subFab button
+        layoutFabFabAddNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivityEntries.this, CreateOrEditEntriesActivity.class);
+                intent.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
+                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+                startActivity(intent);
+                closeSubMenusFab();
+            }
+        });
+
+        //Only main FAB is visible in the beginning
+        closeSubMenusFab();
 
         tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
@@ -91,48 +158,7 @@ public class MainActivityEntries extends AppCompatActivity {
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
         titleTextView.setText("" + tripName);
 
-        buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
 
-        addnewButton = (Button) findViewById(R.id.addNew);
-        addnewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivityEntries.this, CreateOrEditEntriesActivity.class);
-                intent.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
-                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                startActivity(intent);
-            }
-        });
-
-        printButton = (Button) findViewById(R.id.print);
-        printButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this, android.R.style.Theme_Material_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this);
-                }
-                builder.setTitle("Add Image")
-                        .setMessage("do you want to add an image of your trip?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // creat pdf with image
-                                loadImagefromGallery();
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // create pdf no image
-                                createPDF();
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_menu_gallery)
-                        .show();
-            }
-        });
 
         dbHelper = new ExampleDBHelper(this);
 
@@ -176,6 +202,23 @@ public class MainActivityEntries extends AppCompatActivity {
         });
 
 
+    }
+
+    //closes FAB submenus
+    private void closeSubMenusFab(){
+        layoutFabPrintPdf.setVisibility(View.INVISIBLE);
+        layoutFabFabAddNew.setVisibility(View.INVISIBLE);
+        fabEntries.setImageResource(R.drawable.ic_menu_white);
+        fabExpanded = false;
+    }
+
+    //Opens FAB submenus
+    private void openSubMenusFab(){
+        layoutFabPrintPdf.setVisibility(View.VISIBLE);
+        layoutFabFabAddNew.setVisibility(View.VISIBLE);
+        //Change settings icon to 'X' icon
+        fabEntries.setImageResource(R.drawable.ic_close_white);
+        fabExpanded = true;
     }
 
     private void populateListView() {
@@ -238,10 +281,10 @@ public class MainActivityEntries extends AppCompatActivity {
         titleTextView.setTextColor(Color.RED);
 
         buttonLayout.setBackgroundColor(Color.BLACK);
-        addnewButton.setBackgroundResource(R.color.card_background);
-        addnewButton.setTextColor(Color.RED);
-        printButton.setBackgroundResource(R.color.card_background);
-        printButton.setTextColor(Color.RED);
+      //  addnewButton.setBackgroundResource(R.color.card_background);
+      //  addnewButton.setTextColor(Color.RED);
+       // printButton.setBackgroundResource(R.color.card_background);
+       // printButton.setTextColor(Color.RED);
 
         listViewEntries.setBackgroundColor(Color.BLACK);
 
@@ -289,12 +332,12 @@ public class MainActivityEntries extends AppCompatActivity {
                // imgView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
             } else {
 
-                Toast.makeText(this, "You haven't picked Image",
+                Toast.makeText(this, "No Image Selected",
                         Toast.LENGTH_LONG).show();
 
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Incompatible Image", Toast.LENGTH_LONG)
 
                     .show();
         }
@@ -337,7 +380,7 @@ public class MainActivityEntries extends AppCompatActivity {
             //add paragraph 1 to document
             doc.add(p1);
 
-            Paragraph p2 = new Paragraph("From " + tripDeparture + "To " + tripDestination);
+            Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
             Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
             p2.setAlignment(Paragraph.ALIGN_LEFT);
             p2.setFont(paraFont2);
@@ -455,7 +498,7 @@ public class MainActivityEntries extends AppCompatActivity {
             //add paragraph 1 to document
             doc.add(p1);
 
-            Paragraph p2 = new Paragraph("From " + tripDeparture + "To " + tripDestination);
+            Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
             Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
             p2.setAlignment(Paragraph.ALIGN_LEFT);
             p2.setFont(paraFont2);

@@ -256,14 +256,14 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
                     dateEditText.getText().toString(),
                     locationEditText.getText().toString(),
                     trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Update Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entry Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 startActivity(intent);
             } else {
-                Toast.makeText(getApplicationContext(), "Entry Update Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
             }
         } else {
             if (dbHelper.insertEntry(nameEditText.getText().toString(),
@@ -271,9 +271,9 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
                     dateEditText.getText().toString(),
                     locationEditText.getText().toString(),
                     trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Inserted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Could not Insert Entry", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Could not Save Entry", Toast.LENGTH_SHORT).show();
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

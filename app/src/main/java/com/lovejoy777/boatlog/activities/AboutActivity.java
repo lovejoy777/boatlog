@@ -53,7 +53,7 @@ public class AboutActivity extends AppCompatActivity {
 
 
         String[] ListContent1 = {
-                "Bitsyko Development Team"
+                "itellu Development Team"
         };
 
         String[] Developer1 = {

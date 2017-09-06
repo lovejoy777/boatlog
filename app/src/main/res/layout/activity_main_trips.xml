@@ -48,15 +48,6 @@
         android:layout_above="@+id/addNew">
     </ListView>
 
-    <Button
-        android:id="@+id/addNew"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:padding="@dimen/activity_vertical_margin"
-        android:textSize="16sp"
-        android:text="@string/Add_New_trip"/>
+    <include layout="@layout/layout_fabtrips_submenu"/>
 
 </RelativeLayout>

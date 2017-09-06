@@ -192,23 +192,23 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
             if(dbHelper.updateTrip(tripID, nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
                     destinationEditText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Trip Update Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Trip Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
             else {
-                Toast.makeText(getApplicationContext(), "Trip Update Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Trip Edit Failed", Toast.LENGTH_SHORT).show();
             }
         }
         else {
             if(dbHelper.insertTrip(nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
                     destinationEditText.getText().toString())){
-                Toast.makeText(getApplicationContext(), "Trip Inserted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Trip Saved", Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(getApplicationContext(), "Could not Insert trip", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Could not Save trip", Toast.LENGTH_SHORT).show();
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

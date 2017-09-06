@@ -215,23 +215,23 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements V
             if(dbHelper.updateWaypoint(waypointID, nameEditText.getText().toString(),
                     locationEditText.getText().toString(),
                     descriptionEditText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Waypoint Update Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
             else {
-                Toast.makeText(getApplicationContext(), "Waypoint Update Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
             }
         }
         else {
             if(dbHelper.insertWaypoint(nameEditText.getText().toString(),
                     locationEditText.getText().toString(),
                     descriptionEditText.getText().toString())){
-                Toast.makeText(getApplicationContext(), "Waypoint Inserted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Waypoint Saved", Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(getApplicationContext(), "Could not Insert Waypoint", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Could not Save Waypoint", Toast.LENGTH_SHORT).show();
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

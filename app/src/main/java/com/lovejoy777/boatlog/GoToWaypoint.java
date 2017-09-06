@@ -170,7 +170,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewSped.setTextColor(Color.RED);
         textViewHead.setTextColor(Color.RED);
         textViewComp.setTextColor(Color.RED);
-        image.setImageResource(R.drawable.compassred);
+       // image.setImageResource(R.drawable.compassred);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 

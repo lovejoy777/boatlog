@@ -47,32 +47,7 @@
         android:layout_below="@+id/toolbar">
     </ListView>
 
-    <LinearLayout
-        android:id="@+id/buttonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/listViewEntries">
 
-    <Button
-        android:id="@+id/addNew"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:padding="@dimen/activity_vertical_margin"
-        android:textSize="16sp"
-        android:text="@string/Add_New_entry"/>
-
-    <Button
-        android:id="@+id/print"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:padding="@dimen/activity_vertical_margin"
-        android:textSize="16sp"
-        android:text="PRINT PDF"/>
-    </LinearLayout>
-
+    <include layout="@layout/layout_fabentries_submenu"/>
 
 </RelativeLayout>
