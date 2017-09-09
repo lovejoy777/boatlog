@@ -10,17 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/MRL1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".EditTripsActivity"
             android:orientation="vertical"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
-            android:id="@+id/MRL1">
+            tools:context=".MainActivityEntries">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -48,7 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:padding="12dp"
-                android:text="Edit Trip"
+                android:text="Create Entry"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
@@ -56,34 +53,53 @@
                 android:id="@+id/editTextName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/editTextDestination"
+                android:layout_alignParentEnd="true"
                 android:layout_below="@+id/toolbar"
                 android:layout_marginTop="5dp"
                 android:ems="10"
                 android:inputType="text"
                 android:textSize="20sp">
+
+                <requestFocus />
             </EditText>
 
             <EditText
-                android:id="@+id/editTextDeparture"
+                android:id="@+id/editTextTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/editTextDestination"
+                android:layout_alignStart="@+id/editTextName"
                 android:layout_below="@+id/editTextName"
+                android:ems="10"
+                android:inputType="time"
+                android:textSize="@dimen/text_size" />
+
+            <EditText
+                android:id="@+id/editTextDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/editTextName"
+                android:layout_below="@+id/editTextTime"
+                android:ems="10"
+                android:inputType="date"
+                android:textSize="@dimen/text_size" />
+
+            <EditText
+                android:id="@+id/editTextLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/editTextDate"
                 android:ems="10"
                 android:inputType="text"
                 android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/editTextDestination"
+            <TextView
+                android:id="@+id/TextViewTrip_ID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/editTextDeparture"
-                android:layout_marginStart="5dp"
-                android:ems="10"
-                android:inputType="text"
-                android:textSize="20sp" />
+                android:layout_below="@+id/editTextLocation"
+                android:textSize="0sp" />
 
             <TextView
                 android:id="@+id/textViewName"
@@ -91,7 +107,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/editTextName"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/editTextName"
                 android:text="@string/name"
                 android:textColor="@color/colorAccent"
@@ -100,28 +115,39 @@
                 android:typeface="serif" />
 
             <TextView
-                android:id="@+id/textViewDeparture"
+                android:id="@+id/textViewTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/editTextDeparture"
+                android:layout_alignBottom="@+id/editTextTime"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/editTextDeparture"
-                android:text="@string/departure"
+                android:layout_toEndOf="@+id/editTextTime"
+                android:text="@string/time"
                 android:textColor="@color/colorAccent"
                 android:textSize="23sp"
                 android:textStyle="italic"
                 android:typeface="serif" />
 
             <TextView
-                android:id="@+id/textViewDestination"
+                android:id="@+id/textViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/editTextDestination"
+                android:layout_alignBottom="@+id/editTextDate"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/editTextDestination"
-                android:text="@string/destination"
+                android:layout_toEndOf="@+id/editTextDate"
+                android:text="@string/date"
+                android:textColor="@color/colorAccent"
+                android:textSize="23sp"
+                android:textStyle="italic"
+                android:typeface="serif" />
+
+            <TextView
+                android:id="@+id/textViewLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/editTextLocation"
+                android:layout_alignParentStart="true"
+                android:layout_toEndOf="@+id/editTextLocation"
+                android:text="@string/location"
                 android:textColor="@color/colorAccent"
                 android:textSize="23sp"
                 android:textStyle="italic"
@@ -130,7 +156,13 @@
         </RelativeLayout>
     </ScrollView>
 
-    <include
-        layout="@layout/layout_fabdeletesave"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
+        <include layout="@layout/layout_fabsave" />
+
+    </LinearLayout>
 </LinearLayout>

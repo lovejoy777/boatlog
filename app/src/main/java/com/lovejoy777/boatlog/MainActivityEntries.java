@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -30,12 +29,8 @@ import android.widget.Toast;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -58,13 +53,12 @@ public class MainActivityEntries extends AppCompatActivity {
     private boolean fabExpanded = false;
     private FloatingActionButton fabEntries; //fabMain
     private LinearLayout layoutFabPrintPdf;
-    private LinearLayout layoutFabFabAddNew;
+    private LinearLayout layoutFabAddNew;
 
     private ListView listView;
     ExampleDBHelper dbHelper;
 
     RelativeLayout MRL1;
-    LinearLayout buttonLayout;
 
     Toolbar toolBar;
     ListView listViewEntries;
@@ -79,14 +73,29 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
 
+        tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
+
+        tripID = getIntent().getIntExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_NAME);
+
+        tripID = getIntent().getIntExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_NAME);
+
+        //Toast.makeText(getApplicationContext(), "Trip " + tripName, Toast.LENGTH_SHORT).show();
+
+        MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
+        toolBar = (Toolbar) findViewById(R.id.toolbar);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        listViewEntries = (ListView) findViewById(R.id.listViewEntries);
+        titleTextView.setText("" + tripName);
+
+        dbHelper = new ExampleDBHelper(this);
+
         fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
         layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
-        layoutFabFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
-        //layoutFabSettings = (LinearLayout) this.findViewById(R.id.layoutFabSettings);
+        layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
 
-        //When main Fab (Settings) is clicked, it expands if not expanded already.
-        //Collapses if main FAB was open already.
-        //This gives FAB (Settings) open/close behavior
         fabEntries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,10 +138,10 @@ public class MainActivityEntries extends AppCompatActivity {
         });
 
         // ADD NEW subFab button
-        layoutFabFabAddNew.setOnClickListener(new View.OnClickListener() {
+        layoutFabAddNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivityEntries.this, CreateOrEditEntriesActivity.class);
+                Intent intent = new Intent(MainActivityEntries.this, CreateEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
@@ -144,24 +153,6 @@ public class MainActivityEntries extends AppCompatActivity {
         //Only main FAB is visible in the beginning
         closeSubMenusFab();
 
-        tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
-
-        tripID = getIntent().getIntExtra(CreateOrEditEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(CreateOrEditEntriesActivity.KEY_EXTRA_TRIPS_NAME);
-
-        //Toast.makeText(getApplicationContext(), "Trip " + tripName, Toast.LENGTH_SHORT).show();
-
-        MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
-        listViewEntries = (ListView) findViewById(R.id.listViewEntries);
-        titleTextView.setText("" + tripName);
-
-
-
-        dbHelper = new ExampleDBHelper(this);
-
         populateListView();
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -172,20 +163,19 @@ public class MainActivityEntries extends AppCompatActivity {
             populateListViewRed();
         }
 
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
                                     int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
                 int entryID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_ID));
-                Intent intent = new Intent(getApplicationContext(), CreateOrEditEntriesActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
+                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
                 startActivity(intent);
             }
         });
-
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
@@ -194,31 +184,14 @@ public class MainActivityEntries extends AppCompatActivity {
                                            int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
                 int entryID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_ID));
-                Intent intent = new Intent(getApplicationContext(), CreateOrEditEntriesActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
+                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
                 startActivity(intent);
                 return true;
             }
         });
-
-
-    }
-
-    //closes FAB submenus
-    private void closeSubMenusFab(){
-        layoutFabPrintPdf.setVisibility(View.INVISIBLE);
-        layoutFabFabAddNew.setVisibility(View.INVISIBLE);
-        fabEntries.setImageResource(R.drawable.ic_menu_white);
-        fabExpanded = false;
-    }
-
-    //Opens FAB submenus
-    private void openSubMenusFab(){
-        layoutFabPrintPdf.setVisibility(View.VISIBLE);
-        layoutFabFabAddNew.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
-        fabEntries.setImageResource(R.drawable.ic_close_white);
-        fabExpanded = true;
     }
 
     private void populateListView() {
@@ -279,13 +252,6 @@ public class MainActivityEntries extends AppCompatActivity {
         MRL1.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
-
-        buttonLayout.setBackgroundColor(Color.BLACK);
-      //  addnewButton.setBackgroundResource(R.color.card_background);
-      //  addnewButton.setTextColor(Color.RED);
-       // printButton.setBackgroundResource(R.color.card_background);
-       // printButton.setTextColor(Color.RED);
-
         listViewEntries.setBackgroundColor(Color.BLACK);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
@@ -300,7 +266,6 @@ public class MainActivityEntries extends AppCompatActivity {
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -326,10 +291,7 @@ public class MainActivityEntries extends AppCompatActivity {
                 cursor.close();
 
                 createPDFimage(imgDecodableString);
-              //  ImageView imgView = (ImageView) findViewById(R.id.imgView);
 
-                // Set the Image in ImageView after decoding the String
-               // imgView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
             } else {
 
                 Toast.makeText(this, "No Image Selected",
@@ -341,10 +303,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
                     .show();
         }
-
-
     }
-
 
     public void createPDF()
     {
@@ -415,10 +374,6 @@ public class MainActivityEntries extends AppCompatActivity {
                 String time = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
                 String date = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
                 String location = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
-               // String description = cursor.getString(3);
-               // String time = cursor.getString(1);
-               // String date = cursor.getString(2);
-               // String location = cursor.getString(4);
 
                 // input data into table cells
                 table.addCell(description);
@@ -433,13 +388,6 @@ public class MainActivityEntries extends AppCompatActivity {
 
             //add table to document
             doc.add(table);
-
-            //set footer
-           // Phrase footerText = new Phrase("This is an example of a footer");
-           // HeaderFooter pdfFooter = new HeaderFooter(footerText, false);
-            //doc.setFooter(pdfFooter);
-
-
 
         } catch (DocumentException de) {
             Log.e("PDFCreator", "DocumentException:" + de);
@@ -533,10 +481,6 @@ public class MainActivityEntries extends AppCompatActivity {
                 String time = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
                 String date = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
                 String location = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
-                // String description = cursor.getString(3);
-                // String time = cursor.getString(1);
-                // String date = cursor.getString(2);
-                // String location = cursor.getString(4);
 
                 // input data into table cells
                 table.addCell(description);
@@ -552,13 +496,6 @@ public class MainActivityEntries extends AppCompatActivity {
             //add table to document
             doc.add(table);
 
-            //set footer
-            // Phrase footerText = new Phrase("This is an example of a footer");
-            // HeaderFooter pdfFooter = new HeaderFooter(footerText, false);
-            //doc.setFooter(pdfFooter);
-
-
-
         } catch (DocumentException de) {
             Log.e("PDFCreator", "DocumentException:" + de);
         } catch (IOException e) {
@@ -571,6 +508,23 @@ public class MainActivityEntries extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "" + tripName + ".pdf saved to sdcard/boatLog", Toast.LENGTH_LONG).show();
 
+    }
+
+    //closes FAB submenus
+    private void closeSubMenusFab(){
+        layoutFabPrintPdf.setVisibility(View.INVISIBLE);
+        layoutFabAddNew.setVisibility(View.INVISIBLE);
+        fabEntries.setImageResource(R.drawable.ic_menu_white);
+        fabExpanded = false;
+    }
+
+    //Opens FAB submenus
+    private void openSubMenusFab(){
+        layoutFabPrintPdf.setVisibility(View.VISIBLE);
+        layoutFabAddNew.setVisibility(View.VISIBLE);
+        //Change settings icon to 'X' icon
+        fabEntries.setImageResource(R.drawable.ic_close_white);
+        fabExpanded = true;
     }
 
 }

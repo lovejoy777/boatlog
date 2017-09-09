@@ -1,19 +1,15 @@
 package com.lovejoy777.boatlog;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -31,13 +27,13 @@ public class MainActivityTrips extends AppCompatActivity {
 
     RelativeLayout MRL1;
     Toolbar toolBar;
+
     private boolean fabExpanded = false;
     private FloatingActionButton fabTrips; //main
-    private LinearLayout layoutFabFabAddNew; //sub2
+    private LinearLayout layoutFabAddNew; //sub2
+
     ListView listViewTrips;
     TextView titleTextView;
-
-    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +44,7 @@ public class MainActivityTrips extends AppCompatActivity {
         toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         fabTrips = (FloatingActionButton) this.findViewById(R.id.fabTrips);
-        layoutFabFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
-        //layoutFabSettings = (LinearLayout) this.findViewById(R.id.layoutFabSettings);
-
-        //When main Fab (Settings) is clicked, it expands if not expanded already.
-        //Collapses if main FAB was open already.
-        //This gives FAB (Settings) open/close behavior
+        layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
         fabTrips.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,12 +56,11 @@ public class MainActivityTrips extends AppCompatActivity {
             }
         });
 
-
         // ADD NEW TRIP subFab button
-        layoutFabFabAddNew.setOnClickListener(new View.OnClickListener() {
+        layoutFabAddNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivityTrips.this, CreateOrEditTripsActivity.class);
+                Intent intent = new Intent(MainActivityTrips.this, CreateTripsActivity.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, 0);
                 startActivity(intent);
                 closeSubMenusFab();
@@ -86,7 +76,6 @@ public class MainActivityTrips extends AppCompatActivity {
 
         titleTextView.setText("Trips");
 
-
         dbHelper = new ExampleDBHelper(this);
 
         populateListView();
@@ -99,11 +88,6 @@ public class MainActivityTrips extends AppCompatActivity {
             populateListViewRed();
         }
 
-
-       // TextView tripName = (TextView) findViewById(R.id.tripName);
-      //  tripName.setTextColor(Color.RED);
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
@@ -112,8 +96,6 @@ public class MainActivityTrips extends AppCompatActivity {
                 Cursor itemCursor = (Cursor) MainActivityTrips.this.listView.getItemAtPosition(position);
                 int tripID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_ID));
                 String tripName = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-
-
                 Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
@@ -128,28 +110,13 @@ public class MainActivityTrips extends AppCompatActivity {
                                            int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityTrips.this.listView.getItemAtPosition(position);
                 int tripID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_ID));
-                Intent intent = new Intent(getApplicationContext(), CreateOrEditTripsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EditTripsActivity.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 startActivity(intent);
                 return true;
             }
         });
 
-    }
-
-    //closes FAB submenus
-    private void closeSubMenusFab(){
-        layoutFabFabAddNew.setVisibility(View.INVISIBLE);
-        fabTrips.setImageResource(R.drawable.ic_menu_white);
-        fabExpanded = false;
-    }
-
-    //Opens FAB submenus
-    private void openSubMenusFab(){
-        layoutFabFabAddNew.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
-        fabTrips.setImageResource(R.drawable.ic_close_white);
-        fabExpanded = true;
     }
 
     private void populateListView() {
@@ -177,20 +144,25 @@ public class MainActivityTrips extends AppCompatActivity {
 
     private void NightMode() {
 
-
         MRL1.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
-
-        button.setBackgroundResource(R.color.card_background);
-        button.setTextColor(Color.RED);
-
         listViewTrips.setBackgroundColor(Color.BLACK);
-
-
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
 
+    //closes FAB submenus
+    private void closeSubMenusFab(){
+        layoutFabAddNew.setVisibility(View.INVISIBLE);
+        fabTrips.setImageResource(R.drawable.ic_menu_white);
+        fabExpanded = false;
+    }
+
+    //Opens FAB submenus
+    private void openSubMenusFab(){
+        layoutFabAddNew.setVisibility(View.VISIBLE);
+        //Change settings icon to 'X' icon
+        fabTrips.setImageResource(R.drawable.ic_close_white);
+        fabExpanded = true;
+    }
 }

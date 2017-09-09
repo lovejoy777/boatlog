@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" >
 
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,70 +15,69 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".EditTripsActivity"
+            tools:context=".MainActivityWaypoint"
             android:orientation="vertical"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
             android:id="@+id/MRL1">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="?attr/colorPrimary"
                 android:minHeight="?attr/actionBarSize"
-                android:theme="@style/Base.Theme.Test"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:theme="@style/Base.Theme.Test" />
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:src="@mipmap/ic_launcher"
                 android:layout_marginTop="3dp"
-                android:src="@mipmap/ic_launcher" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
 
             <TextView
-                android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Create Waypoint"
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                android:id="@+id/titleTextView"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:padding="12dp"
-                android:text="Edit Trip"
-                android:textColor="@color/white"
-                android:textSize="25sp" />
+                android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
             <EditText
                 android:id="@+id/editTextName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/editTextDestination"
+                android:layout_alignStart="@+id/editTextDescription"
                 android:layout_below="@+id/toolbar"
                 android:layout_marginTop="5dp"
                 android:ems="10"
                 android:inputType="text"
-                android:textSize="20sp">
+                android:textSize="20sp" >
+                <requestFocus />
             </EditText>
 
             <EditText
-                android:id="@+id/editTextDeparture"
+                android:id="@+id/editTextLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/editTextDestination"
+                android:layout_alignStart="@+id/editTextDescription"
                 android:layout_below="@+id/editTextName"
                 android:ems="10"
                 android:inputType="text"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/editTextDestination"
+                android:id="@+id/editTextDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/editTextDeparture"
+                android:layout_below="@+id/editTextLocation"
                 android:layout_marginStart="5dp"
                 android:ems="10"
                 android:inputType="text"
@@ -90,47 +88,53 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/editTextName"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
                 android:layout_toEndOf="@+id/editTextName"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
                 android:text="@string/name"
-                android:textColor="@color/colorAccent"
                 android:textSize="23sp"
                 android:textStyle="italic"
-                android:typeface="serif" />
+                android:typeface="serif"
+                android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/textViewDeparture"
+                android:id="@+id/textViewLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/editTextDeparture"
+                android:layout_alignBottom="@+id/editTextLocation"
+                android:layout_toEndOf="@+id/editTextLocation"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/editTextDeparture"
-                android:text="@string/departure"
-                android:textColor="@color/colorAccent"
+                android:text="@string/location"
                 android:textSize="23sp"
                 android:textStyle="italic"
-                android:typeface="serif" />
+                android:typeface="serif"
+                android:textColor="@color/colorAccent"/>
 
             <TextView
-                android:id="@+id/textViewDestination"
+                android:id="@+id/textViewDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/editTextDestination"
+                android:layout_alignBottom="@+id/editTextDescription"
+                android:layout_toEndOf="@+id/editTextDescription"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/editTextDestination"
-                android:text="@string/destination"
-                android:textColor="@color/colorAccent"
+                android:text="@string/description"
                 android:textSize="23sp"
                 android:textStyle="italic"
-                android:typeface="serif" />
+                android:typeface="serif"
+                android:textColor="@color/colorAccent"/>
 
         </RelativeLayout>
     </ScrollView>
 
-    <include
-        layout="@layout/layout_fabdeletesave"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
+        <include layout="@layout/layout_fabsave" />
+
+    </LinearLayout>
 </LinearLayout>

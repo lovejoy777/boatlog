@@ -36,6 +36,8 @@
     <style name="NavigationViewTheme" parent="AppTheme">
         <item name="textAppearanceListItem">@style/TextAppearance.AppCompat.Body2</item>
     </style>
+    ThemeOverlay_Material_Dialog_Alert
+
 
     <!-- Normal app Theme -->
     <style name="AppTheme" parent="android:Theme.Material.Light">

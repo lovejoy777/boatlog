@@ -10,17 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/MRL1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".EditTripsActivity"
             android:orientation="vertical"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
-            android:id="@+id/MRL1">
+            tools:context=".MainActivityTrips">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -48,7 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:padding="12dp"
-                android:text="Edit Trip"
+                android:text="Create Trip"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
@@ -62,6 +59,8 @@
                 android:ems="10"
                 android:inputType="text"
                 android:textSize="20sp">
+
+                <requestFocus />
             </EditText>
 
             <EditText
@@ -130,7 +129,13 @@
         </RelativeLayout>
     </ScrollView>
 
-    <include
-        layout="@layout/layout_fabdeletesave"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
 
+        <include layout="@layout/layout_fabsave" />
+
+    </LinearLayout>
 </LinearLayout>

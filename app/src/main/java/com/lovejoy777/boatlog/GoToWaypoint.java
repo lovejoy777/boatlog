@@ -170,12 +170,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewSped.setTextColor(Color.RED);
         textViewHead.setTextColor(Color.RED);
         textViewComp.setTextColor(Color.RED);
-       // image.setImageResource(R.drawable.compassred);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
-
 
     private void screenOn() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -204,7 +200,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             int latMinutes = latSeconds / 60;
             latSeconds %= 60;
 
-
             String latDegree = latDegrees >= 0 ? "N" : "S";
 
             return Math.abs(latDegrees) + ":" + latMinutes + ":" + latSeconds
@@ -214,7 +209,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             return "" + String.format("%8.5f", latitude);
         }
     }
-
 
     public static String FormattedLocationDMSLon(double longitude) {
         try {
@@ -279,11 +273,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-
-
-
-
-
 
         String formattedLocationLat = FormattedLocationDMSLat(location.getLatitude());
         String formattedLocationLon = FormattedLocationDMSLon(location.getLongitude());
@@ -352,11 +341,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             // Speed information not available.
 
         }
-
-
         // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
-
-
     }
 
     private void Speedlt() {

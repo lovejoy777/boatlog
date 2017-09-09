@@ -117,20 +117,38 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".CreateOrEditTripsActivity"
-            android:label="Edit/Add"
-            android:parentActivityName=".MainActivityTrips" >
-        </activity>
-
-        <activity
-            android:name=".CreateOrEditEntriesActivity"
-            android:label="Edit/Add"
+            android:name=".CreateEntriesActivity"
+            android:label="Create"
             android:parentActivityName=".MainActivityEntries" >
         </activity>
 
         <activity
-            android:name=".CreateOrEditWaypointActivity"
-            android:label="Edit/Add"
+            android:name=".EditEntriesActivity"
+            android:label="Edit"
+            android:parentActivityName=".MainActivityEntries" >
+        </activity>
+
+        <activity
+            android:name=".CreateTripsActivity"
+            android:label="Create"
+            android:parentActivityName=".MainActivityTrips" >
+        </activity>
+
+        <activity
+            android:name=".EditTripsActivity"
+            android:label="Edit"
+            android:parentActivityName=".MainActivityTrips" >
+        </activity>
+
+        <activity
+            android:name=".CreateWaypointActivity"
+            android:label="Create"
+            android:parentActivityName=".MainActivityWaypoint" >
+        </activity>
+
+        <activity
+            android:name=".EditWaypointActivity"
+            android:label="Edit"
             android:parentActivityName=".MainActivityWaypoint" >
         </activity>
 

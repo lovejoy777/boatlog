@@ -1,26 +1,21 @@
 package com.lovejoy777.boatlog;
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -30,14 +25,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * Created by lovejoy777 on 03/10/15.
+ * Created by steve on 07/09/17.
  */
-public class CreateOrEditEntriesActivity extends AppCompatActivity implements View.OnClickListener, LocationListener {
+
+public class CreateEntriesActivity  extends AppCompatActivity implements LocationListener {
 
 
     private LocationManager locationManager;
     private String provider;
     private ExampleDBHelper dbHelper;
+
+    private FloatingActionButton fabSave; //fabMainDeleteEditSave
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -46,9 +44,6 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
     TextView trip_idText;
-
-    LinearLayout buttonLayout;
-    Button saveButton, editButton, deleteButton;
 
     public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
@@ -61,7 +56,7 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_entries);
+        setContentView(R.layout.activity_create_entries);
 
         // Toast.makeText(getApplicationContext(), "Trip used " + tripID, Toast.LENGTH_SHORT).show();
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
@@ -83,14 +78,11 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         dateEditText = (EditText) findViewById(R.id.editTextDate);
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
 
-        buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
-        saveButton = (Button) findViewById(R.id.saveButton);
-        editButton = (Button) findViewById(R.id.editButton);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
+        fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
 
-        titleTextView.setText("Create");
+        titleTextView.setText("Create New Entry");
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -112,7 +104,7 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         // Define the criteria how to select the location provider -> use default
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -143,111 +135,17 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         dateEditText.setText("" + formattedDate);
         locationEditText.setText("" + formattedLocation);
 
-        saveButton = (Button) findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(this);
-        buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
-        editButton = (Button) findViewById(R.id.editButton);
-        editButton.setOnClickListener(this);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(this);
-
         dbHelper = new ExampleDBHelper(this);
 
-        if (entryID > 0) {
-            saveButton.setVisibility(View.GONE);
-            buttonLayout.setVisibility(View.VISIBLE);
-
-            titleTextView = (TextView) findViewById(R.id.titleTextView);
-            titleTextView.setText("Edit");
-
-            Cursor rs = dbHelper.getEntry(entryID);
-            rs.moveToFirst();
-            String entryName = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_NAME));
-            String entryTime = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
-            String entryDate = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
-            String entryLocation = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
-            String entryTrip_ID = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TRIP_ID));
-            if (!rs.isClosed()) {
-                rs.close();
-            }
-
-            nameEditText.setText(entryName);
-            nameEditText.setFocusable(false);
-            nameEditText.setClickable(false);
-
-            timeEditText.setText((CharSequence) entryTime);
-            timeEditText.setFocusable(false);
-            timeEditText.setClickable(false);
-
-            dateEditText.setText((CharSequence) entryDate);
-            dateEditText.setFocusable(false);
-            dateEditText.setClickable(false);
-
-            locationEditText.setText((CharSequence) (entryLocation + ""));
-            locationEditText.setFocusable(false);
-            locationEditText.setClickable(false);
-
-            trip_idText.setText((CharSequence) entryTrip_ID);
-            trip_idText.setFocusable(false);
-            trip_idText.setClickable(false);
-
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.saveButton:
+        fabSave.setImageResource(R.drawable.ic_save_white);
+        fabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 persistEntry();
-                return;
-            case R.id.editButton:
-                saveButton.setVisibility(View.VISIBLE);
-                buttonLayout.setVisibility(View.GONE);
-                nameEditText.setEnabled(true);
-                nameEditText.setFocusableInTouchMode(true);
-                nameEditText.setClickable(true);
-
-                timeEditText.setEnabled(true);
-                timeEditText.setFocusableInTouchMode(true);
-                timeEditText.setClickable(true);
-
-                dateEditText.setEnabled(true);
-                dateEditText.setFocusableInTouchMode(true);
-                dateEditText.setClickable(true);
-
-                locationEditText.setEnabled(true);
-                locationEditText.setFocusableInTouchMode(true);
-                locationEditText.setClickable(true);
-
-                trip_idText.setEnabled(true);
-                trip_idText.setFocusableInTouchMode(true);
-                trip_idText.setClickable(true);
-                return;
-            case R.id.deleteButton:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.deleteEntry)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dbHelper.deleteEntry(entryID);
-                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-                AlertDialog d = builder.create();
-                d.setTitle("Delete Entry?");
-                d.show();
-                return;
-        }
+            }
+        });
     }
+
 
     public void persistEntry() {
         if (entryID > 0) {
@@ -283,7 +181,6 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         }
     }
 
-
     public static String FormattedLocation(double latitude, double longitude) {
         try {
             int latSeconds = (int) Math.round(latitude * 3600);
@@ -314,7 +211,7 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
     @Override
     protected void onResume() {
         super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -340,7 +237,7 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         int lng = (int) (location.getLongitude());
         String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
         String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
-       // Toast.makeText(this, "" + strLatitude + strLongitude, Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "" + strLatitude + strLongitude, Toast.LENGTH_LONG).show();
 
     }
 
@@ -365,7 +262,6 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
 
     private void NightMode() {
 
-
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
@@ -380,17 +276,5 @@ public class CreateOrEditEntriesActivity extends AppCompatActivity implements Vi
         timeEditText.setTextColor(Color.RED);
         dateEditText.setTextColor(Color.RED);
         locationEditText.setTextColor(Color.RED);
-
-        buttonLayout.setBackgroundColor(Color.BLACK);
-
-        saveButton.setBackgroundResource(R.color.card_background);
-        saveButton.setTextColor(Color.RED);
-        editButton.setBackgroundResource(R.color.card_background);
-        editButton.setTextColor(Color.RED);
-        deleteButton.setBackgroundResource(R.color.card_background);
-        deleteButton.setTextColor(Color.RED);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
-
     }
 }

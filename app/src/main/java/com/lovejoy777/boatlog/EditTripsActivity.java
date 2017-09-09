@@ -1,20 +1,16 @@
 package com.lovejoy777.boatlog;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,24 +18,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+/**
+ * Created by steve on 08/09/17.
+ */
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-
-
-public class CreateOrEditTripsActivity extends AppCompatActivity implements View.OnClickListener {
+public class EditTripsActivity extends AppCompatActivity {
 
 
     private ExampleDBHelper dbHelper ;
@@ -48,24 +31,22 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
     RelativeLayout MRL1;
     Toolbar toolBar;
 
+    private boolean fabExpanded = false;
+    private FloatingActionButton fabDeleteSave; //fabMainDeleteEdit
+    private LinearLayout layoutFabDelete;
+    private LinearLayout layoutFabSave;
+
     TextView textViewName;
     TextView textViewDeparture;
     TextView textViewDestination;
-    TextView textViewImage_Path;
 
     EditText nameEditText;
     EditText departureEditText;
     EditText destinationEditText;
 
-    Button saveButton;
-    LinearLayout buttonLayout;
-    Button editButton, deleteButton,printButton;
-
     TextView titleTextView;
 
     int tripID;
-    int enteriesID;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,22 +64,16 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
         textViewDeparture = (TextView) findViewById(R.id.textViewDeparture);
         textViewDestination = (TextView) findViewById(R.id.textViewDestination);
 
-        titleTextView.setText("Create");
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
         departureEditText = (EditText) findViewById(R.id.editTextDeparture);
         destinationEditText = (EditText) findViewById(R.id.editTextDestination);
 
-        saveButton = (Button) findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(this);
-        buttonLayout = (LinearLayout) findViewById(R.id.buttonLayout);
-        editButton = (Button) findViewById(R.id.editButton);
-        editButton.setOnClickListener(this);
-        deleteButton = (Button) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(this);
+        fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
+        layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
+        layoutFabSave = (LinearLayout) this.findViewById(R.id.layoutFabSave);
 
-
-        dbHelper = new ExampleDBHelper(this);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -107,62 +82,63 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
             NightMode();
         }
 
-        if(tripID > 0) {
-            saveButton.setVisibility(View.GONE);
-            buttonLayout.setVisibility(View.VISIBLE);
+        dbHelper = new ExampleDBHelper(this);
 
-            titleTextView = (TextView) findViewById(R.id.titleTextView);
-            titleTextView.setText("Edit");
+       // nameEditText.setEnabled(true);
+        nameEditText.setFocusableInTouchMode(true);
+        nameEditText.setClickable(true);
 
-            Cursor rs = dbHelper.getTrip(tripID);
-            rs.moveToFirst();
-            String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-            String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
-            String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
-            if (!rs.isClosed()) {
-                rs.close();
-            }
+      //  departureEditText.setEnabled(true);
+        departureEditText.setFocusableInTouchMode(true);
+        departureEditText.setClickable(true);
 
-            nameEditText.setText(tripName);
-            nameEditText.setFocusable(false);
-            nameEditText.setClickable(false);
+      //  destinationEditText.setEnabled(true);
+        destinationEditText.setFocusableInTouchMode(true);
+        destinationEditText.setClickable(true);
 
-            departureEditText.setText((CharSequence) tripDeparture);
-            departureEditText.setFocusable(false);
-            departureEditText.setClickable(false);
-
-            destinationEditText.setText((CharSequence) (tripDestination + ""));
-            destinationEditText.setFocusable(false);
-            destinationEditText.setClickable(false);
+        Cursor rs = dbHelper.getTrip(tripID);
+        rs.moveToFirst();
+        final String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
+        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
+        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
+        if (!rs.isClosed()) {
+            rs.close();
         }
-    }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.saveButton:
-                persistTrip();
-                return;
-            case R.id.editButton:
-                saveButton.setVisibility(View.VISIBLE);
-                buttonLayout.setVisibility(View.GONE);
-                nameEditText.setEnabled(true);
-                nameEditText.setFocusableInTouchMode(true);
-                nameEditText.setClickable(true);
+        titleTextView.setText("Edit " + tripName);
+        nameEditText.setText(tripName);
+        departureEditText.setText(tripDeparture);
+        destinationEditText.setText(tripDestination + "");
 
-                departureEditText.setEnabled(true);
-                departureEditText.setFocusableInTouchMode(true);
-                departureEditText.setClickable(true);
+            fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
 
-                destinationEditText.setEnabled(true);
-                destinationEditText.setFocusableInTouchMode(true);
-                destinationEditText.setClickable(true);
-                return;
-            case R.id.deleteButton:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.deleteTrips)
+            fabDeleteSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (fabExpanded == true){
+                        closeSubMenusFabDeleteSave();
+                    } else {
+                        openSubMenusFabDeleteSave();
+                    }
+                }
+            });
+
+        // DELETE subFab button
+        layoutFabDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                android.support.v7.app.AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this);
+                }
+                builder.setTitle("Delete Trip?")
+                        .setMessage(tripName)
+
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                            public void onClick(DialogInterface dialog, int which) {
                                 dbHelper.deleteTrip(tripID);
                                 dbHelper.deleteAllTripEntries(tripID);
                                 Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
@@ -171,21 +147,34 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
                                 startActivity(intent);
                             }
                         })
+
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
                             }
-                        });
-                AlertDialog d = builder.create();
-                d.setTitle("Delete Trip?");
-                d.show();
-                return;
+                        })
 
+                        .setIcon(R.drawable.ic_delete_white)
+                        .show();
 
-        }
+            }
+        });
+
+        // ADD NEW subFab button
+        layoutFabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+                persistTrip();
+                // closeSubMenusFabSave();
+            }
+        });
+
+        //Only main FAB is visible in the beginning
+        closeSubMenusFabDeleteSave();
+
     }
-
-
 
     public void persistTrip() {
         if(tripID > 0) {
@@ -232,18 +221,24 @@ public class CreateOrEditTripsActivity extends AppCompatActivity implements View
         departureEditText.setTextColor(Color.RED);
         destinationEditText.setTextColor(Color.RED);
 
-        buttonLayout.setBackgroundColor(Color.BLACK);
-
-        saveButton.setBackgroundResource(R.color.card_background);
-        saveButton.setTextColor(Color.RED);
-        editButton.setBackgroundResource(R.color.card_background);
-        editButton.setTextColor(Color.RED);
-        deleteButton.setBackgroundResource(R.color.card_background);
-        deleteButton.setTextColor(Color.RED);
-
-
-
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
+    }
+
+    //closes FAB submenus delete & edit
+    private void closeSubMenusFabDeleteSave(){
+        layoutFabDelete.setVisibility(View.INVISIBLE);
+        layoutFabSave.setVisibility(View.INVISIBLE);
+        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabExpanded = false;
+    }
+
+    //Opens FAB submenus
+    private void openSubMenusFabDeleteSave(){
+        layoutFabDelete.setVisibility(View.VISIBLE);
+        layoutFabSave.setVisibility(View.VISIBLE);
+        //Change settings icon to 'X' icon
+        fabDeleteSave.setImageResource(R.drawable.ic_close_white);
+        fabExpanded = true;
     }
 }

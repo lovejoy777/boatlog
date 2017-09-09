@@ -45,19 +45,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:padding="12dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/addNew">
+        android:layout_below="@+id/toolbar">
     </ListView>
 
-    <Button
-        android:id="@+id/addNew"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:padding="@dimen/activity_vertical_margin"
-        android:textSize="16sp"
-        android:text="@string/Add_New_waypoint"/>
+    <include layout="@layout/layout_fabwaypoints_submenu"/>
 
 </RelativeLayout>

@@ -1,6 +1,6 @@
 package com.lovejoy777.boatlog;
 
-import android.Manifest;
+import android.*;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,18 +27,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Created by lovejoy777 on 13/10/15.
+ * Created by steve on 08/09/17.
  */
-public class CreateOrEditWaypointActivity extends AppCompatActivity implements LocationListener {
+
+public class CreateWaypointActivity extends AppCompatActivity implements LocationListener {
 
     private LocationManager locationManager;
     private String provider;
     private ExampleDBHelper dbHelper ;
 
     private boolean fabExpanded = false;
-    private FloatingActionButton fabDeleteEdit; //fabMainDeleteEdit
-    private LinearLayout layoutFabDelete;
-    private LinearLayout layoutFabEdit;
+    private FloatingActionButton fabSave; //fabMainDeleteEditSave
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -62,7 +61,7 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
 
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
 
-        setContentView(R.layout.activity_edit_waypoint);
+        setContentView(R.layout.activity_create_waypoint);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -78,11 +77,9 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
 
-        titleTextView.setText("Create");
+        titleTextView.setText("Create New Waypoint");
 
-        fabDeleteEdit = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
-        layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
-        layoutFabEdit = (LinearLayout) this.findViewById(R.id.layoutFabSave);
+        fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -96,7 +93,7 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
         // Define the criteria how to select the location provider -> use default
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -124,113 +121,17 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
 
         locationEditText.setText("" + formattedLocation);
 
-
         dbHelper = new ExampleDBHelper(this);
 
-        if(waypointID > 0) {
-            titleTextView = (TextView) findViewById(R.id.titleTextView);
-            titleTextView.setText("Edit");
-
-            fabDeleteEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (fabExpanded == true){
-                        closeSubMenusFabDeleteEdit();
-                    } else {
-                        openSubMenusFabDeleteEdit();
-                    }
-                }
-            });
-
-            // PRINT PDF subFab button
-            layoutFabDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CreateOrEditWaypointActivity.this);
-                    builder.setMessage(R.string.deleteWaypoint)
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dbHelper.deleteWaypoint(waypointID);
-                                    Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                }
-                            })
-                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // User cancelled the dialog
-                                }
-                            });
-                    AlertDialog d = builder.create();
-                    d.setTitle("Delete Waypoint?");
-                    d.setIcon(R.drawable.ic_delete_white);
-                    d.show();
-                    closeSubMenusFabDeleteEdit();
-                }
-            });
-
-            // ADD NEW subFab button
-            layoutFabEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    nameEditText.setEnabled(true);
-                    nameEditText.setFocusableInTouchMode(true);
-                    nameEditText.setClickable(true);
-
-                    locationEditText.setEnabled(true);
-                    locationEditText.setFocusableInTouchMode(true);
-                    locationEditText.setClickable(true);
-
-                    descriptionEditText.setEnabled(true);
-                    descriptionEditText.setFocusableInTouchMode(true);
-                    descriptionEditText.setClickable(true);
-                    closeSubMenusFabDeleteEdit();
-                }
-            });
-
-            //Only main FAB is visible in the beginning
-            closeSubMenusFabDeleteEdit();
-
-            Cursor rs = dbHelper.getWaypoint(waypointID);
-            rs.moveToFirst();
-            String waypointName = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_NAME));
-            String waypointLocation = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_LOCATION));
-            String waypointDescription = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
-            if (!rs.isClosed()) {
-                rs.close();
+        fabSave.setImageResource(R.drawable.ic_save_white);
+        fabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                persistWaypoint();
             }
+        });
 
-            nameEditText.setText(waypointName);
-            nameEditText.setFocusable(false);
-            nameEditText.setClickable(false);
-
-            locationEditText.setText((CharSequence) waypointLocation);
-            locationEditText.setFocusable(false);
-            locationEditText.setClickable(false);
-
-            descriptionEditText.setText((CharSequence) (waypointDescription + ""));
-            descriptionEditText.setFocusable(false);
-            descriptionEditText.setClickable(false);
-        } else {
-            if (fabExpanded == true){
-                closeSubMenusFabSave();
-            }
-            fabDeleteEdit.setImageResource(R.drawable.ic_save_white);
-            fabDeleteEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    persistWaypoint();
-                    // closeSubMenusFabSave();
-                }
-            });
-        }
-        //Only main FAB is visible in the beginning
-        closeSubMenusFabSave();
     }
-
-
     public void persistWaypoint() {
         if(waypointID > 0) {
             if(dbHelper.updateWaypoint(waypointID, nameEditText.getText().toString(),
@@ -290,7 +191,7 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
     @Override
     protected void onResume() {
         super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -354,33 +255,6 @@ public class CreateOrEditWaypointActivity extends AppCompatActivity implements L
         nameEditText.setTextColor(Color.RED);
         locationEditText.setTextColor(Color.RED);
         descriptionEditText.setTextColor(Color.RED);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
-
     }
 
-    //closes FAB submenus save
-    private void closeSubMenusFabSave(){
-        layoutFabDelete.setVisibility(View.INVISIBLE);
-        layoutFabEdit.setVisibility(View.INVISIBLE);
-        fabDeleteEdit.setImageResource(R.drawable.ic_save_white);
-        fabExpanded = false;
-    }
-
-    //closes FAB submenus delete & edit
-    private void closeSubMenusFabDeleteEdit(){
-        layoutFabDelete.setVisibility(View.INVISIBLE);
-        layoutFabEdit.setVisibility(View.INVISIBLE);
-        fabDeleteEdit.setImageResource(R.drawable.ic_menu_white);
-        fabExpanded = false;
-    }
-
-    //Opens FAB submenus
-    private void openSubMenusFabDeleteEdit(){
-        layoutFabDelete.setVisibility(View.VISIBLE);
-        layoutFabEdit.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
-        fabDeleteEdit.setImageResource(R.drawable.ic_close_white);
-        fabExpanded = true;
-    }
 }

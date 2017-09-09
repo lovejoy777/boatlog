@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollView1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,8 +16,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivityEntries"
+        tools:context=".EditEntriesActivity"
         android:orientation="vertical"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         android:id="@+id/MRL1">
 
         <android.support.v7.widget.Toolbar
@@ -36,7 +43,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add/Edit"
+            android:text="Edit Entry"
             android:textSize="25sp"
             android:textColor="@color/white"
             android:id="@+id/titleTextView"
@@ -54,9 +61,8 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:inputType="text"
-            android:textSize="20sp"
-            >
-            <requestFocus />
+            android:textSize="20sp">
+
         </EditText>
 
         <EditText
@@ -104,6 +110,7 @@
             android:layout_alignBottom="@+id/editTextName"
             android:layout_toEndOf="@+id/editTextName"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
             android:text="@string/name"
             android:textSize="23sp"
             android:textStyle="italic"
@@ -117,6 +124,7 @@
             android:layout_alignBottom="@+id/editTextTime"
             android:layout_toEndOf="@+id/editTextTime"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
             android:text="@string/time"
             android:textSize="23sp"
             android:textStyle="italic"
@@ -130,6 +138,7 @@
             android:layout_alignBottom="@+id/editTextDate"
             android:layout_toEndOf="@+id/editTextDate"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
             android:text="@string/date"
             android:textSize="23sp"
             android:textStyle="italic"
@@ -143,51 +152,18 @@
             android:layout_alignBottom="@+id/editTextLocation"
             android:layout_toEndOf="@+id/editTextLocation"
             android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
             android:text="@string/location"
             android:textSize="23sp"
             android:textStyle="italic"
             android:typeface="serif"
             android:textColor="@color/colorAccent"/>
 
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/textViewLocation"
-            android:padding="@dimen/activity_vertical_margin"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:onClick="run"
-            android:text="@string/save"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/textViewLocation"
-            android:layout_marginBottom="28dp"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/deleteButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/activity_vertical_margin"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:text="@string/delete"
-                android:textSize="16sp"/>
-
-            <Button
-                android:id="@+id/editButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/activity_vertical_margin"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:text="@string/edit"
-                android:textSize="16sp"/>
-        </LinearLayout>
     </RelativeLayout>
+
 </ScrollView>
+
+        <include
+            layout="@layout/layout_fabdeletesave"/>
+
+</LinearLayout>

@@ -33,7 +33,7 @@
                 android:id="@+id/addNewTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/FabNewTrip"
+                android:text="@string/FabNewWaypoints"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:paddingRight="@dimen/cardview_horizontal_padding"
@@ -54,7 +54,7 @@
 
 
     <LinearLayout
-        android:id="@+id/layoutFabTrips"
+        android:id="@+id/layoutFabWaypoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -63,7 +63,7 @@
         android:orientation="horizontal">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabTrips"
+            android:id="@+id/fabWaypoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

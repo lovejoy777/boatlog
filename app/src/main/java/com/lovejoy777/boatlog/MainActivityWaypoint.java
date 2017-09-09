@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by lovejoy777 on 13/10/15.
@@ -28,12 +32,14 @@ public class MainActivityWaypoint extends AppCompatActivity {
     private ListView listView;
     ExampleDBHelper dbHelper;
 
+    private boolean fabExpanded = false;
+    private FloatingActionButton fabWaypoints; //main
+    private LinearLayout layoutFabAddNew; //sub2
+
     RelativeLayout MRL1;
     Toolbar toolBar;
     ListView listViewWaypoint;
     TextView titleTextView;
-
-    Button button, button1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +48,45 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
+        fabWaypoints = (FloatingActionButton) this.findViewById(R.id.fabWaypoints);
+        layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
+        fabWaypoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabExpanded == true){
+                    closeSubMenusFab();
+                } else {
+                    openSubMenusFab();
+                }
+            }
+        });
+
+        // ADD NEW TRIP subFab button
+        layoutFabAddNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivityWaypoint.this, CreateWaypointActivity.class);
+                intent.putExtra(KEY_EXTRA_WAYPOINT_ID, 0);
+                startActivity(intent);
+                //Only main FAB is visible in the beginning
+                closeSubMenusFab();
+            }
+        });
+
+        //Only main FAB is visible in the beginning
+        closeSubMenusFab();
+
+
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
         listViewWaypoint = (ListView) findViewById(R.id.listViewWaypoint);
 
         titleTextView.setText("Waypoints");
 
 
 
-        button = (Button) findViewById(R.id.addNew);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivityWaypoint.this, CreateOrEditWaypointActivity.class);
-                intent.putExtra(KEY_EXTRA_WAYPOINT_ID, 0);
-                startActivity(intent);
-            }
-        });
+
+
 
         dbHelper = new ExampleDBHelper(this);
 
@@ -82,30 +110,33 @@ public class MainActivityWaypoint extends AppCompatActivity {
                 final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_NAME));
                 final String waypointLocation = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_LOCATION));
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivityWaypoint.this);
-                builder.setMessage(waypointName)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
+                android.support.v7.app.AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this);
+                }
+                builder.setTitle("GoTo Waypoint")
+                        .setMessage(waypointName)
 
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_LOCATION, waypointLocation);
-
                                 startActivity(intent);
                             }
                         })
+
                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
                             }
-                        });
-                AlertDialog d = builder.create();
-                d.setTitle("GoTo Waypoint ?");
-                d.show();
-                return;
+                        })
 
-
+                        .setIcon(R.drawable.ic_location_on_white)
+                        .show();
 
             }
         });
@@ -118,7 +149,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
                 int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_ID));
-                Intent intent = new Intent(getApplicationContext(), CreateOrEditWaypointActivity.class);
+                Intent intent = new Intent(getApplicationContext(), EditWaypointActivity.class);
                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
                 startActivity(intent);
                 return true;
@@ -151,20 +182,27 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void NightMode() {
 
-
         MRL1.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
-
-        button.setBackgroundResource(R.color.card_background);
-        button.setTextColor(Color.RED);
-
         listViewWaypoint.setBackgroundColor(Color.BLACK);
 
+    }
 
 
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+    //closes FAB submenus
+    private void closeSubMenusFab(){
+        layoutFabAddNew.setVisibility(View.INVISIBLE);
+        fabWaypoints.setImageResource(R.drawable.ic_menu_white);
+        fabExpanded = false;
+    }
 
+    //Opens FAB submenus
+    private void openSubMenusFab(){
+        layoutFabAddNew.setVisibility(View.VISIBLE);
+        //Change settings icon to 'X' icon
+        fabWaypoints.setImageResource(R.drawable.ic_close_white);
+        fabExpanded = true;
     }
 
 }

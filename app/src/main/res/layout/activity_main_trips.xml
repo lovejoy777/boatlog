@@ -44,8 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:padding="12dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/addNew">
+        android:layout_below="@+id/toolbar">
     </ListView>
 
     <include layout="@layout/layout_fabtrips_submenu"/>

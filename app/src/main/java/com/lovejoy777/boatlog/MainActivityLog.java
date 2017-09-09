@@ -81,15 +81,12 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     ImageView image;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_logs);
 
-
         // assign the views
-
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
@@ -106,8 +103,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewSped = (TextView) findViewById(R.id.textViewSped);
         textViewHead = (TextView) findViewById(R.id.textViewHead);
         textViewComp = (TextView) findViewById(R.id.textViewComp);
-        //image = (ImageView) findViewById(R.id.imageViewCompass);
-
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -121,7 +116,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         if (ScreenOn) {
             screenOn();
         }
-
 
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -175,8 +169,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewSped.setTextColor(Color.RED);
         textViewHead.setTextColor(Color.RED);
         textViewComp.setTextColor(Color.RED);
-     //   image.setImageResource(R.drawable.compassred);
-
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
@@ -188,7 +180,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     }
 
-
     public static String FormattedLocationLat(double latitude) {
         try {
             int latSeconds = (int) Math.round(latitude * 3600);
@@ -196,7 +187,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
             latSeconds = Math.abs(latSeconds % 3600);
             int latMinutes = latSeconds / 60;
             latSeconds %= 60;
-
 
             String latDegree = latDegrees >= 0 ? "N" : "S";
 
@@ -308,28 +298,17 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
         }
 
-
-
-
-
-        // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
-
-
     }
     private void Speedlt() {
 
         textViewSpeed.setText("0.0    (Kn)");
-
         // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
-
 
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
-
-
 
     }
 
@@ -447,7 +426,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
-
     }
 
     @Override
@@ -459,6 +437,5 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Toast.makeText(this, "ConnectionFailed", Toast.LENGTH_SHORT).show();
     }
-
 
 }

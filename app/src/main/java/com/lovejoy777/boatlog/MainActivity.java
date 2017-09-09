@@ -2,7 +2,6 @@ package com.lovejoy777.boatlog;
 
 import android.Manifest;
 import android.app.ActivityOptions;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolBar;
     TextView titleTextView;
 
-
     public RelativeLayout MRL1;
     public RelativeLayout RL1;
     public RelativeLayout RL2;
@@ -55,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_main);
-       // loadToolbarNavDrawer();
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1",false);
@@ -107,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             RL2.setBackgroundColor(Color.WHITE);
             RL3.setBackgroundColor(Color.WHITE);
 
-            textView1.setText("LogBook");
+            textView1.setText("Ships LogBook");
             textView2.setText("Log");
             textView3.setText("Nav Aids");
 
@@ -115,20 +110,7 @@ public class MainActivity extends AppCompatActivity {
             img_thumbnail2.setImageResource(R.drawable.log);
             img_thumbnail3.setImageResource(R.drawable.navaids);
 
-
-
         }
-
-
-
-
-
-      //  SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-       // Boolean NightModeOn = myPrefs.getBoolean("switch1",false);
-
-       // if (NightModeOn) {
-       //     NightMode();
-       // }
 
         RL1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,14 +156,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-   // }
-
     private void NightMode() {
         toolBar.setBackgroundColor(Color.BLACK);
        // titleTextView.setTextColor(Color.RED);
 
-        textView1.setText("LogBook");
+        textView1.setText("Ships LogBook");
         textView2.setText("Log");
         textView3.setText("Nav Aids");
 
@@ -202,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void loadToolbarNavDrawer() {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
@@ -218,9 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (navigationView != null) {
             setupDrawerContent(navigationView);
-           // navigationView.setBackgroundColor(Color.BLACK);
-
-           // navigationView.setItemTextColor(Color.RED);
         }
     }
 
@@ -242,9 +217,6 @@ public class MainActivity extends AppCompatActivity {
             navigationView.setItemTextColor(ColorStateList.valueOf(Color.RED));
             navigationView.setItemIconTintList(ColorStateList.valueOf(Color.RED));
             navigationView.setBackgroundColor(Color.BLACK);
-
-
-            // navigationView.setItemTextColor(Color.RED);
         }
     }
 
