@@ -196,6 +196,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (navigationView != null) {
             setupDrawerContent(navigationView);
+            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            //navigationView.setBackgroundColor(Color.BLACK);
         }
     }
 
