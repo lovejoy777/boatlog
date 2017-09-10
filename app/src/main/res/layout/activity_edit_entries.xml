@@ -164,6 +164,7 @@
 </ScrollView>
 
         <include
-            layout="@layout/layout_fabdeletesave"/>
+            layout="@layout/layout_fabdeletesave"
+            />
 
 </LinearLayout>

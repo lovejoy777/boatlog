@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     Toolbar toolBar;
     TextView titleTextView;
 
+    RelativeLayout MainRL;
     LinearLayout MLL1;
     LinearLayout MLL2;
     LinearLayout MLL3;
@@ -49,6 +51,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     TextView textViewSped;
     TextView textViewHead;
     TextView textViewComp;
+    TextView textViewDist;
+    TextView textViewCourse;
 
     TextView textViewLat;
     TextView textViewLon;
@@ -76,6 +80,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
+        MainRL = (RelativeLayout) findViewById(R.id.MainRL);
         MLL1 = (LinearLayout) findViewById(R.id.MLL1);
         MLL2 = (LinearLayout) findViewById(R.id.MLL2);
         MLL3 = (LinearLayout) findViewById(R.id.MLL3);
@@ -85,12 +90,15 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewSpeed = (TextView) findViewById(R.id.textViewSpeed);
         textViewHeading = (TextView) findViewById(R.id.textViewHeading);
         textViewCompass = (TextView) findViewById(R.id.textViewCompass);
+        textViewDistance = (TextView) findViewById(R.id.textViewDistance);
+        textViewCourseTo = (TextView) findViewById(R.id.textViewCourseTo);
         textViewDest = (TextView) findViewById(R.id.textViewDest);
         textViewSped = (TextView) findViewById(R.id.textViewSped);
         textViewHead = (TextView) findViewById(R.id.textViewHead);
         textViewComp = (TextView) findViewById(R.id.textViewComp);
-        textViewDistance = (TextView) findViewById(R.id.textViewDistance);
-        textViewCourseTo = (TextView) findViewById(R.id.textViewCourseTo);
+        textViewCourse = (TextView) findViewById(R.id.textViewCourse);
+        textViewDist = (TextView) findViewById(R.id.textViewDist);
+
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
 
         textViewGoTo.setText("Heading To " + waypointName + " at " + waypointLocation);
@@ -130,12 +138,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         // Initialize the location fields
         if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
-            String formattedLocationLat = FormattedLocationDMSLat(location.getLatitude());
-            String formattedLocationLon = FormattedLocationDMSLon(location.getLongitude());
-            textViewLat.setText("" + formattedLocationLat);
-            textViewLon.setText("" + formattedLocationLon);
-
-
 
             onLocationChanged(location);
         } else {
@@ -143,27 +145,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         }
     }
 
-    private void NightMode() {
 
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-
-        MLL1.setBackgroundColor(Color.BLACK);
-        MLL2.setBackgroundColor(Color.BLACK);
-        MLL3.setBackgroundColor(Color.BLACK);
-
-        textViewLat.setTextColor(Color.RED);
-        textViewLon.setTextColor(Color.RED);
-        textViewSpeed.setTextColor(Color.RED);
-        textViewHeading.setTextColor(Color.RED);
-        textViewCompass.setTextColor(Color.RED);
-
-        textViewDest.setTextColor(Color.RED);
-        textViewSped.setTextColor(Color.RED);
-        textViewHead.setTextColor(Color.RED);
-        textViewComp.setTextColor(Color.RED);
-
-    }
 
     private void screenOn() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -183,8 +165,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         return (LatOrLon);
     }
 
-
-    public static String FormattedLocationDMSLat(double latitude) {
+    public static String FormattedLocationLat(double latitude) {
         try {
             int latSeconds = (int) Math.round(latitude * 3600);
             int latDegrees = latSeconds / 3600;
@@ -194,11 +175,28 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
             String latDegree = latDegrees >= 0 ? "N" : "S";
 
-            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
-                    + " " + latDegree;
+            return Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
+                    + "\"" + latDegree;
         } catch (Exception e) {
 
             return "" + String.format("%8.5f", latitude);
+        }
+    }
+
+    public static String FormattedLocationLon(double longitude) {
+        try {
+            int longSeconds = (int) Math.round(longitude * 3600);
+            int longDegrees = longSeconds / 3600;
+            longSeconds = Math.abs(longSeconds % 3600);
+            int longMinutes = longSeconds / 60;
+            longSeconds %= 60;
+            String lonDegrees = longDegrees >= 0 ? "W" : "E";
+
+            return Math.abs(longDegrees) + "°" + longMinutes
+                    + "'" + longSeconds + "\"" + lonDegrees;
+        } catch (Exception e) {
+
+            return "" + String.format("%8.5f", longitude);
         }
     }
 
@@ -241,6 +239,24 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         return (eDegrees);
     }
 
+    public static String FormattedLocationDMSLat(double latitude) {
+        try {
+            int latSeconds = (int) Math.round(latitude * 3600);
+            int latDegrees = latSeconds / 3600;
+            latSeconds = Math.abs(latSeconds % 3600);
+            int latMinutes = latSeconds / 60;
+            latSeconds %= 60;
+
+            String latDegree = latDegrees >= 0 ? "N" : "S";
+
+            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
+                    + " " + latDegree;
+        } catch (Exception e) {
+
+            return "" + String.format("%8.5f", latitude);
+        }
+    }
+
     public static String FormattedLocationDMSLon(double longitude) {
         try {
             int longSeconds = (int) Math.round(longitude * 3600);
@@ -257,6 +273,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             return "" + String.format("%8.5f", longitude);
         }
     }
+
+
+
+
 
     // convert from meters per second to knots per hour
     public static float FormattedSpeed(float mps) {
@@ -305,12 +325,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     @Override
     public void onLocationChanged(Location location) {
 
-        String formattedLocationLat = FormattedLocationDMSLat(location.getLatitude());
-        String formattedLocationLon = FormattedLocationDMSLon(location.getLongitude());
         float degree = location.getBearing();
 
-        textViewLat.setText("" + formattedLocationLat);
-        textViewLon.setText("" + formattedLocationLon);
+        textViewLat.setText(FormattedLocationLat(location.getLatitude()));
+        textViewLon.setText(FormattedLocationLon(location.getLongitude()));
 
         textViewHeading.setText("" + degree + "     (T)");
 
@@ -320,7 +338,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("" + 0.0f + " no speed");
+            textViewSpeed.setText("no speed");
             // Speed information not available.
 
         }
@@ -467,5 +485,32 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // not in use
+    }
+
+    private void NightMode() {
+
+        toolBar.setBackgroundColor(Color.BLACK);
+        titleTextView.setTextColor(Color.RED);
+
+        MainRL.setBackgroundColor(Color.BLACK);
+        MLL1.setBackgroundColor(Color.BLACK);
+        MLL2.setBackgroundColor(Color.BLACK);
+        MLL3.setBackgroundColor(Color.BLACK);
+
+        textViewLat.setTextColor(Color.RED);
+        textViewLon.setTextColor(Color.RED);
+        textViewSpeed.setTextColor(Color.RED);
+        textViewHeading.setTextColor(Color.RED);
+        textViewCompass.setTextColor(Color.RED);
+        textViewCourseTo.setTextColor(Color.RED);
+        textViewDistance.setTextColor(Color.RED);
+
+        textViewDest.setTextColor(Color.RED);
+        textViewSped.setTextColor(Color.RED);
+        textViewHead.setTextColor(Color.RED);
+        textViewComp.setTextColor(Color.RED);
+        textViewCourse.setTextColor(Color.RED);
+        textViewDist.setTextColor(Color.RED);
+
     }
 }

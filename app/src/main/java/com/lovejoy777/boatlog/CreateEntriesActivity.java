@@ -14,8 +14,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -36,9 +39,11 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
     private ExampleDBHelper dbHelper;
 
     private FloatingActionButton fabSave; //fabMainDeleteEditSave
+    FrameLayout fabFrame;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
+    LinearLayout MLL1;
     Toolbar toolBar;
 
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
@@ -65,6 +70,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
+        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
@@ -264,6 +270,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
+        fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 

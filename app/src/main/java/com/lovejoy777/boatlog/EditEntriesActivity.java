@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -30,6 +31,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabDeleteSave; //fabMainDeleteEditSave
+    FrameLayout fabFrame;
     private LinearLayout layoutFabDelete;
     private LinearLayout layoutFabSave;
 
@@ -61,6 +63,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
+        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
@@ -244,6 +247,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
+        fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
