@@ -25,6 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * Created by lovejoy777 on 14/10/15.
  */
@@ -80,7 +84,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
         // float degpos = convertToDegree(waypointLocation);
         // double dec = DMSToDecimal("W", 79, 58, 55);
-        Toast.makeText(getApplicationContext(), "" + newway, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "" + newway, Toast.LENGTH_LONG).show();
 
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
@@ -143,11 +147,19 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         // Initialize the location fields
         if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
+            String formattedLocationLat = FormattedLocationDMSLat(location.getLatitude());
+            String formattedLocationLon = FormattedLocationDMSLon(location.getLongitude());
+            textViewLat.setText("" + formattedLocationLat);
+            textViewLon.setText("" + formattedLocationLon);
+
+
+
             onLocationChanged(location);
         } else {
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
-        //  Toast.makeText(getApplicationContext(), "" + formattedLocation, Toast.LENGTH_SHORT).show();
+
+
     }
 
     private void NightMode() {
@@ -202,13 +214,77 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
             String latDegree = latDegrees >= 0 ? "N" : "S";
 
-            return Math.abs(latDegrees) + ":" + latMinutes + ":" + latSeconds
+            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
                     + " " + latDegree;
         } catch (Exception e) {
 
             return "" + String.format("%8.5f", latitude);
         }
     }
+
+    public static double FormattedLocationDMSLatDouble(String stinput) {
+        double nDegrees = 0;
+        double nResult;
+        try {
+            String inputst = stinput.replaceAll("[^A-Za-z0-9]", " ");
+            String[] array = inputst.split(" ");
+
+            int nDegree = Integer.parseInt(array[0]);
+            int nMinute = Integer.parseInt(array[1]);
+            int nSecond = Integer.parseInt(array[2]);
+
+            int eDegree = Integer.parseInt(array[4]);
+            int eMinute = Integer.parseInt(array[5]);
+            int eSecond = Integer.parseInt(array[6]);
+
+            nDegrees = nDegree + (double) nMinute/60 + (double) nSecond/3600;
+           //eDegrees = eDegree + (double) eMinute/60 + (double) eSecond/3600;
+
+          //  nResult = Double.toString(nDegrees).substring(0,8);
+           // String eResult = Double.toString(eDegrees).substring(0,10);
+
+            //return (nDegrees);
+           // System.out.println(nResult);
+            //System.out.println(eResult);
+        } catch (Exception e) {
+
+
+        }
+        return (nDegrees);
+
+    }
+
+    public static double FormattedLocationDMSLonDouble(String stinput) {
+       // double nDegrees = 0;
+        float eDegrees = 1;
+        try {
+            String inputst = stinput.replaceAll("[^A-Za-z0-9]", " ");
+            String[] array = inputst.split(" ");
+
+            int nDegree = Integer.parseInt(array[0]);
+            int nMinute = Integer.parseInt(array[1]);
+            int nSecond = Integer.parseInt(array[2]);
+
+            int eDegree = Integer.parseInt(array[4]);
+            int eMinute = Integer.parseInt(array[5]);
+            int eSecond = Integer.parseInt(array[6]);
+
+            //double nDegrees = nDegree + (double) nMinute/60 + (double) nSecond/3600;
+            eDegrees = eDegree + (float) eMinute/60 + (float) eSecond/3600;
+
+            //String nResult = Double.toString(nDegrees).substring(0,10);
+            String eResult = Float.toString(eDegrees).substring(0,10);
+
+            //return (nDegrees);
+           // System.out.println(nResult);
+            System.out.println(eResult);
+        } catch (Exception e) {
+
+
+        }
+        return (eDegrees);
+    }
+
 
     public static String FormattedLocationDMSLon(double longitude) {
         try {
@@ -219,8 +295,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             longSeconds %= 60;
             String lonDegrees = longDegrees >= 0 ? "W" : "E";
 
-            return Math.abs(longDegrees) + ":" + longMinutes
-                    + ":" + longSeconds + ":" + lonDegrees;
+            return Math.abs(longDegrees) + "." + longMinutes
+                    + "." + longSeconds + " " + lonDegrees;
         } catch (Exception e) {
 
             return "" + String.format("%8.5f", longitude);
@@ -295,8 +371,86 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             // Speed information not available.
 
         }
+
+        //String waypointDest = formattedLocationLat.substring(0, formattedLocationLat.length() - 2);
+        double destLatDouble = FormattedLocationDMSLatDouble(waypointLocation);
+        double destLonDouble = FormattedLocationDMSLonDouble(waypointLocation);
+
+        String lat1 = String.valueOf(destLatDouble);
+        String lon1 = String.valueOf(destLonDouble);
+        String cutlat1 = lat1.substring(0, 9);
+        String cutlon1 = lon1.substring(0, 9);
+        double cutdlat = Double.parseDouble(cutlat1);
+        double cutdlon = Double.parseDouble(cutlon1);
+
+
+        BigDecimal bdlat = BigDecimal.valueOf(destLatDouble);
+        bdlat = bdlat.setScale(9, RoundingMode.DOWN);
+        double finaldestlat = bdlat.doubleValue();
+
+        BigDecimal bdlon = BigDecimal.valueOf(destLonDouble);
+        bdlon = bdlon.setScale(9, RoundingMode.DOWN);
+        double finaldestlon = bdlon.doubleValue();
+
+        double minus = finaldestlon;
+
+        Location locationA = new Location("point A");
+
+        locationA.setLatitude(location.getLatitude());
+        locationA.setLongitude(location.getLongitude());
+
+        Location locationB = new Location("point B");
+
+        locationB.setLatitude(cutdlat);
+        locationB.setLongitude(cutdlon);
+
+        //convert to knots
+        double distance = locationA.distanceTo(locationB) /1000;
+
+        String total2 = String.valueOf(distance);
+
+
+
+        float[] results = new float[1];
+        Location.distanceBetween(
+                location.getLatitude(),location.getLongitude(),
+                cutdlat, cutdlon, results);
+
+        String total3 = String.valueOf(results[0]);
+       // String total4 = String.valueOf(results[2]);
+        //String text = "12.34"; // example String
+        double value = Double.parseDouble(total3);
+        double value1 = value / 1000;
+        double value2 = value1 * 0.539957;
+        String finalString = String.valueOf(value2);
+        String cutString = finalString.substring(0, 6);
+        System.out.println("Distance is: " + results[0]);
+
+        Double d = new Double(1.23);
+        int i = (int) d.intValue();
+
+        double courseTo = location.bearingTo(locationB);
+        int intcource = (int) courseTo;
+        String finalCourseTo = String.valueOf(courseTo);
+        String intCourse1 = String.valueOf(intcource);
+        String cutString1 = finalCourseTo.substring(0, 6);
+        textViewCourseTo.setText(intCourse1 +(" (M)"));
+
+        textViewDistance.setText(cutString  +(" NM"));
+        //Toast.makeText(GoToWaypoint.this, "" + total4, Toast.LENGTH_LONG).show();
+
         //Toast.makeText(this, "" + speedMeters + "     mps", Toast.LENGTH_LONG).show();
     }
+
+
+
+    //public void distanceTo(String currentLoc, String waypointLocation) {
+
+
+
+
+     //   return result;
+   // }
 
     private Float convertToDegree(String stringDMS){
         Float result = null;

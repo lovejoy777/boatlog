@@ -177,9 +177,9 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             String latDegree = latDegrees >= 0 ? "N" : "S";
             String lonDegrees = longDegrees >= 0 ? "W" : "E";
 
-            return Math.abs(latDegrees) + ":" + latMinutes + ":" + latSeconds
-                    + ":" + latDegree + "/" + Math.abs(longDegrees) + ":" + longMinutes
-                    + ":" + longSeconds + ":" + lonDegrees;
+            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
+                    + " " + latDegree + "/" + Math.abs(longDegrees) + "." + longMinutes
+                    + "." + longSeconds + " " + lonDegrees;
         } catch (Exception e) {
 
             return "" + String.format("%8.5f", latitude) + "  "
