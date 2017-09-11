@@ -133,9 +133,9 @@ public class EditTripsActivity extends AppCompatActivity {
 
                 android.support.v7.app.AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this);
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditTripsActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Delete Trip?")
                         .setMessage(tripName)

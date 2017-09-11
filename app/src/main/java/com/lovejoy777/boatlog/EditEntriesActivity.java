@@ -148,9 +148,9 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
                     android.support.v7.app.AlertDialog.Builder builder;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
                     } else {
-                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this);
+                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
                     }
                     builder.setTitle("Delete Entry?")
                             .setMessage(entryName)

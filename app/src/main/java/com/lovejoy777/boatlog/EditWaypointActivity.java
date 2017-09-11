@@ -136,9 +136,9 @@ public class EditWaypointActivity extends AppCompatActivity {
 
                 android.support.v7.app.AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this);
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Delete Waypoint?")
                         .setMessage(waypointName)

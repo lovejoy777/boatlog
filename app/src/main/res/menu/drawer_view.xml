@@ -47,4 +47,21 @@
         </menu>
     </item>
 
+    <item android:title="Advanced">
+        <menu>
+            <item
+                android:id="@+id/nav_backup"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Backup Data"
+                />
+
+            <item
+                android:id="@+id/nav_restore"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Restore Data"
+                />
+
+        </menu>
+    </item>
+
 </menu>

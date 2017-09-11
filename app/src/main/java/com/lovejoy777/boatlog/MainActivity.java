@@ -2,12 +2,15 @@ package com.lovejoy777.boatlog;
 
 import android.Manifest;
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,9 +23,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created by lovejoy777 on 11/10/15.
@@ -32,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private int ACCESS_FINE_LOCATION_CODE=23;
     private int ACCESS_COARSE_LOCATION_CODE=24;
-    private int WRITE_EXTERNAL_STORAGE_CODE=25;
+
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -148,12 +160,7 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
         }
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_COARSE_LOCATION_CODE);
-        }
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-        }
+
     }
 
     private void NightMode() {
@@ -262,6 +269,14 @@ public class MainActivity extends AppCompatActivity {
                                 Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
+
+                            case R.id.nav_backup:
+                                Backup();
+                                break;
+
+                            case R.id.nav_restore:
+                                Restore();
+                                break;
                         }
                         return false;
                     }
@@ -269,5 +284,151 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void Backup() {
+
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Backup")
+                .setMessage("boatlog database")
+
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+                        File dbFile = new File(inFileName);
+
+                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
+                        File dir = new File(path);
+                        if(!dir.exists())
+                            dir.mkdirs();
+
+                        // Local database
+                        InputStream input = null;
+                        try {
+                            input = new FileInputStream(dbFile);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        // Path to the external backup
+                        OutputStream output = null;
+                        try {
+                            output = new FileOutputStream(path + "/SQLiteExample.db");
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        // transfer bytes from the Input File to the Output File
+                        byte[] buffer = new byte[1024];
+                        int length;
+                        try {
+                            while ((length = input.read(buffer))>0) {
+                                output.write(buffer, 0, length);
+                            }
+
+
+                            output.flush();
+                            output.close();
+                            input.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_LONG).show();
+                    }
+                })
+
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+
+                .setIcon(R.drawable.ic_save_white)
+                .show();
+
+    }
+
+    private void Restore() {
+
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
+        }
+        builder.setTitle("Restore")
+                .setMessage("boatlog database")
+
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
+                        File dir = new File(path);
+                        if (!dir.exists())
+                            dir.mkdirs();
+
+                        final String inFilePath = path + "/SQLiteExample.db";
+                        //  final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+                        File dbFile = new File(inFilePath);
+
+                        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+
+                        if (dbFile.exists()) {
+                            // Local database
+                            InputStream input = null;
+                            try {
+                                input = new FileInputStream(dbFile);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            // Path to the external backup
+                            OutputStream output = null;
+                            try {
+                                output = new FileOutputStream(outFilePath);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            }
+
+                            // transfer bytes from the Input File to the Output File
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            try {
+                                while ((length = input.read(buffer)) > 0) {
+                                    output.write(buffer, 0, length);
+                                }
+
+
+                                output.flush();
+                                output.close();
+                                input.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                })
+
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+
+                .setIcon(R.drawable.ic_save_white)
+                .show();
+
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.lovejoy777.boatlog;
 
+import android.*;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +51,7 @@ public class MainActivityEntries extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
+    private int WRITE_EXTERNAL_STORAGE_CODE=25;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
 
@@ -112,10 +117,13 @@ public class MainActivityEntries extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder;
+                if (ContextCompat.checkSelfPermission(MainActivityEntries.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivityEntries.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this, android.R.style.Theme_Material_Dialog_Alert);
+                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this);
+                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Add an Image")
                         .setMessage("do you want to add an image to your trip?")
