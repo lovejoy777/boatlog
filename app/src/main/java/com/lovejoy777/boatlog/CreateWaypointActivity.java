@@ -1,13 +1,9 @@
 package com.lovejoy777.boatlog;
 
-import android.*;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -21,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -35,7 +30,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
     private LocationManager locationManager;
     private String provider;
-    private ExampleDBHelper dbHelper ;
+    private BoatLogDBHelper dbHelper ;
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabSave; //fabMainDeleteEditSave
@@ -50,8 +45,16 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
     TextView textViewDescription;
 
     EditText nameEditText;
-    EditText locationEditText;
     EditText descriptionEditText;
+    EditText latdegEditText;
+    EditText latminEditText;
+    EditText latsecEditText;
+    EditText latnsEditText;
+    EditText longdegEditText;
+    EditText longminEditText;
+    EditText longsecEditText;
+    EditText longewEditText;
+
 
     TextView titleTextView;
 
@@ -77,8 +80,15 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
-        locationEditText = (EditText) findViewById(R.id.editTextLocation);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
+        latdegEditText = (EditText) findViewById(R.id.editTextLatDeg);
+        latminEditText = (EditText) findViewById(R.id.editTextLatMin);
+        latsecEditText = (EditText) findViewById(R.id.editTextLatSec);
+        latnsEditText = (EditText) findViewById(R.id.editTextLatNS);
+        longdegEditText = (EditText) findViewById(R.id.editTextLongDeg);
+        longminEditText = (EditText) findViewById(R.id.editTextLongMin);
+        longsecEditText = (EditText) findViewById(R.id.editTextLongSec);
+        longewEditText = (EditText) findViewById(R.id.editTextLongEW);
 
         titleTextView.setText("Create New Waypoint");
 
@@ -115,16 +125,13 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
 
-        String formattedLocation = null;
-        if (location != null) {
-            formattedLocation = FormattedLocation(location.getLatitude(), location.getLongitude());
-        }
+
 
         // pre fill text fields
 
-        locationEditText.setText("" + formattedLocation);
+       // locationEditText.setText("" + formattedLocation);
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         fabSave.setImageResource(R.drawable.ic_save_white);
         fabSave.setOnClickListener(new View.OnClickListener() {
@@ -137,9 +144,19 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
     }
     public void persistWaypoint() {
         if(waypointID > 0) {
-            if(dbHelper.updateWaypoint(waypointID, nameEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    descriptionEditText.getText().toString())) {
+            if(dbHelper.updateWaypoint(
+                    waypointID,
+                    nameEditText.getText().toString(),
+                    descriptionEditText.getText().toString(),
+                    latdegEditText.getText().toString(),
+                    latminEditText.getText().toString(),
+                    latsecEditText.getText().toString(),
+                    latnsEditText.getText().toString(),
+                    longdegEditText.getText().toString(),
+                    longminEditText.getText().toString(),
+                    longsecEditText.getText().toString(),
+                    longewEditText.getText().toString()))
+            {
                 Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -150,9 +167,18 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             }
         }
         else {
-            if(dbHelper.insertWaypoint(nameEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    descriptionEditText.getText().toString())){
+            if(dbHelper.insertWaypoint(
+                    nameEditText.getText().toString(),
+                    descriptionEditText.getText().toString(),
+                    latdegEditText.getText().toString(),
+                    latminEditText.getText().toString(),
+                    latsecEditText.getText().toString(),
+                    latnsEditText.getText().toString(),
+                    longdegEditText.getText().toString(),
+                    longminEditText.getText().toString(),
+                    longsecEditText.getText().toString(),
+                    longewEditText.getText().toString()))
+            {
                 Toast.makeText(getApplicationContext(), "Waypoint Saved", Toast.LENGTH_SHORT).show();
             }
             else{
@@ -164,7 +190,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         }
     }
 
-    public static String FormattedLocation(double latitude, double longitude) {
+    public static String DDtoDMS(double latitude, double longitude) {
         try {
             int latSeconds = (int) Math.round(latitude * 3600);
             int latDegrees = latSeconds / 3600;
@@ -178,11 +204,11 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             int longMinutes = longSeconds / 60;
             longSeconds %= 60;
             String latDegree = latDegrees >= 0 ? "N" : "S";
-            String lonDegrees = longDegrees >= 0 ? "W" : "E";
+            String lonDegree = longDegrees >= 0 ? "W" : "E";
 
             return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
                     + " " + latDegree + "/" + Math.abs(longDegrees) + "." + longMinutes
-                    + "." + longSeconds + " " + lonDegrees;
+                    + "." + longSeconds + " " + lonDegree;
         } catch (Exception e) {
 
             return "" + String.format("%8.5f", latitude) + "  "
@@ -222,6 +248,52 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
         // Toast.makeText(this, "" + strLatitude + strLongitude, Toast.LENGTH_LONG).show();
 
+        // prefill lat long text fields
+        String dms = null;
+        float nDegrees = 1;
+        float eDegrees = 1;
+        if (location != null) {
+
+            dms = DDtoDMS(location.getLatitude(), location.getLongitude());
+
+            try {
+                String inputst = dms.replaceAll("[^A-Za-z0-9]", " ");
+                String[] array = inputst.split(" ");
+
+                int nDegree = Integer.parseInt(array[0]);
+                int nMinute = Integer.parseInt(array[1]);
+                int nSecond = Integer.parseInt(array[2]);
+                String latDegrees = nDegree >= 0 ? "N" : "S";
+
+                int eDegree = Integer.parseInt(array[4]);
+                int eMinute = Integer.parseInt(array[5]);
+                int eSecond = Integer.parseInt(array[6]);
+                String longDegrees = eDegree >= 0 ? "W" : "E";
+
+                latdegEditText.setText(String.valueOf(nDegree));
+                latminEditText.setText(String.valueOf(nMinute));
+                latsecEditText.setText(String.valueOf(nSecond));
+                latnsEditText.setText(latDegrees);
+
+                longdegEditText.setText(String.valueOf(eDegree));
+                longminEditText.setText(String.valueOf(eMinute));
+                longsecEditText.setText(String.valueOf(eSecond));
+                longewEditText.setText(longDegrees);
+
+                nDegrees = nDegree + (float) nMinute/60 + (float) nSecond/3600;
+                String nResult = Float.toString(nDegrees).substring(0,10);
+
+                eDegrees = eDegree + (float) eMinute/60 + (float) eSecond/3600;
+                String eResult = Float.toString(eDegrees).substring(0,10);
+
+                System.out.println(nResult);
+                System.out.println(eResult);
+            } catch (Exception e) {
+
+            }
+
+        }
+
     }
 
     @Override
@@ -257,8 +329,36 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         textViewDescription.setTextColor(Color.RED);
 
         nameEditText.setTextColor(Color.RED);
-        locationEditText.setTextColor(Color.RED);
+        //locationEditText.setTextColor(Color.RED);
         descriptionEditText.setTextColor(Color.RED);
     }
 
 }
+
+/**
+    public static String FormattedLocation(double latitude, double longitude) {
+        try {
+            int latSeconds = (int) Math.round(latitude * 3600);
+            int latDegrees = latSeconds / 3600;
+            latSeconds = Math.abs(latSeconds % 3600);
+            int latMinutes = latSeconds / 60;
+            latSeconds %= 60;
+
+            int longSeconds = (int) Math.round(longitude * 3600);
+            int longDegrees = longSeconds / 3600;
+            longSeconds = Math.abs(longSeconds % 3600);
+            int longMinutes = longSeconds / 60;
+            longSeconds %= 60;
+            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String lonDegrees = longDegrees >= 0 ? "W" : "E";
+
+            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
+                    + " " + latDegree + "/" + Math.abs(longDegrees) + "." + longMinutes
+                    + "." + longSeconds + " " + lonDegrees;
+        } catch (Exception e) {
+
+            return "" + String.format("%8.5f", latitude) + "  "
+                    + String.format("%8.5f", longitude);
+        }
+    }
+ */

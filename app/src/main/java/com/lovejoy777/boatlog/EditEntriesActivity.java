@@ -27,7 +27,7 @@ import android.widget.Toast;
 public class EditEntriesActivity  extends AppCompatActivity {
 
 
-    private ExampleDBHelper dbHelper;
+    private BoatLogDBHelper dbHelper;
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabDeleteSave; //fabMainDeleteEditSave
@@ -90,7 +90,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
             NightMode();
         }
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
        // nameEditText.setEnabled(true);
         nameEditText.setFocusableInTouchMode(true);
@@ -114,11 +114,11 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
         Cursor rs = dbHelper.getEntry(entryID);
         rs.moveToFirst();
-        final String entryName = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_NAME));
-        String entryTime = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
-        String entryDate = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
-        String entryLocation = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
-        String entryTrip_ID = rs.getString(rs.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TRIP_ID));
+        final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+        String entryTime = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
+        String entryDate = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
+        String entryLocation = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
+        String entryTrip_ID = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID));
         if (!rs.isClosed()) {
             rs.close();
         }

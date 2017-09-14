@@ -23,7 +23,7 @@ import android.widget.Toast;
 public class CreateTripsActivity extends AppCompatActivity {
 
 
-    private ExampleDBHelper dbHelper ;
+    private BoatLogDBHelper dbHelper ;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -67,7 +67,7 @@ public class CreateTripsActivity extends AppCompatActivity {
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -76,7 +76,7 @@ public class CreateTripsActivity extends AppCompatActivity {
             NightMode();
         }
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         fabSave.setImageResource(R.drawable.ic_save_white);
         fabSave.setOnClickListener(new View.OnClickListener() {

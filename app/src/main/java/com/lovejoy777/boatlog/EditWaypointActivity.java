@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 public class EditWaypointActivity extends AppCompatActivity {
 
-    private ExampleDBHelper dbHelper;
+    private BoatLogDBHelper dbHelper;
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabDeleteSave; //fabMainDeleteSave
@@ -42,8 +42,15 @@ public class EditWaypointActivity extends AppCompatActivity {
     TextView textViewDescription;
 
     EditText nameEditText;
-    EditText locationEditText;
     EditText descriptionEditText;
+    EditText latdegEditText;
+    EditText latminEditText;
+    EditText latsecEditText;
+    EditText latnsEditText;
+    EditText longdegEditText;
+    EditText longminEditText;
+    EditText longsecEditText;
+    EditText longewEditText;
 
     TextView titleTextView;
 
@@ -69,10 +76,15 @@ public class EditWaypointActivity extends AppCompatActivity {
 
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
-        locationEditText = (EditText) findViewById(R.id.editTextLocation);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
-
-        titleTextView.setText("Create");
+        latdegEditText = (EditText) findViewById(R.id.editTextLatDeg);
+        latminEditText = (EditText) findViewById(R.id.editTextLatMin);
+        latsecEditText = (EditText) findViewById(R.id.editTextLatSec);
+        latnsEditText = (EditText) findViewById(R.id.editTextLatNS);
+        longdegEditText = (EditText) findViewById(R.id.editTextLongDeg);
+        longminEditText = (EditText) findViewById(R.id.editTextLongMin);
+        longsecEditText = (EditText) findViewById(R.id.editTextLongSec);
+        longewEditText = (EditText) findViewById(R.id.editTextLongEW);
 
         fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
         layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
@@ -85,36 +97,37 @@ public class EditWaypointActivity extends AppCompatActivity {
             NightMode();
         }
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
+        dbHelper = new BoatLogDBHelper(this);
 
-        dbHelper = new ExampleDBHelper(this);
-
-        //nameEditText.setEnabled(true);
-        nameEditText.setFocusableInTouchMode(true);
-        nameEditText.setClickable(true);
-
-        //locationEditText.setEnabled(true);
-        locationEditText.setFocusableInTouchMode(true);
-        locationEditText.setClickable(true);
-
-        //descriptionEditText.setEnabled(true);
-        descriptionEditText.setFocusableInTouchMode(true);
-        descriptionEditText.setClickable(true);
-
-        Cursor rs = dbHelper.getWaypoint(waypointID);
+   Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();
-        final String waypointName = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_NAME));
-        String waypointLocation = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_LOCATION));
-        String waypointDescription = rs.getString(rs.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
+        final String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
+        String waypointDescription = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
+        String waypointLatDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATDEG));
+        String waypointLatMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATMIN));
+        String waypointLatSec = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATSEC));
+        String waypointLatNS = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATNS));
+        String waypointLongDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGDEG));
+        String waypointLongMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGMIN));
+        String waypointLongSec = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGSEC));
+        String waypointLongEW = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGEW));
         if (!rs.isClosed()) {
             rs.close();
         }
 
         titleTextView.setText("Edit " + waypointName);
         nameEditText.setText(waypointName);
-        locationEditText.setText(waypointLocation);
         descriptionEditText.setText(waypointDescription);
+        latdegEditText.setText(waypointLatDeg);
+        latminEditText.setText(waypointLatMin);
+        latsecEditText.setText(waypointLatSec);
+        latnsEditText.setText(waypointLatNS);
+        longdegEditText.setText(waypointLongDeg);
+        longminEditText.setText(waypointLongMin);
+        longsecEditText.setText(waypointLongSec);
+        longewEditText.setText(waypointLongEW);
+
 
         fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
 
@@ -141,7 +154,7 @@ public class EditWaypointActivity extends AppCompatActivity {
                     builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Delete Waypoint?")
-                        .setMessage(waypointName)
+                       // .setMessage(waypointName)
 
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -181,12 +194,20 @@ public class EditWaypointActivity extends AppCompatActivity {
 
     }
 
-
     public void persistWaypoint() {
-        if (waypointID > 0) {
-            if (dbHelper.updateWaypoint(waypointID, nameEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    descriptionEditText.getText().toString())) {
+            if (dbHelper.updateWaypoint(
+                    waypointID,
+                    nameEditText.getText().toString(),
+                    descriptionEditText.getText().toString(),
+                    latdegEditText.getText().toString(),
+                    latminEditText.getText().toString(),
+                    latsecEditText.getText().toString(),
+                    latnsEditText.getText().toString(),
+                    longdegEditText.getText().toString(),
+                    longminEditText.getText().toString(),
+                    longsecEditText.getText().toString(),
+                    longewEditText.getText().toString()
+                    )) {
                 Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -194,19 +215,9 @@ public class EditWaypointActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            if (dbHelper.insertWaypoint(nameEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    descriptionEditText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Waypoint Saved", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Could not Save Waypoint", Toast.LENGTH_SHORT).show();
-            }
-            Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        }
     }
+
+
 
     /* Request updates at startup */
     @Override
@@ -233,7 +244,7 @@ public class EditWaypointActivity extends AppCompatActivity {
         textViewDescription.setTextColor(Color.RED);
 
         nameEditText.setTextColor(Color.RED);
-        locationEditText.setTextColor(Color.RED);
+      //  locationEditText.setTextColor(Color.RED);
         descriptionEditText.setTextColor(Color.RED);
     }
 

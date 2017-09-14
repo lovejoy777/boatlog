@@ -16,14 +16,6 @@
         android:textColor="@color/colorAccent"/>
 
     <TextView
-        android:id="@+id/waypointLocation"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginStart="10dp"
-        android:textSize="20sp"/>
-
-    <TextView
         android:id="@+id/waypointID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

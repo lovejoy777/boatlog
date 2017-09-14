@@ -35,6 +35,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by lovejoy777 on 11/10/15.
@@ -42,6 +44,7 @@ import java.io.OutputStream;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private int WRITE_EXTERNAL_STORAGE_CODE=25;
     private int ACCESS_FINE_LOCATION_CODE=23;
     private int ACCESS_COARSE_LOCATION_CODE=24;
 
@@ -156,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(bootanimactivity, bndlanimation);
             }
         });
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+        }
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
@@ -275,7 +282,25 @@ public class MainActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.nav_restore:
-                                Restore();
+
+
+                              FileChooser  filechooser = new FileChooser(MainActivity.this);
+                                filechooser.setFileListener(new FileChooser.FileSelectedListener() {
+                                    @Override
+                                    public void fileSelected(final File file) {
+                                        // ....do something with the file
+                                        String filename = file.getAbsolutePath();
+                                        //Toast.makeText(MainActivity.this, filename, Toast.LENGTH_LONG).show();
+                                        Restore(filename);
+                                       // Log.d("File", filename);
+                                        // then actually do something in another module
+
+                                    }
+                                });
+
+                                //filechooser.setExtension("db");
+                                filechooser.showDialog();
+
                                 break;
                         }
                         return false;
@@ -297,7 +322,19 @@ public class MainActivity extends AppCompatActivity {
 
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+
+                        // Get Time and Date
+                        Calendar c = Calendar.getInstance();
+                        System.out.println("Current time => " + c.getTime());
+                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+                        String formattedDate = df.format(c.getTime());
+                        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
+                        String formattedTime = dt.format(c.getTime());
+                        String fileDate = "_" + formattedDate;
+                        String fileTime = "_" + formattedTime;
+
+
+                        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
                         File dbFile = new File(inFileName);
 
                         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
@@ -317,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                         // Path to the external backup
                         OutputStream output = null;
                         try {
-                            output = new FileOutputStream(path + "/SQLiteExample.db");
+                            output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime  + ".db");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -353,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void Restore() {
+    private void Restore(final String dbFileName) {
 
         android.support.v7.app.AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -362,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
             builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
         }
         builder.setTitle("Restore")
-                .setMessage("boatlog database")
+                .setMessage(dbFileName)
 
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -371,11 +408,12 @@ public class MainActivity extends AppCompatActivity {
                         if (!dir.exists())
                             dir.mkdirs();
 
-                        final String inFilePath = path + "/SQLiteExample.db";
-                        //  final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
-                        File dbFile = new File(inFilePath);
 
-                        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+                       // final String inFilePath = dbFileName;
+                        //  final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
+                        File dbFile = new File(dbFileName);
+
+                        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
 
                         if (dbFile.exists()) {
                             // Local database

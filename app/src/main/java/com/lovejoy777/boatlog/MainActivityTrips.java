@@ -23,7 +23,7 @@ public class MainActivityTrips extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
     private ListView listView;
-    ExampleDBHelper dbHelper;
+    BoatLogDBHelper dbHelper;
 
     RelativeLayout MRL1;
     Toolbar toolBar;
@@ -76,7 +76,7 @@ public class MainActivityTrips extends AppCompatActivity {
 
         titleTextView.setText("Trips");
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         populateListView();
 
@@ -94,8 +94,8 @@ public class MainActivityTrips extends AppCompatActivity {
                                     int position, long id) {
 
                 Cursor itemCursor = (Cursor) MainActivityTrips.this.listView.getItemAtPosition(position);
-                int tripID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_ID));
-                String tripName = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
+                int tripID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_ID));
+                String tripName = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
                 Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
@@ -109,7 +109,7 @@ public class MainActivityTrips extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> listView, View view,
                                            int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityTrips.this.listView.getItemAtPosition(position);
-                int tripID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_ID));
+                int tripID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditTripsActivity.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 startActivity(intent);
@@ -121,7 +121,7 @@ public class MainActivityTrips extends AppCompatActivity {
 
     private void populateListView() {
         final Cursor cursor = dbHelper.getAllTrips();
-        String [] columns = new String[] {ExampleDBHelper.TRIPS_COLUMN_ID, ExampleDBHelper.TRIPS_COLUMN_NAME};
+        String [] columns = new String[] {BoatLogDBHelper.TRIPS_COLUMN_ID, BoatLogDBHelper.TRIPS_COLUMN_NAME};
         int [] widgets = new int[] {R.id.tripID, tripName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.trips_info, cursor, columns, widgets, 0);
         listView = (ListView)findViewById(R.id.listViewTrips);
@@ -133,7 +133,7 @@ public class MainActivityTrips extends AppCompatActivity {
 
     private void populateListViewRed() {
         final Cursor cursor = dbHelper.getAllTrips();
-        String [] columns = new String[] {ExampleDBHelper.TRIPS_COLUMN_ID, ExampleDBHelper.TRIPS_COLUMN_NAME};
+        String [] columns = new String[] {BoatLogDBHelper.TRIPS_COLUMN_ID, BoatLogDBHelper.TRIPS_COLUMN_NAME};
         int [] widgets = new int[] {R.id.tripID, tripName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.trips_info1, cursor, columns, widgets, 0);
         listView = (ListView)findViewById(R.id.listViewTrips);

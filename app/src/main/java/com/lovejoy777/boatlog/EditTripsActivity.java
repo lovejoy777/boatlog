@@ -26,7 +26,7 @@ import android.widget.Toast;
 public class EditTripsActivity extends AppCompatActivity {
 
 
-    private ExampleDBHelper dbHelper ;
+    private BoatLogDBHelper dbHelper ;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -85,7 +85,7 @@ public class EditTripsActivity extends AppCompatActivity {
             NightMode();
         }
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
        // nameEditText.setEnabled(true);
         nameEditText.setFocusableInTouchMode(true);
@@ -101,9 +101,9 @@ public class EditTripsActivity extends AppCompatActivity {
 
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
-        final String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
-        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
+        final String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
+        String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
+        String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
         if (!rs.isClosed()) {
             rs.close();
         }

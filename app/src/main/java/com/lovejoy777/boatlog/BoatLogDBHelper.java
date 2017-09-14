@@ -10,10 +10,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by obaro on 02/04/2015.
  */
-public class ExampleDBHelper extends SQLiteOpenHelper {
+public class BoatLogDBHelper extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "SQLiteExample.db";
-    private static final int DATABASE_VERSION = 2;
+    public static final String DATABASE_NAME = "SQLiteBoatLog.db";
+    private static final int DATABASE_VERSION = 3;
 
     public static final String ENTRY_TABLE_NAME = "entries";
     public static final String ENTRY_COLUMN_ID = "_id";
@@ -32,10 +32,17 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
     public static final String WAYPOINT_TABLE_NAME = "waypoint";
     public static final String WAYPOINT_COLUMN_ID = "_id";
     public static final String WAYPOINT_COLUMN_NAME = "name";
-    public static final String WAYPOINT_COLUMN_LOCATION = "location";
     public static final String WAYPOINT_COLUMN_DESCRIPTION = "description";
+    public static final String WAYPOINT_COLUMN_LATDEG = "latdeg";
+    public static final String WAYPOINT_COLUMN_LATMIN = "latmin";
+    public static final String WAYPOINT_COLUMN_LATSEC = "latsec";
+    public static final String WAYPOINT_COLUMN_LATNS = "latns";
+    public static final String WAYPOINT_COLUMN_LONGDEG = "longdeg";
+    public static final String WAYPOINT_COLUMN_LONGMIN = "longmin";
+    public static final String WAYPOINT_COLUMN_LONGSEC = "longsec";
+    public static final String WAYPOINT_COLUMN_LONGEW = "longew";
 
-    public ExampleDBHelper(Context context) {
+    public BoatLogDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -67,8 +74,15 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + WAYPOINT_TABLE_NAME +
                         "(" + WAYPOINT_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         WAYPOINT_COLUMN_NAME + " TEXT, " +
-                        WAYPOINT_COLUMN_LOCATION + " TEXT, " +
-                        WAYPOINT_COLUMN_DESCRIPTION + " TEXT)"
+                        WAYPOINT_COLUMN_DESCRIPTION + " TEXT, " +
+                        WAYPOINT_COLUMN_LATDEG + " TEXT, "  +
+                        WAYPOINT_COLUMN_LATMIN + " TEXT, "  +
+                        WAYPOINT_COLUMN_LATSEC + " TEXT, "  +
+                        WAYPOINT_COLUMN_LATNS + " TEXT, "   +
+                        WAYPOINT_COLUMN_LONGDEG + " TEXT, "  +
+                        WAYPOINT_COLUMN_LONGMIN + " TEXT, "  +
+                        WAYPOINT_COLUMN_LONGSEC + " TEXT, "  +
+                        WAYPOINT_COLUMN_LONGEW + " TEXT)"
         );
     }
 
@@ -106,13 +120,31 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean insertWaypoint(String name, String location, String description) {
+    public boolean insertWaypoint(
+            String name,
+            String description,
+            String latdeg,
+            String latmin,
+            String latsec,
+            String latns,
+            String longdeg,
+            String longmin,
+            String longsec,
+            String longew
+    ) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(WAYPOINT_COLUMN_NAME, name);
-        contentValues.put(WAYPOINT_COLUMN_LOCATION, location);
         contentValues.put(WAYPOINT_COLUMN_DESCRIPTION, description);
+        contentValues.put(WAYPOINT_COLUMN_LATDEG, latdeg);
+        contentValues.put(WAYPOINT_COLUMN_LATMIN, latmin);
+        contentValues.put(WAYPOINT_COLUMN_LATSEC, latsec);
+        contentValues.put(WAYPOINT_COLUMN_LATNS, latns);
+        contentValues.put(WAYPOINT_COLUMN_LONGDEG, longdeg);
+        contentValues.put(WAYPOINT_COLUMN_LONGMIN, longmin);
+        contentValues.put(WAYPOINT_COLUMN_LONGSEC, longsec);
+        contentValues.put(WAYPOINT_COLUMN_LONGEW, longew);
 
         db.insert(WAYPOINT_TABLE_NAME, null, contentValues);
         return true;
@@ -152,12 +184,32 @@ public class ExampleDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateWaypoint(Integer id, String name, String location, String description) {
+    public boolean updateWaypoint(
+            Integer id,
+            String name,
+            String description,
+            String latdeg,
+            String latmin,
+            String latsec,
+            String latns,
+            String longdeg,
+            String longmin,
+            String longsec,
+            String longew
+    ) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(WAYPOINT_COLUMN_NAME, name);
-        contentValues.put(WAYPOINT_COLUMN_LOCATION, location);
         contentValues.put(WAYPOINT_COLUMN_DESCRIPTION, description);
+        contentValues.put(WAYPOINT_COLUMN_LATDEG, latdeg);
+        contentValues.put(WAYPOINT_COLUMN_LATMIN, latmin);
+        contentValues.put(WAYPOINT_COLUMN_LATSEC, latsec);
+        contentValues.put(WAYPOINT_COLUMN_LATNS, latns);
+        contentValues.put(WAYPOINT_COLUMN_LONGDEG, longdeg);
+        contentValues.put(WAYPOINT_COLUMN_LONGMIN, longmin);
+        contentValues.put(WAYPOINT_COLUMN_LONGSEC, longsec);
+        contentValues.put(WAYPOINT_COLUMN_LONGEW, longew);
+
         db.update(WAYPOINT_TABLE_NAME, contentValues, WAYPOINT_COLUMN_ID + " = ? ", new String[] { Integer.toString(id) } );
         return true;
     }

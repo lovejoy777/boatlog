@@ -1,10 +1,8 @@
 package com.lovejoy777.boatlog;
 
-import android.*;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -51,7 +47,7 @@ public class MainActivityEntries extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
-    private int WRITE_EXTERNAL_STORAGE_CODE=25;
+
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
 
@@ -61,7 +57,7 @@ public class MainActivityEntries extends AppCompatActivity {
     private LinearLayout layoutFabAddNew;
 
     private ListView listView;
-    ExampleDBHelper dbHelper;
+    BoatLogDBHelper dbHelper;
 
     RelativeLayout MRL1;
 
@@ -95,7 +91,7 @@ public class MainActivityEntries extends AppCompatActivity {
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
         titleTextView.setText("" + tripName);
 
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
         layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
@@ -117,9 +113,7 @@ public class MainActivityEntries extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder;
-                if (ContextCompat.checkSelfPermission(MainActivityEntries.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivityEntries.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
                 } else {
@@ -176,7 +170,7 @@ public class MainActivityEntries extends AppCompatActivity {
             public void onItemClick(AdapterView<?> listView, View view,
                                     int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
-                int entryID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_ID));
+                int entryID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
@@ -191,7 +185,7 @@ public class MainActivityEntries extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> listView, View view,
                                            int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
-                int entryID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_ID));
+                int entryID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
@@ -205,11 +199,11 @@ public class MainActivityEntries extends AppCompatActivity {
     private void populateListView() {
         final Cursor cursor = dbHelper.getTripEntry(tripID);
         String [] columns = new String[] {
-                ExampleDBHelper.ENTRY_COLUMN_ID,
-                ExampleDBHelper.ENTRY_COLUMN_NAME,
-                ExampleDBHelper.ENTRY_COLUMN_TIME,
-                ExampleDBHelper.ENTRY_COLUMN_DATE,
-                ExampleDBHelper.ENTRY_COLUMN_TRIP_ID
+                BoatLogDBHelper.ENTRY_COLUMN_ID,
+                BoatLogDBHelper.ENTRY_COLUMN_NAME,
+                BoatLogDBHelper.ENTRY_COLUMN_TIME,
+                BoatLogDBHelper.ENTRY_COLUMN_DATE,
+                BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID
 
         };
         int [] widgets = new int[] {
@@ -231,11 +225,11 @@ public class MainActivityEntries extends AppCompatActivity {
     private void populateListViewRed() {
         final Cursor cursor = dbHelper.getTripEntry(tripID);
         String [] columns = new String[] {
-                ExampleDBHelper.ENTRY_COLUMN_ID,
-                ExampleDBHelper.ENTRY_COLUMN_NAME,
-                ExampleDBHelper.ENTRY_COLUMN_TIME,
-                ExampleDBHelper.ENTRY_COLUMN_DATE,
-                ExampleDBHelper.ENTRY_COLUMN_TRIP_ID
+                BoatLogDBHelper.ENTRY_COLUMN_ID,
+                BoatLogDBHelper.ENTRY_COLUMN_NAME,
+                BoatLogDBHelper.ENTRY_COLUMN_TIME,
+                BoatLogDBHelper.ENTRY_COLUMN_DATE,
+                BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID
 
         };
         int [] widgets = new int[] {
@@ -318,9 +312,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
-        String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
-        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
+        String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
+        String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
+        String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
         if (!rs.isClosed()) {
             rs.close();
         }
@@ -378,10 +372,10 @@ public class MainActivityEntries extends AppCompatActivity {
             while (cursor.moveToNext()) {
 
                 // get strings for table cells
-                String description = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_NAME));
-                String time = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
-                String date = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
-                String location = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
+                String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+                String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
+                String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
+                String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
 
                 // input data into table cells
                 table.addCell(description);
@@ -416,9 +410,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
-        String tripName = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_NAME));
-        String tripDeparture = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DEPARTURE));
-        String tripDestination = rs.getString(rs.getColumnIndex(ExampleDBHelper.TRIPS_COLUMN_DESTINATION));
+        String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
+        String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
+        String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
         if (!rs.isClosed()) {
             rs.close();
         }
@@ -485,10 +479,10 @@ public class MainActivityEntries extends AppCompatActivity {
             while (cursor.moveToNext()) {
 
                 // get strings for table cells
-                String description = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_NAME));
-                String time = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_TIME));
-                String date = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_DATE));
-                String location = cursor.getString(cursor.getColumnIndex(ExampleDBHelper.ENTRY_COLUMN_LOCATION));
+                String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+                String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
+                String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
+                String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
 
                 // input data into table cells
                 table.addCell(description);

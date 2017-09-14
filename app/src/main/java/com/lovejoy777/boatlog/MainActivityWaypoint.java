@@ -1,6 +1,5 @@
 package com.lovejoy777.boatlog;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,13 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by lovejoy777 on 13/10/15.
@@ -30,7 +27,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
     public final static String KEY_EXTRA_WAYPOINT_LOCATION = "KEY_EXTRA_WAYPOINT_LOCATION";
 
     private ListView listView;
-    ExampleDBHelper dbHelper;
+    BoatLogDBHelper dbHelper;
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabWaypoints; //main
@@ -83,12 +80,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
         titleTextView.setText("Waypoints");
 
-
-
-
-
-
-        dbHelper = new ExampleDBHelper(this);
+        dbHelper = new BoatLogDBHelper(this);
 
         populateListView();
 
@@ -106,9 +98,9 @@ public class MainActivityWaypoint extends AppCompatActivity {
                                     final int position, long id) {
 
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
-                final int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_ID));
-                final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_NAME));
-                final String waypointLocation = "" + itemCursor.getString(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_LOCATION));
+                final int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
+                final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
+               // final String waypointLocation = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LOCATION));
 
                 android.support.v7.app.AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -124,7 +116,6 @@ public class MainActivityWaypoint extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
-                                intent.putExtra(KEY_EXTRA_WAYPOINT_LOCATION, waypointLocation);
                                 startActivity(intent);
                             }
                         })
@@ -148,7 +139,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
                                            int position, long id) {
 
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
-                int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(ExampleDBHelper.WAYPOINT_COLUMN_ID));
+                int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditWaypointActivity.class);
                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
                 startActivity(intent);
@@ -160,8 +151,8 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void populateListView() {
         final Cursor cursor = dbHelper.getAllWaypoint();
-        String [] columns = new String[] {ExampleDBHelper.WAYPOINT_COLUMN_ID, ExampleDBHelper.WAYPOINT_COLUMN_NAME, ExampleDBHelper.ENTRY_COLUMN_LOCATION};
-        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName, R.id.waypointLocation};
+        String [] columns = new String[] {BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
+        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info, cursor, columns, widgets, 0);
         listView = (ListView)findViewById(R.id.listViewWaypoint);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
@@ -171,8 +162,8 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void populateListViewRed() {
         final Cursor cursor = dbHelper.getAllWaypoint();
-        String [] columns = new String[] {ExampleDBHelper.WAYPOINT_COLUMN_ID, ExampleDBHelper.WAYPOINT_COLUMN_NAME, ExampleDBHelper.ENTRY_COLUMN_LOCATION};
-        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName, R.id.waypointLocation};
+        String [] columns = new String[] {BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
+        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info1, cursor, columns, widgets, 0);
         listView = (ListView)findViewById(R.id.listViewWaypoint);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));

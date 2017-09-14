@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -36,7 +35,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
     private LocationManager locationManager;
     private String provider;
-    private ExampleDBHelper dbHelper;
+    private BoatLogDBHelper dbHelper;
 
     private FloatingActionButton fabSave; //fabMainDeleteEditSave
     FrameLayout fabFrame;
@@ -134,14 +133,13 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
             formattedLocation = FormattedLocation(location.getLatitude(), location.getLongitude());
         }
 
-        // pre fill text fields
+        dbHelper = new BoatLogDBHelper(this);
 
+        // pre fill text fields
         trip_idText.setText("" + tripID);
         timeEditText.setText("" + formattedTime);
         dateEditText.setText("" + formattedDate);
         locationEditText.setText("" + formattedLocation);
-
-        dbHelper = new ExampleDBHelper(this);
 
         fabSave.setImageResource(R.drawable.ic_save_white);
         fabSave.setOnClickListener(new View.OnClickListener() {

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -25,10 +26,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.floor;
+
 /**
  * Created by lovejoy777 on 14/10/15.
  */
 public class GoToWaypoint extends AppCompatActivity implements LocationListener, SensorEventListener {
+
+    private BoatLogDBHelper dbHelper;
 
     // GPS location
     private LocationManager locationManager;
@@ -66,6 +72,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     int waypointID;
     String waypointName;
     String waypointLocation;
+    double doublelat;
+    double doublelong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +82,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
         waypointName = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_NAME);
-        waypointLocation = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_LOCATION);
 
         // assign the views
         toolBar = (Toolbar) findViewById(R.id.toolbar);
@@ -101,7 +108,38 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
 
-        textViewGoTo.setText("Heading To " + waypointName + " at " + waypointLocation);
+        dbHelper = new BoatLogDBHelper(this);
+
+        Cursor rs = dbHelper.getWaypoint(waypointID);
+        rs.moveToFirst();
+        final String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
+        String waypointDescription = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
+        String waypointLatDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATDEG));
+        String waypointLatMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATMIN));
+        String waypointLatSec = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATSEC));
+        String waypointLatNS = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATNS));
+        String waypointLongDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGDEG));
+        String waypointLongMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGMIN));
+        String waypointLongSec = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGSEC));
+        String waypointLongEW = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LONGEW));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
+        double intLatDeg = Double.parseDouble(waypointLatDeg);
+        double intLatMin = Double.parseDouble(waypointLatMin);
+        double intLatSec = Double.parseDouble(waypointLatSec);
+        double intLongDeg = Double.parseDouble(waypointLongDeg);
+        double intLongMin = Double.parseDouble(waypointLongMin);
+        double intLongSec = Double.parseDouble(waypointLongSec);
+
+        doublelat = DMSToDecimal(intLatDeg,intLatMin,intLatSec,waypointLatNS);
+        doublelong = DMSToDecimal(intLongDeg,intLongMin,intLongSec,waypointLongEW);
+
+        String stringlatdms =  waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
+        String stringlongdms =  waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
+
+        textViewGoTo.setText("Heading To " + stringlatdms + " " + stringlongdms);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -146,10 +184,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     }
 
 
-
     private void screenOn() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
 
@@ -160,7 +196,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         if ((hemisphereOUmeridien.equals("W")) || (hemisphereOUmeridien.equals("S"))) {
             signe = -1.0;
         }
-        LatOrLon = signe * (Math.floor(degres) + Math.floor(minutes) / 60.0 + secondes / 3600.0);
+        LatOrLon = signe * (floor(degres) + floor(minutes) / 60.0 + secondes / 3600.0);
 
         return (LatOrLon);
     }
@@ -169,13 +205,13 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         try {
             int latSeconds = (int) Math.round(latitude * 3600);
             int latDegrees = latSeconds / 3600;
-            latSeconds = Math.abs(latSeconds % 3600);
+            latSeconds = abs(latSeconds % 3600);
             int latMinutes = latSeconds / 60;
             latSeconds %= 60;
 
             String latDegree = latDegrees >= 0 ? "N" : "S";
 
-            return Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
+            return abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
                     + "\"" + latDegree;
         } catch (Exception e) {
 
@@ -187,12 +223,12 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         try {
             int longSeconds = (int) Math.round(longitude * 3600);
             int longDegrees = longSeconds / 3600;
-            longSeconds = Math.abs(longSeconds % 3600);
+            longSeconds = abs(longSeconds % 3600);
             int longMinutes = longSeconds / 60;
             longSeconds %= 60;
             String lonDegrees = longDegrees >= 0 ? "W" : "E";
 
-            return Math.abs(longDegrees) + "°" + longMinutes
+            return abs(longDegrees) + "°" + longMinutes
                     + "'" + longSeconds + "\"" + lonDegrees;
         } catch (Exception e) {
 
@@ -200,88 +236,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         }
     }
 
-    public static double FormattedLocationDMSLatDouble(String stinput) {
-        double nDegrees = 0;
-        try {
-            String inputst = stinput.replaceAll("[^A-Za-z0-9]", " ");
-            String[] array = inputst.split(" ");
-
-            int nDegree = Integer.parseInt(array[0]);
-            int nMinute = Integer.parseInt(array[1]);
-            int nSecond = Integer.parseInt(array[2]);
-
-            nDegrees = nDegree + (double) nMinute/60 + (double) nSecond/3600;
-
-        } catch (Exception e) {
-
-        }
-        return (nDegrees);
-    }
-
-    public static double FormattedLocationDMSLonDouble(String stinput) {
-
-        float eDegrees = 1;
-        try {
-            String inputst = stinput.replaceAll("[^A-Za-z0-9]", " ");
-            String[] array = inputst.split(" ");
-
-            int eDegree = Integer.parseInt(array[4]);
-            int eMinute = Integer.parseInt(array[5]);
-            int eSecond = Integer.parseInt(array[6]);
-
-            eDegrees = eDegree + (float) eMinute/60 + (float) eSecond/3600;
-            String eResult = Float.toString(eDegrees).substring(0,10);
-
-            System.out.println(eResult);
-        } catch (Exception e) {
-
-        }
-        return (eDegrees);
-    }
-
-    public static String FormattedLocationDMSLat(double latitude) {
-        try {
-            int latSeconds = (int) Math.round(latitude * 3600);
-            int latDegrees = latSeconds / 3600;
-            latSeconds = Math.abs(latSeconds % 3600);
-            int latMinutes = latSeconds / 60;
-            latSeconds %= 60;
-
-            String latDegree = latDegrees >= 0 ? "N" : "S";
-
-            return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
-                    + " " + latDegree;
-        } catch (Exception e) {
-
-            return "" + String.format("%8.5f", latitude);
-        }
-    }
-
-    public static String FormattedLocationDMSLon(double longitude) {
-        try {
-            int longSeconds = (int) Math.round(longitude * 3600);
-            int longDegrees = longSeconds / 3600;
-            longSeconds = Math.abs(longSeconds % 3600);
-            int longMinutes = longSeconds / 60;
-            longSeconds %= 60;
-            String lonDegrees = longDegrees >= 0 ? "W" : "E";
-
-            return Math.abs(longDegrees) + "." + longMinutes
-                    + "." + longSeconds + " " + lonDegrees;
-        } catch (Exception e) {
-
-            return "" + String.format("%8.5f", longitude);
-        }
-    }
-
-
-
-
-
     // convert from meters per second to knots per hour
     public static float FormattedSpeed(float mps) {
-        int mpsSped = (int) Math.abs(mps * 1.943844f);
-        return Math.abs(mpsSped);
+        int mpsSped = (int) abs(mps * 1.943844f);
+        return abs(mpsSped);
     }
 
     /* Request updates at startup */
@@ -330,115 +288,48 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewLat.setText(FormattedLocationLat(location.getLatitude()));
         textViewLon.setText(FormattedLocationLon(location.getLongitude()));
 
-        textViewHeading.setText("" + degree + "     (T)");
+        textViewHeading.setText("" + degree + " (T)");
 
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + "    (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("no speed");
-            // Speed information not available.
+            textViewSpeed.setText("0.0 (Kn)");
 
         }
-
-        double destLatDouble = FormattedLocationDMSLatDouble(waypointLocation);
-        double destLonDouble = FormattedLocationDMSLonDouble(waypointLocation);
-
-        String lat1 = String.valueOf(destLatDouble);
-        String lon1 = String.valueOf(destLonDouble);
-        String cutlat1 = lat1.substring(0, 9);
-        String cutlon1 = lon1.substring(0, 9);
-        double cutdlat = Double.parseDouble(cutlat1);
-        double cutdlon = Double.parseDouble(cutlon1);
 
         Location locationA = new Location("point A");
         locationA.setLatitude(location.getLatitude());
         locationA.setLongitude(location.getLongitude());
 
         Location locationB = new Location("point B");
-        locationB.setLatitude(cutdlat);
-        locationB.setLongitude(cutdlon);
+        locationB.setLatitude(doublelat);
+        locationB.setLongitude(doublelong);
 
         float[] results = new float[1];
         Location.distanceBetween(
                 location.getLatitude(),location.getLongitude(),
-                cutdlat, cutdlon, results);
+                doublelat, doublelong, results);
+        String sttotal = String.valueOf(results[0]);
 
-        String total3 = String.valueOf(results[0]);
-        double value = Double.parseDouble(total3);
-        double value1 = value / 1000;
-        double value2 = value1 * 0.539957;
-        String finalString = String.valueOf(value2);
-        String cutString = finalString.substring(0, 6);
-        System.out.println("Distance is: " + results[0]);
+        // DISTANCE TO
+        double doubleDistTo = Double.parseDouble(sttotal) / 1852; // 1852m per NM //nm to meters
+        String stringDistTo = String.format( "%.2f", doubleDistTo);
+        textViewDistance.setText(stringDistTo + (" NM"));
 
-        double courseTo = location.bearingTo(locationB);
-        int intcource = (int) courseTo;
-        String finalCourseTo = String.valueOf(courseTo);
-        String intCourse1 = String.valueOf(intcource);
-        String cutString1 = finalCourseTo.substring(0, 6);
+        // BEARING TO
+        double doubleBearTo = location.bearingTo(locationB);
+        int intBearTo = (int)doubleBearTo;
+        String stringBearTo = String.valueOf(intBearTo);
+        textViewCourseTo.setText(stringBearTo +(" (M)"));
 
-        textViewCourseTo.setText(intCourse1 +(" (M)"));
-        textViewDistance.setText(cutString  +(" NM"));
-        //Toast.makeText(GoToWaypoint.this, "" + total4, Toast.LENGTH_LONG).show();
-    }
-
-
-    private Float convertToDegree(String stringDMS){
-        Float result = null;
-        String[] DMS = stringDMS.split(":", 3);
-
-
-        Toast.makeText(this, "" + DMS, Toast.LENGTH_LONG).show();
-
-     /**   String[] stringD = DMS[0].split("/", 2);
-        Double D0 = new Double(stringD[0]);
-        Double D1 = new Double(stringD[1]);
-        Double FloatD = D0/D1;
-
-        String[] stringM = DMS[1].split("/", 2);
-        Double M0 = new Double(stringM[0]);
-        Double M1 = new Double(stringM[1]);
-        Double FloatM = M0/M1;
-
-        String[] stringS = DMS[2].split("/", 2);
-        Double S0 = new Double(stringS[0]);
-        Double S1 = new Double(stringS[1]);
-        Double FloatS = S0/S1;
-
-      */
-
-        return result;
-    };
-
-    private void Speedgt(Location location) {
-
-        if (location.hasSpeed()) {
-            float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + "    (Kn)");
-            // process data
-        }
-        if (!location.hasSpeed()) {
-            textViewSpeed.setText("0.0f    (Kn)");
-            // Speed information not available.
-
-        }
-        // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
-    }
-
-    private void Speedlt() {
-
-        textViewSpeed.setText("0.0    (Kn)");
-
-        // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // TODO Auto-generated method stub
-
 
     }
 
