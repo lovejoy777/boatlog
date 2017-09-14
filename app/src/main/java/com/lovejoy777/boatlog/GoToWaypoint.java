@@ -71,7 +71,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
     int waypointID;
     String waypointName;
-    String waypointLocation;
     double doublelat;
     double doublelong;
 

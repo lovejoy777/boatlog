@@ -38,15 +38,16 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+
 /**
  * Created by lovejoy777 on 11/10/15.
  */
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private int WRITE_EXTERNAL_STORAGE_CODE=25;
-    private int ACCESS_FINE_LOCATION_CODE=23;
-    private int ACCESS_COARSE_LOCATION_CODE=24;
+    private int WRITE_EXTERNAL_STORAGE_CODE = 25;
+    private int ACCESS_FINE_LOCATION_CODE = 23;
+    private int ACCESS_COARSE_LOCATION_CODE = 24;
 
 
     Toolbar toolBar;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public RelativeLayout RL1;
     public RelativeLayout RL2;
     public RelativeLayout RL3;
+    public RelativeLayout RL4;
 
     public TextView textView1;
     public ImageView img_thumbnail1;
@@ -63,13 +65,22 @@ public class MainActivity extends AppCompatActivity {
     public ImageView img_thumbnail2;
     public TextView textView3;
     public ImageView img_thumbnail3;
+    public TextView textView4;
+    public ImageView img_thumbnail4;
+
+    String Directory = "/boatLog/backups";
+    String[] mFileList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
+        }
+
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1",false);
+        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
             setContentView(R.layout.activity_main);
@@ -82,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             RL1 = (RelativeLayout) findViewById(R.id.RL1);
             RL2 = (RelativeLayout) findViewById(R.id.RL2);
             RL3 = (RelativeLayout) findViewById(R.id.RL3);
+            RL4 = (RelativeLayout) findViewById(R.id.RL4);
 
             textView1 = (TextView) findViewById(R.id.textView1);
             img_thumbnail1 = (ImageView) findViewById(R.id.img_thumbnail1);
@@ -89,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             img_thumbnail2 = (ImageView) findViewById(R.id.img_thumbnail2);
             textView3 = (TextView) findViewById(R.id.textView3);
             img_thumbnail3 = (ImageView) findViewById(R.id.img_thumbnail3);
+            textView4 = (TextView) findViewById(R.id.textView4);
+            img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
 
             NightMode();
 
@@ -105,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             RL1 = (RelativeLayout) findViewById(R.id.RL1);
             RL2 = (RelativeLayout) findViewById(R.id.RL2);
             RL3 = (RelativeLayout) findViewById(R.id.RL3);
+            RL4 = (RelativeLayout) findViewById(R.id.RL4);
 
             textView1 = (TextView) findViewById(R.id.textView1);
             img_thumbnail1 = (ImageView) findViewById(R.id.img_thumbnail1);
@@ -112,18 +127,23 @@ public class MainActivity extends AppCompatActivity {
             img_thumbnail2 = (ImageView) findViewById(R.id.img_thumbnail2);
             textView3 = (TextView) findViewById(R.id.textView3);
             img_thumbnail3 = (ImageView) findViewById(R.id.img_thumbnail3);
+            textView4 = (TextView) findViewById(R.id.textView4);
+            img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
 
             RL1.setBackgroundColor(Color.WHITE);
             RL2.setBackgroundColor(Color.WHITE);
             RL3.setBackgroundColor(Color.WHITE);
+            RL4.setBackgroundColor(Color.WHITE);
 
             textView1.setText("Ships LogBook");
             textView2.setText("Log");
-            textView3.setText("Nav Aids");
+            textView3.setText("Waypoints");
+            textView4.setText("Maintenance Log");
 
             img_thumbnail1.setImageResource(R.drawable.book);
             img_thumbnail2.setImageResource(R.drawable.log);
-            img_thumbnail3.setImageResource(R.drawable.navaids);
+            img_thumbnail3.setImageResource(R.drawable.waypoints);
+            img_thumbnail4.setImageResource(R.drawable.book);
 
         }
 
@@ -141,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         RL2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent bootanimactivity = new Intent(MainActivity.this, MainActivityLog.class);
 
                 Bundle bndlanimation =
@@ -152,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         RL3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent bootanimactivity = new Intent(MainActivity.this, MainActivityNavAids.class);
+
+                Intent bootanimactivity = new Intent(MainActivity.this, MainActivityWaypoint.class);
 
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
@@ -160,28 +182,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-        }
+        RL4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Coming Soon", Toast.LENGTH_LONG).show();
+                //Intent bootanimactivity = new Intent(MainActivity.this, MainActivityMaint.class);
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
-        }
+                //Bundle bndlanimation =
+                //        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                //startActivity(bootanimactivity, bndlanimation);
+            }
+        });
 
     }
 
     private void NightMode() {
         toolBar.setBackgroundColor(Color.BLACK);
-       // titleTextView.setTextColor(Color.RED);
+        // titleTextView.setTextColor(Color.RED);
 
         textView1.setText("Ships LogBook");
         textView2.setText("Log");
-        textView3.setText("Nav Aids");
+        textView3.setText("Waypoints");
+        textView4.setText("Maintenance Log");
 
         MRL1.setBackgroundColor(Color.BLACK);
         RL1.setBackgroundResource(R.color.card_background);
         RL2.setBackgroundResource(R.color.card_background);
         RL3.setBackgroundResource(R.color.card_background);
+        RL4.setBackgroundResource(R.color.card_background);
 
         textView1.setTextColor(Color.RED);
         textView2.setTextColor(Color.RED);
@@ -189,7 +217,8 @@ public class MainActivity extends AppCompatActivity {
 
         img_thumbnail1.setImageResource(R.drawable.book);
         img_thumbnail2.setImageResource(R.drawable.log);
-        img_thumbnail3.setImageResource(R.drawable.navaids);
+        img_thumbnail3.setImageResource(R.drawable.waypoints);
+        img_thumbnail4.setImageResource(R.drawable.book);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
@@ -271,36 +300,49 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(about, bndlanimation);
                                 break;
 
-
                             case R.id.nav_settings:
                                 Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
 
                             case R.id.nav_backup:
+                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                                }
                                 Backup();
                                 break;
 
                             case R.id.nav_restore:
+                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                                }
 
+                                File dir = new File(Environment.getExternalStorageDirectory() + Directory);
 
-                              FileChooser  filechooser = new FileChooser(MainActivity.this);
-                                filechooser.setFileListener(new FileChooser.FileSelectedListener() {
-                                    @Override
-                                    public void fileSelected(final File file) {
-                                        // ....do something with the file
-                                        String filename = file.getAbsolutePath();
-                                        //Toast.makeText(MainActivity.this, filename, Toast.LENGTH_LONG).show();
-                                        Restore(filename);
-                                       // Log.d("File", filename);
-                                        // then actually do something in another module
+                                mFileList = dir.list();
 
+                                android.support.v7.app.AlertDialog.Builder builder;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                                } else {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                                }
+
+                                builder.setTitle("      Select a File to Restore");
+                                builder.setIcon(R.drawable.ic_save_white);
+                                if (mFileList == null) {
+                                    builder.create();
+                                }
+                                builder.setItems(mFileList, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String mChosenFile = mFileList[which];
+                                        Restore(mChosenFile);
+                                        // Toast.makeText(MainActivity.this, mChosenFile , Toast.LENGTH_LONG).show();
                                     }
                                 });
 
-                                //filechooser.setExtension("db");
-                                filechooser.showDialog();
-
+                                builder.show();
+                                //  return true;
                                 break;
                         }
                         return false;
@@ -308,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
+
 
     public void Backup() {
 
@@ -339,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
 
                         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
                         File dir = new File(path);
-                        if(!dir.exists())
+                        if (!dir.exists())
                             dir.mkdirs();
 
                         // Local database
@@ -354,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
                         // Path to the external backup
                         OutputStream output = null;
                         try {
-                            output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime  + ".db");
+                            output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime + ".db");
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -363,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                         byte[] buffer = new byte[1024];
                         int length;
                         try {
-                            while ((length = input.read(buffer))>0) {
+                            while ((length = input.read(buffer)) > 0) {
                                 output.write(buffer, 0, length);
                             }
 
@@ -409,9 +452,7 @@ public class MainActivity extends AppCompatActivity {
                             dir.mkdirs();
 
 
-                       // final String inFilePath = dbFileName;
-                        //  final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteExample.db";
-                        File dbFile = new File(dbFileName);
+                        File dbFile = new File(path + "/" + dbFileName);
 
                         String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
 
@@ -419,11 +460,10 @@ public class MainActivity extends AppCompatActivity {
                             // Local database
                             InputStream input = null;
                             try {
-                                input = new FileInputStream(dbFile);
+                                input = new FileInputStream(path + "/" + dbFileName);
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             }
-
 
                             // Path to the external backup
                             OutputStream output = null;

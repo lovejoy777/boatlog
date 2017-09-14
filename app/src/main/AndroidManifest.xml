@@ -68,9 +68,21 @@
             android:name=".MainActivityEntries"
             android:label="@string/app_name"
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
-            android:parentActivityName=".MainActivityTrips">
+            android:parentActivityName=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAINENTRIES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivityMaint"
+            android:label="@string/app_name"
+            android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINMAINT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -82,7 +94,7 @@
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
             android:parentActivityName=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAINwaypoint" />
+                <action android:name="android.intent.action.MAINWAYPOINT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -157,7 +169,6 @@
             android:label="Edit/Add"
             android:parentActivityName=".MainActivityWaypoint" >
         </activity>
-
 
     </application>
 

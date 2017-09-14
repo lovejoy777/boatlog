@@ -22,9 +22,11 @@ import android.widget.TextView;
  * Created by lovejoy777 on 13/10/15.
  */
 public class MainActivityWaypoint extends AppCompatActivity {
+    private int ACCESS_FINE_LOCATION_CODE = 23;
+    private int ACCESS_COARSE_LOCATION_CODE = 24;
+
     public final static String KEY_EXTRA_WAYPOINT_ID = "KEY_EXTRA_WAYPOINT_ID";
     public final static String KEY_EXTRA_WAYPOINT_NAME = "KEY_EXTRA_WAYPOINT_NAME";
-    public final static String KEY_EXTRA_WAYPOINT_LOCATION = "KEY_EXTRA_WAYPOINT_LOCATION";
 
     private ListView listView;
     BoatLogDBHelper dbHelper;

@@ -43,6 +43,9 @@ import com.google.android.gms.maps.model.Marker;
  */
 public class MainActivityLog extends AppCompatActivity implements LocationListener, SensorEventListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
+    private int ACCESS_FINE_LOCATION_CODE = 23;
+    private int ACCESS_COARSE_LOCATION_CODE = 24;
+
     // GPS location
     private LocationManager locationManager;
     private String provider;
@@ -51,7 +54,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     GoogleApiClient mGoogleApiClient;
 
     LatLng latLng;
-    LatLng latLng1;
     GoogleMap mGoogleMap;
     SupportMapFragment mFragment;
     Marker currLocationMarker;
@@ -85,6 +87,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_logs);
+
 
         // assign the views
         toolBar = (Toolbar) findViewById(R.id.toolbar);
