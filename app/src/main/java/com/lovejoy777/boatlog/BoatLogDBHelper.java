@@ -288,7 +288,4 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
                 ENTRY_COLUMN_TRIP_ID + "=?", new String[]{Integer.toString(id)});
         return res;
     }
-
-
-
 }

@@ -43,13 +43,10 @@ import java.io.IOException;
  * Created by lovejoy777 on 03/10/15.
  */
 public class MainActivityEntries extends AppCompatActivity {
-    private int ACCESS_FINE_LOCATION_CODE = 23;
-    private int ACCESS_COARSE_LOCATION_CODE = 24;
 
     public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
-
 
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;

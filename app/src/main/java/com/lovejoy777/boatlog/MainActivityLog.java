@@ -43,9 +43,6 @@ import com.google.android.gms.maps.model.Marker;
  */
 public class MainActivityLog extends AppCompatActivity implements LocationListener, SensorEventListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    private int ACCESS_FINE_LOCATION_CODE = 23;
-    private int ACCESS_COARSE_LOCATION_CODE = 24;
-
     // GPS location
     private LocationManager locationManager;
     private String provider;
