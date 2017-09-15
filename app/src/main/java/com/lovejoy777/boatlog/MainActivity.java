@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             img_thumbnail1.setImageResource(R.drawable.book);
             img_thumbnail2.setImageResource(R.drawable.log);
             img_thumbnail3.setImageResource(R.drawable.waypoints);
-            img_thumbnail4.setImageResource(R.drawable.book);
+            img_thumbnail4.setImageResource(R.drawable.test1);
 
         }
 
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         // titleTextView.setTextColor(Color.RED);
 
         textView1.setText("Ships LogBook");
-        textView2.setText("Log");
+        textView2.setText("Navigation");
         textView3.setText("Waypoints");
         textView4.setText("Maintenance Log");
 
@@ -214,11 +214,12 @@ public class MainActivity extends AppCompatActivity {
         textView1.setTextColor(Color.RED);
         textView2.setTextColor(Color.RED);
         textView3.setTextColor(Color.RED);
+        textView4.setTextColor(Color.RED);
 
         img_thumbnail1.setImageResource(R.drawable.book);
         img_thumbnail2.setImageResource(R.drawable.log);
         img_thumbnail3.setImageResource(R.drawable.waypoints);
-        img_thumbnail4.setImageResource(R.drawable.book);
+        img_thumbnail4.setImageResource(R.drawable.test1);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 

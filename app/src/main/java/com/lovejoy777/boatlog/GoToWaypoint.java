@@ -138,7 +138,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         String stringlatdms =  waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
         String stringlongdms =  waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
 
-        textViewGoTo.setText("Heading To " + stringlatdms + " " + stringlongdms);
+        textViewGoTo.setText(waypointName + " @ " + stringlatdms + " " + stringlongdms);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -386,6 +386,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         MLL1.setBackgroundColor(Color.BLACK);
         MLL2.setBackgroundColor(Color.BLACK);
         MLL3.setBackgroundColor(Color.BLACK);
+
+        textViewGoTo.setTextColor(Color.RED);
 
         textViewLat.setTextColor(Color.RED);
         textViewLon.setTextColor(Color.RED);

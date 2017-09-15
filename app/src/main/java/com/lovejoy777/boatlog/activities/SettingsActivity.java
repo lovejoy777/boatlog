@@ -1,28 +1,21 @@
 package com.lovejoy777.boatlog.activities;
 
-import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import com.lovejoy777.boatlog.R;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Created by lovejoy777 on 14/11/13.
  */
 
 public class SettingsActivity extends PreferenceActivity implements
-
        SharedPreferences.OnSharedPreferenceChangeListener {
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,9 +31,6 @@ public class SettingsActivity extends PreferenceActivity implements
         if (NightModeOn) {
             NightMode();
         }
-
-
-
     }
 
     private void NightMode() {
@@ -48,29 +38,18 @@ public class SettingsActivity extends PreferenceActivity implements
         getListView().setBackgroundColor(Color.BLACK);
         setTheme(R.style.DarkTheme);
                // Toast.makeText(SettingsActivity.this, "Night Mode Active", Toast.LENGTH_LONG).show();
-
     }
-
-
 
     private void screenOn() {
 
         //Toast.makeText(SettingsActivity.this, "Screen On", Toast.LENGTH_LONG).show();
-
     }
-
-
-
-
-
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
     }
-
-
 
     @Override
     protected void onResume() {
@@ -94,18 +73,20 @@ public class SettingsActivity extends PreferenceActivity implements
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
         Boolean ScreenOn = myPrefs.getBoolean("switch2",false);
 
+        // Restart app to load day/night modes
+        Intent restart = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+        restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(restart);
 
         if (NightModeOn) {
             NightMode();
-            finish();
+            // finish();
         }
-
-
 
         if (ScreenOn) {
             screenOn();
         }
 
     }
-
 }

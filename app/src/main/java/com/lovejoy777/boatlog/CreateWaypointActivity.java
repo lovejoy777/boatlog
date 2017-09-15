@@ -41,8 +41,9 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
     Toolbar toolBar;
 
     TextView textViewName;
-    TextView textViewLocation;
     TextView textViewDescription;
+    TextView textViewLocationLat;
+    TextView textViewLocationLong;
 
     EditText nameEditText;
     EditText descriptionEditText;
@@ -68,15 +69,17 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
         setContentView(R.layout.activity_create_waypoint);
 
-        scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
+        // scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
-        textViewLocation = (TextView) findViewById(R.id.textViewLocation);
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
+        textViewLocationLat = (TextView) findViewById(R.id.textViewLocationLat);
+        textViewLocationLong = (TextView) findViewById(R.id.textViewLocationLong);
+
 
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
@@ -318,19 +321,28 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(Color.BLACK);
+        // scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        fabFrame.setBackgroundColor(Color.BLACK);
+        //fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
         textViewName.setTextColor(Color.RED);
-        textViewLocation.setTextColor(Color.RED);
         textViewDescription.setTextColor(Color.RED);
+        textViewLocationLat.setTextColor(Color.RED);
+        textViewLocationLong.setTextColor(Color.RED);
+
 
         nameEditText.setTextColor(Color.RED);
-        //locationEditText.setTextColor(Color.RED);
         descriptionEditText.setTextColor(Color.RED);
+        latdegEditText.setTextColor(Color.RED);
+        latminEditText.setTextColor(Color.RED);
+        latsecEditText.setTextColor(Color.RED);
+        latnsEditText.setTextColor(Color.RED);
+        longdegEditText.setTextColor(Color.RED);
+        longminEditText.setTextColor(Color.RED);
+        longsecEditText.setTextColor(Color.RED);
+        longewEditText.setTextColor(Color.RED);
     }
 
 }
