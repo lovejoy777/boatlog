@@ -9,6 +9,7 @@
         <SwitchPreference
             android:key="switch1"
             android:title="Night Mode"
+            android:textColor="@color/textMain"
             android:defaultValue="false"
             android:summary="Doesn\'t ruin your night vision."
         />
@@ -16,6 +17,7 @@
         <SwitchPreference
             android:key="switch2"
             android:title="Screen Lock"
+            android:textColor="@color/textMain"
             android:defaultValue="false"
             android:summary="Keep screen on when using Log Screen."
             />

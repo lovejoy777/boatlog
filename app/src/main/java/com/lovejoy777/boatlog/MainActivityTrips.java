@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -62,7 +63,9 @@ public class MainActivityTrips extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivityTrips.this, CreateTripsActivity.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, 0);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
                 closeSubMenusFab();
             }
         });
@@ -99,7 +102,9 @@ public class MainActivityTrips extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
             }
         });
 
@@ -112,7 +117,9 @@ public class MainActivityTrips extends AppCompatActivity {
                 int tripID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditTripsActivity.class);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
                 return true;
             }
         });
@@ -148,6 +155,7 @@ public class MainActivityTrips extends AppCompatActivity {
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
         listViewTrips.setBackgroundColor(Color.BLACK);
+        fabTrips.setBackgroundColor(Color.RED);
 
     }
 
@@ -161,8 +169,13 @@ public class MainActivityTrips extends AppCompatActivity {
     //Opens FAB submenus
     private void openSubMenusFab(){
         layoutFabAddNew.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fabTrips.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }

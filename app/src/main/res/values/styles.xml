@@ -79,7 +79,7 @@
     </style>
 
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">#fff</item>
+        <item name="android:textColor">@color/accent</item>
     </style>
 
 </resources>

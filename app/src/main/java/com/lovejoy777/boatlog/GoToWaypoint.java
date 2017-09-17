@@ -405,4 +405,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewDist.setTextColor(Color.RED);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
+    }
 }

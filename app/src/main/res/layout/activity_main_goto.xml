@@ -89,7 +89,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -170,7 +170,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -231,7 +231,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -291,7 +291,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -352,7 +352,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -412,7 +412,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/textMain"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>

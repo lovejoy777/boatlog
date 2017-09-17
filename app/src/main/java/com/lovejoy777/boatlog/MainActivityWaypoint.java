@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,7 +66,9 @@ public class MainActivityWaypoint extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivityWaypoint.this, CreateWaypointActivity.class);
                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, 0);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
                 //Only main FAB is visible in the beginning
                 closeSubMenusFab();
             }
@@ -100,15 +103,14 @@ public class MainActivityWaypoint extends AppCompatActivity {
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
                 final int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
                 final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
-               // final String waypointLocation = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LOCATION));
 
                 android.support.v7.app.AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, android.R.style.Theme_Material_Dialog_Alert);
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this);
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
                 }
-                builder.setTitle("GoTo Waypoint")
+                builder.setTitle("       GoTo Waypoint")
                         .setMessage(waypointName)
 
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -116,7 +118,9 @@ public class MainActivityWaypoint extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
                                 intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
-                                startActivity(intent);
+                                Bundle bndlanimation =
+                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                startActivity(intent, bndlanimation);
                             }
                         })
 
@@ -127,6 +131,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
                         })
 
                         .setIcon(R.drawable.ic_location_on_white)
+
                         .show();
 
             }
@@ -142,7 +147,9 @@ public class MainActivityWaypoint extends AppCompatActivity {
                 int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
                 Intent intent = new Intent(getApplicationContext(), EditWaypointActivity.class);
                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
                 return true;
             }
         });
@@ -190,9 +197,14 @@ public class MainActivityWaypoint extends AppCompatActivity {
     //Opens FAB submenus
     private void openSubMenusFab(){
         layoutFabAddNew.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fabWaypoints.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

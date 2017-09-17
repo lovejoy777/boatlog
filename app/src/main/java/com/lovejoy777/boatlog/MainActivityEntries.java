@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by lovejoy777 on 03/10/15.
@@ -45,6 +47,7 @@ import java.io.IOException;
 public class MainActivityEntries extends AppCompatActivity {
 
     public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
+    public final static String KEY_EXTRA_ENTRY_NAME = "KEY_EXTRA_ENTRY_NAME";
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
@@ -53,8 +56,10 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabEntries; //fabMain
+    private FloatingActionButton fabFav; //fabSub
     private LinearLayout layoutFabPrintPdf;
     private LinearLayout layoutFabAddNew;
+    private LinearLayout layoutFabFav;
 
     private ListView listView;
     BoatLogDBHelper dbHelper;
@@ -94,8 +99,13 @@ public class MainActivityEntries extends AppCompatActivity {
         dbHelper = new BoatLogDBHelper(this);
 
         fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
+        fabFav = (FloatingActionButton) this.findViewById(R.id.fabFav);
         layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
         layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
+        layoutFabFav = (LinearLayout) this.findViewById(R.id.layoutFabFav);
+
+        //  fabFav.setBackgroundResource(android.R.drawable.btn_star_big_off);
+        fabFav.setImageResource(android.R.drawable.btn_star_big_on);
 
         fabEntries.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,14 +157,66 @@ public class MainActivityEntries extends AppCompatActivity {
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
                 closeSubMenusFab();
+            }
+        });
+
+        layoutFabFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String on = "on";
+                Cursor rs = dbHelper.getFavEntries(on);
+                ArrayList<String> favArray = new ArrayList<String>();
+                while (rs.moveToNext()) {
+                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+                    favArray.add(fav);
+                }
+                if (!rs.isClosed()) {
+                    rs.close();
+                }
+                final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+                android.support.v7.app.AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                } else {
+                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                }
+
+                builder.setTitle("      Select a Favourite");
+                builder.setIcon(android.R.drawable.btn_star_big_off);
+                if (favnames == null) {
+                    builder.create();
+                }
+                builder.setItems(favnames, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String mChosenFavourite = favnames[which];
+
+                        Intent createEntry = new Intent(MainActivityEntries.this, CreateEntriesActivity.class);
+
+                        createEntry.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
+                        createEntry.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                        createEntry.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+                        createEntry.putExtra(KEY_EXTRA_ENTRY_NAME, mChosenFavourite);
+
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(createEntry, bndlanimation);
+                        closeSubMenusFab();
+                    }
+                });
+
+                builder.show();
+
             }
         });
 
         //Only main FAB is visible in the beginning
         closeSubMenusFab();
-
         populateListView();
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -171,11 +233,16 @@ public class MainActivityEntries extends AppCompatActivity {
                                     int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
                 int entryID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_ID));
+
                 Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                startActivity(intent);
+
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
+                closeSubMenusFab();
             }
         });
 
@@ -190,7 +257,11 @@ public class MainActivityEntries extends AppCompatActivity {
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                startActivity(intent);
+
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
+                closeSubMenusFab();
                 return true;
             }
         });
@@ -211,7 +282,6 @@ public class MainActivityEntries extends AppCompatActivity {
                 R.id.entryName,
                 R.id.entryTime,
                 R.id.entryDate
-                // R.id.entryTrip_ID
         };
 
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info,
@@ -248,17 +318,6 @@ public class MainActivityEntries extends AppCompatActivity {
         listView.setAdapter(cursorAdapter);
     }
 
-    private void NightMode() {
-
-
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-        listViewEntries.setBackgroundColor(Color.BLACK);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
-
-    }
 
     public void loadImagefromGallery() {
         // Create intent to Open Image applications like Gallery, Google Photos
@@ -512,10 +571,22 @@ public class MainActivityEntries extends AppCompatActivity {
 
     }
 
+    private void NightMode() {
+
+
+        MRL1.setBackgroundColor(Color.BLACK);
+        toolBar.setBackgroundColor(Color.BLACK);
+        titleTextView.setTextColor(Color.RED);
+        listViewEntries.setBackgroundColor(Color.BLACK);
+
+    }
+
+
     //closes FAB submenus
     private void closeSubMenusFab(){
         layoutFabPrintPdf.setVisibility(View.INVISIBLE);
         layoutFabAddNew.setVisibility(View.INVISIBLE);
+        layoutFabFav.setVisibility(View.INVISIBLE);
         fabEntries.setImageResource(R.drawable.ic_menu_white);
         fabExpanded = false;
     }
@@ -524,9 +595,15 @@ public class MainActivityEntries extends AppCompatActivity {
     private void openSubMenusFab(){
         layoutFabPrintPdf.setVisibility(View.VISIBLE);
         layoutFabAddNew.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
+        layoutFabFav.setVisibility(View.VISIBLE);
         fabEntries.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

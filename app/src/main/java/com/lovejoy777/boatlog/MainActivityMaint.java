@@ -15,4 +15,10 @@ public class MainActivityMaint extends AppCompatActivity {
         setContentView(R.layout.activity_main_entries);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
+    }
 }

@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,7 +70,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
         setContentView(R.layout.activity_create_waypoint);
 
-        // scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
+        scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,8 +80,6 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
         textViewLocationLat = (TextView) findViewById(R.id.textViewLocationLat);
         textViewLocationLong = (TextView) findViewById(R.id.textViewLocationLong);
-
-
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
@@ -128,14 +127,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
 
-
-
-        // pre fill text fields
-
-       // locationEditText.setText("" + formattedLocation);
-
         dbHelper = new BoatLogDBHelper(this);
-
         fabSave.setImageResource(R.drawable.ic_save_white);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +155,9 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
                 Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
             }
             else {
                 Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
@@ -189,7 +183,9 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
         }
     }
 
@@ -245,11 +241,6 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
     @Override
     public void onLocationChanged(Location location) {
-        int lat = (int) (location.getLatitude());
-        int lng = (int) (location.getLongitude());
-        String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
-        String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
-        // Toast.makeText(this, "" + strLatitude + strLongitude, Toast.LENGTH_LONG).show();
 
         // prefill lat long text fields
         String dms = null;
@@ -321,9 +312,8 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
     private void NightMode() {
 
-        // scrollView1.setBackgroundColor(Color.BLACK);
+        scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        //fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -343,6 +333,12 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         longminEditText.setTextColor(Color.RED);
         longsecEditText.setTextColor(Color.RED);
         longewEditText.setTextColor(Color.RED);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

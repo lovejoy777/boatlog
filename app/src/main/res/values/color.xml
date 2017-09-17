@@ -15,6 +15,10 @@
     <color name="accent">#ffFF5252</color>
     <color name="black">#ff000000</color>
 
+    <color name="fab">#ff3F51B5</color>
+    <color name="textMain">#ff3F51B5</color>
+    <color name="textMenuTitle">#ff3F51B5</color>
+
     <!-- Text colors -->
     <color name="about_text">@color/textColorPrimary</color>
     <color name="textColorPrimary">#ff212121</color>

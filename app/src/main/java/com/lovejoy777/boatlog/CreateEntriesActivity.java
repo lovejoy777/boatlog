@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,15 +46,18 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
     LinearLayout MLL1;
     Toolbar toolBar;
 
+
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
     TextView trip_idText;
 
     public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
+    public final static String KEY_EXTRA_ENTRY_NAME = "KEY_EXTRA_ENTRY_NAME";
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
     int entryID;
+    String entryName;
     int tripID;
     String tripName;
 
@@ -64,6 +68,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         // Toast.makeText(getApplicationContext(), "Trip used " + tripID, Toast.LENGTH_SHORT).show();
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
+        entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_TRIPS_NAME);
 
@@ -71,6 +76,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
+
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         textViewName = (TextView) findViewById(R.id.textViewName);
@@ -84,9 +90,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
-
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
-
         titleTextView.setText("Create New Entry");
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -137,6 +141,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         // pre fill text fields
         trip_idText.setText("" + tripID);
+        nameEditText.setText("" + entryName);
         timeEditText.setText("" + formattedTime);
         dateEditText.setText("" + formattedDate);
         locationEditText.setText("" + formattedLocation);
@@ -150,25 +155,11 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         });
     }
 
-
     public void persistEntry() {
-        if (entryID > 0) {
-            if (dbHelper.updateEntry(entryID, nameEditText.getText().toString(),
-                    timeEditText.getText().toString(),
-                    dateEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Edited Successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                startActivity(intent);
-            } else {
-                Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            if (dbHelper.insertEntry(nameEditText.getText().toString(),
+
+        String fav = "off";
+        if (dbHelper.insertEntry(fav,
+                nameEditText.getText().toString(),
                     timeEditText.getText().toString(),
                     dateEditText.getText().toString(),
                     locationEditText.getText().toString(),
@@ -181,8 +172,10 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
             intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-            startActivity(intent);
-        }
+        Bundle bndlanimation =
+                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+        startActivity(intent, bndlanimation);
+
     }
 
     public static String FormattedLocation(double latitude, double longitude) {
@@ -268,7 +261,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        fabFrame.setBackgroundColor(Color.BLACK);
+        //  fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -281,5 +274,11 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         timeEditText.setTextColor(Color.RED);
         dateEditText.setTextColor(Color.RED);
         locationEditText.setTextColor(Color.RED);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }

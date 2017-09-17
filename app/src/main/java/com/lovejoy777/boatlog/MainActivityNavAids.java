@@ -146,7 +146,12 @@ public class MainActivityNavAids extends AppCompatActivity {
         img_thumbnail3.setImageResource(R.drawable.test2);
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

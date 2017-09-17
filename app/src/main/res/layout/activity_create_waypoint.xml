@@ -44,7 +44,18 @@
             android:padding="12dp"
             android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
-        <LinearLayout
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scrollView1"
+            android:layout_below="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                xmlns:android="http://schemas.android.com/apk/res/android">
+
+                <LinearLayout
             android:id="@+id/fieldlayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +75,7 @@
                 android:textSize="23sp"
                 android:textStyle="italic"
                 android:typeface="serif"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/textMain" />
 
             <EditText
                 android:id="@+id/editTextName"
@@ -97,7 +108,7 @@
                 android:textSize="23sp"
                 android:textStyle="italic"
                 android:typeface="serif"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/textMain" />
 
             <EditText
                 android:id="@+id/editTextDescription"
@@ -130,12 +141,13 @@
                 android:textSize="23sp"
                 android:textStyle="italic"
                 android:typeface="serif"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/textMain" />
 
             <EditText
                 android:id="@+id/editTextLatDeg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:ems="10"
                 android:inputType="text"
                 android:hint="Deg"
@@ -177,7 +189,6 @@
             android:id="@+id/fieldlayout4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/fieldlayout3"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:orientation="horizontal">
@@ -192,7 +203,7 @@
                 android:textSize="23sp"
                 android:textStyle="italic"
                 android:typeface="serif"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/textMain" />
 
             <EditText
                 android:id="@+id/editTextLongDeg"
@@ -235,6 +246,9 @@
                 android:layout_weight="1"/>
 
         </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"

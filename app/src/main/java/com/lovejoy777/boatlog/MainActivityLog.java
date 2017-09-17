@@ -438,4 +438,10 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         Toast.makeText(this, "ConnectionFailed", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
+    }
+
 }

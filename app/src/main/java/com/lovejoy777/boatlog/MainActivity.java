@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
             textView1.setText("Ships LogBook");
             textView2.setText("Log");
-            textView3.setText("Waypoints");
+            textView3.setText("Navigation");
             textView4.setText("Maintenance Log");
 
             img_thumbnail1.setImageResource(R.drawable.book);
@@ -201,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
         // titleTextView.setTextColor(Color.RED);
 
         textView1.setText("Ships LogBook");
-        textView2.setText("Navigation");
-        textView3.setText("Waypoints");
+        textView2.setText("Log");
+        textView3.setText("Navigation");
         textView4.setText("Maintenance Log");
 
         MRL1.setBackgroundColor(Color.BLACK);
@@ -394,7 +394,6 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-
                         // Path to the external backup
                         OutputStream output = null;
                         try {
@@ -410,7 +409,6 @@ public class MainActivity extends AppCompatActivity {
                             while ((length = input.read(buffer)) > 0) {
                                 output.write(buffer, 0, length);
                             }
-
 
                             output.flush();
                             output.close();
@@ -438,9 +436,9 @@ public class MainActivity extends AppCompatActivity {
 
         android.support.v7.app.AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         }
         builder.setTitle("Restore")
                 .setMessage(dbFileName)
@@ -482,7 +480,6 @@ public class MainActivity extends AppCompatActivity {
                                     output.write(buffer, 0, length);
                                 }
 
-
                                 output.flush();
                                 output.close();
                                 input.close();
@@ -508,6 +505,12 @@ public class MainActivity extends AppCompatActivity {
                 .setIcon(R.drawable.ic_save_white)
                 .show();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -96,7 +97,9 @@ public class CreateTripsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Trip Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
             }
             else {
                 Toast.makeText(getApplicationContext(), "Trip Edit Failed", Toast.LENGTH_SHORT).show();
@@ -113,7 +116,9 @@ public class CreateTripsActivity extends AppCompatActivity {
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
         }
     }
     /* Request updates at startup */
@@ -132,7 +137,7 @@ public class CreateTripsActivity extends AppCompatActivity {
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        fabFrame.setBackgroundColor(Color.BLACK);
+        // fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -144,6 +149,12 @@ public class CreateTripsActivity extends AppCompatActivity {
         departureEditText.setTextColor(Color.RED);
         destinationEditText.setTextColor(Color.RED);
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
 }

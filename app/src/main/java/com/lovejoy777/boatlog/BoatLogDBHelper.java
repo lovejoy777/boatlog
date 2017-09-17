@@ -13,10 +13,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BoatLogDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "SQLiteBoatLog.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String ENTRY_TABLE_NAME = "entries";
     public static final String ENTRY_COLUMN_ID = "_id";
+    public static final String ENTRY_COLUMN_FAV = "fav";
     public static final String ENTRY_COLUMN_NAME = "name";
     public static final String ENTRY_COLUMN_TIME = "time";
     public static final String ENTRY_COLUMN_DATE = "date";
@@ -53,6 +54,7 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE " + ENTRY_TABLE_NAME +
                         "(" + ENTRY_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        ENTRY_COLUMN_FAV + " TEXT, " +
                         ENTRY_COLUMN_NAME + " TEXT, " +
                         ENTRY_COLUMN_TIME + " TEXT, " +
                         ENTRY_COLUMN_DATE + " TEXT, " +
@@ -94,10 +96,11 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertEntry(String name, String time, String date, String location, String trip_id) {
+    public boolean insertEntry(String fav, String name, String time, String date, String location, String trip_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(ENTRY_COLUMN_FAV, fav);
         contentValues.put(ENTRY_COLUMN_NAME, name);
         contentValues.put(ENTRY_COLUMN_TIME, time);
         contentValues.put(ENTRY_COLUMN_DATE, date);
@@ -162,9 +165,10 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return numRows;
     }
 
-    public boolean updateEntry(Integer id, String name, String time, String date, String location, String trip_id) {
+    public boolean updateEntry(Integer id, String fav, String name, String time, String date, String location, String trip_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(ENTRY_COLUMN_FAV, fav);
         contentValues.put(ENTRY_COLUMN_NAME, name);
         contentValues.put(ENTRY_COLUMN_TIME, time);
         contentValues.put(ENTRY_COLUMN_DATE, date);
@@ -247,6 +251,15 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + ENTRY_TABLE_NAME + " WHERE " +
                 ENTRY_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        return res;
+    }
+
+    public Cursor getFavEntries(String fav) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {ENTRY_COLUMN_NAME};
+        Cursor res = db.query(ENTRY_TABLE_NAME, columns, ENTRY_COLUMN_FAV + " = '" + fav + "'", null, null, null, null);
+
         return res;
     }
 

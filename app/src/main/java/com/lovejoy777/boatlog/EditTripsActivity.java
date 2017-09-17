@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -87,15 +88,12 @@ public class EditTripsActivity extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
-       // nameEditText.setEnabled(true);
         nameEditText.setFocusableInTouchMode(true);
         nameEditText.setClickable(true);
 
-      //  departureEditText.setEnabled(true);
         departureEditText.setFocusableInTouchMode(true);
         departureEditText.setClickable(true);
 
-      //  destinationEditText.setEnabled(true);
         destinationEditText.setFocusableInTouchMode(true);
         destinationEditText.setClickable(true);
 
@@ -147,7 +145,9 @@ public class EditTripsActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
+                                Bundle bndlanimation =
+                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                startActivity(intent, bndlanimation);
                             }
                         })
 
@@ -170,7 +170,6 @@ public class EditTripsActivity extends AppCompatActivity {
 
                 fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
                 persistTrip();
-                // closeSubMenusFabSave();
             }
         });
 
@@ -187,7 +186,9 @@ public class EditTripsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Trip Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
             }
             else {
                 Toast.makeText(getApplicationContext(), "Trip Edit Failed", Toast.LENGTH_SHORT).show();
@@ -204,7 +205,9 @@ public class EditTripsActivity extends AppCompatActivity {
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
         }
     }
 
@@ -213,7 +216,7 @@ public class EditTripsActivity extends AppCompatActivity {
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        fabFrame.setBackgroundColor(Color.BLACK);
+        // fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -224,8 +227,6 @@ public class EditTripsActivity extends AppCompatActivity {
         nameEditText.setTextColor(Color.RED);
         departureEditText.setTextColor(Color.RED);
         destinationEditText.setTextColor(Color.RED);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
 
@@ -241,8 +242,13 @@ public class EditTripsActivity extends AppCompatActivity {
     private void openSubMenusFabDeleteSave(){
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }

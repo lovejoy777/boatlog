@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -38,6 +40,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
     ScrollView scrollView1;
     RelativeLayout MRL1;
     Toolbar toolBar;
+    ImageView imageViewFav;
 
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
@@ -67,6 +70,8 @@ public class EditEntriesActivity  extends AppCompatActivity {
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
+        imageViewFav = (ImageView) findViewById(R.id.imageViewFav);
+
         textViewName = (TextView) findViewById(R.id.textViewName);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         textViewDate = (TextView) findViewById(R.id.textViewDate);
@@ -76,6 +81,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
         timeEditText = (EditText) findViewById(R.id.editTextTime);
         dateEditText = (EditText) findViewById(R.id.editTextDate);
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
+
 
         fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
         layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
@@ -92,29 +98,25 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
-       // nameEditText.setEnabled(true);
         nameEditText.setFocusableInTouchMode(true);
         nameEditText.setClickable(true);
 
-       // timeEditText.setEnabled(true);
         timeEditText.setFocusableInTouchMode(true);
         timeEditText.setClickable(true);
 
-       // dateEditText.setEnabled(true);
         dateEditText.setFocusableInTouchMode(true);
         dateEditText.setClickable(true);
 
-      //  locationEditText.setEnabled(true);
         locationEditText.setFocusableInTouchMode(true);
         locationEditText.setClickable(true);
 
-       // trip_idText.setEnabled(true);
         trip_idText.setFocusableInTouchMode(true);
         trip_idText.setClickable(true);
 
         Cursor rs = dbHelper.getEntry(entryID);
         rs.moveToFirst();
         final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+        String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_FAV));
         String entryTime = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
         String entryDate = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
         String entryLocation = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
@@ -123,12 +125,55 @@ public class EditEntriesActivity  extends AppCompatActivity {
             rs.close();
         }
 
+        if (fav.equals("on")) {
+            imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_on);
+        } else {
+            imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_off);
+        }
+
         titleTextView.setText("Edit " + entryName);
         nameEditText.setText(entryName);
         timeEditText.setText(entryTime);
         dateEditText.setText(entryDate);
         locationEditText.setText(entryLocation + "");
         trip_idText.setText(entryTrip_ID);
+
+        imageViewFav.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                boolean isFavourite;
+                isFavourite = readStae();
+                if (isFavourite) {
+                    imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_off);
+                    isFavourite = false;
+                    saveStae(isFavourite);
+
+                } else {
+                    imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_on);
+                    isFavourite = true;
+                    saveStae(isFavourite);
+
+                }
+            }
+        });
+
+        imageViewFav.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                boolean isFavourite = readStae();
+                if (isFavourite) {
+                    imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_off);
+                    isFavourite = false;
+                    saveStae(isFavourite);
+
+                } else {
+                    imageViewFav.setBackgroundResource(android.R.drawable.btn_star_big_on);
+                    isFavourite = true;
+                    saveStae(isFavourite);
+
+                }
+            }
+        });
 
             fabDeleteSave.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -140,6 +185,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
                     }
                 }
             });
+
 
             // DELETE subFab button
             layoutFabDelete.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +209,9 @@ public class EditEntriesActivity  extends AppCompatActivity {
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                                     intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+                                    Bundle bndlanimation =
+                                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                    startActivity(intent, bndlanimation);
                                     startActivity(intent);
                                 }
                             })
@@ -186,7 +235,6 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
                     fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
                     persistEntry();
-                   // closeSubMenusFabSave();
                 }
             });
 
@@ -195,9 +243,72 @@ public class EditEntriesActivity  extends AppCompatActivity {
         closeSubMenusFabDeleteSave();
     }
 
+    private void saveStae(boolean isFavourite) {
+
+        String yesfab = "on";
+        String nofab = "off";
+
+        if (isFavourite) {
+            persistEntryFab(yesfab);
+
+        } else {
+            persistEntryFab(nofab);
+        }
+
+    }
+
+    private boolean readStae() {
+        boolean onOff;
+        Cursor rs = dbHelper.getEntry(entryID);
+        rs.moveToFirst();
+        String fab = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_FAV));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        if (fab.equals("on")) {
+            onOff = true;
+        } else {
+            onOff = false;
+        }
+        return (onOff);
+    }
+
+
+    public void persistEntryFab(String yesfab) {
+
+        if (dbHelper.updateEntry(entryID, yesfab, nameEditText.getText().toString(),
+                timeEditText.getText().toString(),
+                dateEditText.getText().toString(),
+                locationEditText.getText().toString(),
+                trip_idText.getText().toString())) {
+            // Toast.makeText(getApplicationContext(), "Entry Edited Successful", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+            intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
+            startActivity(intent);
+        } else {
+            Toast.makeText(getApplicationContext(), "Favourite failed", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+
     public void persistEntry() {
-        if (entryID > 0) {
-            if (dbHelper.updateEntry(entryID, nameEditText.getText().toString(),
+
+        Cursor rs = dbHelper.getEntry(entryID);
+        rs.moveToFirst();
+        String fab = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_FAV));
+        final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+
+        if (dbHelper.updateEntry(entryID, fab, nameEditText.getText().toString(),
                     timeEditText.getText().toString(),
                     dateEditText.getText().toString(),
                     locationEditText.getText().toString(),
@@ -207,26 +318,13 @@ public class EditEntriesActivity  extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                startActivity(intent);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
             } else {
                 Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            if (dbHelper.insertEntry(nameEditText.getText().toString(),
-                    timeEditText.getText().toString(),
-                    dateEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Could not Save Entry", Toast.LENGTH_SHORT).show();
-            }
-            Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-            intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-            startActivity(intent);
-        }
+
     }
 
     /* Request updates at startup */
@@ -247,7 +345,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        fabFrame.setBackgroundColor(Color.BLACK);
+        //  fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -275,8 +373,13 @@ public class EditEntriesActivity  extends AppCompatActivity {
     private void openSubMenusFabDeleteSave(){
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }

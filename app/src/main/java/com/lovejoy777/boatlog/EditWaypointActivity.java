@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,7 +66,7 @@ public class EditWaypointActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_edit_waypoint);
 
-        // scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
+        scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
@@ -75,7 +76,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
         textViewLocationLat = (TextView) findViewById(R.id.textViewLocationLat);
         textViewLocationLong = (TextView) findViewById(R.id.textViewLocationLong);
-
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
@@ -98,7 +98,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         if (NightModeOn) {
             NightMode();
         }
-
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -129,7 +128,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         longminEditText.setText(waypointLongMin);
         longsecEditText.setText(waypointLongSec);
         longewEditText.setText(waypointLongEW);
-
 
         fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
 
@@ -164,7 +162,9 @@ public class EditWaypointActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
+                                Bundle bndlanimation =
+                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                startActivity(intent, bndlanimation);
                             }
                         })
 
@@ -187,7 +187,6 @@ public class EditWaypointActivity extends AppCompatActivity {
 
                 fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
                 persistWaypoint();
-                // closeSubMenusFabSave();
             }
         });
 
@@ -213,13 +212,13 @@ public class EditWaypointActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(intent, bndlanimation);
             } else {
                 Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
             }
     }
-
-
 
     /* Request updates at startup */
     @Override
@@ -235,9 +234,8 @@ public class EditWaypointActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        // scrollView1.setBackgroundColor(Color.BLACK);
+        scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        //fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -272,8 +270,13 @@ public class EditWaypointActivity extends AppCompatActivity {
     private void openSubMenusFabDeleteSave(){
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }

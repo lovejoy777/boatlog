@@ -114,14 +114,6 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.back2, R.anim.back1);
-    }
-
     private void NightMode() {
 
         MRL1.setBackgroundColor(Color.BLACK);;
@@ -134,5 +126,11 @@ public class AboutActivity extends AppCompatActivity {
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }
