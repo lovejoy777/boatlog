@@ -129,6 +129,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
             System.out.println("Provider " + provider + " has been selected.");
             onLocationChanged(location);
         } else {
+            // Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
 

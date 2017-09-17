@@ -12,12 +12,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +50,9 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private SwitchCompat switcher1;
+    private SwitchCompat switcher2;
+
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     private int ACCESS_FINE_LOCATION_CODE = 23;
     private int ACCESS_COARSE_LOCATION_CODE = 24;
@@ -197,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
 
@@ -215,7 +223,73 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (navigationView != null) {
+
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean switch1 = myPrefs.getBoolean("switch1", false);
+            Boolean switch2 = myPrefs.getBoolean("switch2", false);
+
             setupDrawerContent(navigationView);
+            Menu menu = navigationView.getMenu();
+
+            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
+            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
+
+            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
+            switcher1.setChecked(switch1);
+            switcher1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", false);
+                        myPrefse.apply();
+                    }
+                    // Restart app to load day/night modes
+                    Intent restart = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    Bundle bndlanimation =
+                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                    startActivity(restart, bndlanimation);
+
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
+            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
+
+            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
+            switcher2.setChecked(switch2);
+            switcher2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher2.isChecked())) {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", false);
+                        myPrefse.apply();
+                    }
+
+
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+
             navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
             navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
             //navigationView.setBackgroundColor(Color.BLACK);
@@ -236,7 +310,73 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (navigationView != null) {
+
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean switch1 = myPrefs.getBoolean("switch1", false);
+            Boolean switch2 = myPrefs.getBoolean("switch2", false);
+
             setupDrawerContent(navigationView);
+            Menu menu = navigationView.getMenu();
+
+            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
+            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
+
+            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
+            switcher1.setChecked(switch1);
+            switcher1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", false);
+                        myPrefse.apply();
+                    }
+
+                    // Restart app to load day/night modes
+                    Intent restart = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    Bundle bndlanimation =
+                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                    startActivity(restart, bndlanimation);
+
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
+            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
+
+            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
+            switcher2.setChecked(switch2);
+            switcher2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher2.isChecked())) {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", false);
+                        myPrefse.apply();
+                    }
+
+
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
             navigationView.setItemTextColor(ColorStateList.valueOf(Color.RED));
             navigationView.setItemIconTintList(ColorStateList.valueOf(Color.RED));
             navigationView.setBackgroundColor(Color.BLACK);
@@ -269,9 +409,19 @@ public class MainActivity extends AppCompatActivity {
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home:
-                                mDrawerLayout.closeDrawers();
+                                // mDrawerLayout.closeDrawers();
                                 getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
                                 break;
+
+                            case R.id.nav_night_switch:
+                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                break;
+
+                            case R.id.nav_screen_on_switch:
+                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                                break;
+
                             case R.id.nav_about:
                                 Intent about = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(about, bndlanimation);
