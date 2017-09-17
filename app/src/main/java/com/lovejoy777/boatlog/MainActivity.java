@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolBar;
     TextView titleTextView;
 
+    ScrollView scrollView1;
     public RelativeLayout MRL1;
     public RelativeLayout RL1;
     public RelativeLayout RL2;
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             toolBar = (Toolbar) findViewById(R.id.toolbar);
             titleTextView = (TextView) findViewById(R.id.titleTextView);
 
+            scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
             MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
             RL1 = (RelativeLayout) findViewById(R.id.RL1);
             RL2 = (RelativeLayout) findViewById(R.id.RL2);
@@ -196,34 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void NightMode() {
-        toolBar.setBackgroundColor(Color.BLACK);
-        // titleTextView.setTextColor(Color.RED);
 
-        textView1.setText("Ships LogBook");
-        textView2.setText("Log");
-        textView3.setText("Navigation");
-        textView4.setText("Maintenance Log");
-
-        MRL1.setBackgroundColor(Color.BLACK);
-        RL1.setBackgroundResource(R.color.card_background);
-        RL2.setBackgroundResource(R.color.card_background);
-        RL3.setBackgroundResource(R.color.card_background);
-        RL4.setBackgroundResource(R.color.card_background);
-
-        textView1.setTextColor(Color.RED);
-        textView2.setTextColor(Color.RED);
-        textView3.setTextColor(Color.RED);
-        textView4.setTextColor(Color.RED);
-
-        img_thumbnail1.setImageResource(R.drawable.book);
-        img_thumbnail2.setImageResource(R.drawable.log);
-        img_thumbnail3.setImageResource(R.drawable.waypoints);
-        img_thumbnail4.setImageResource(R.drawable.test1);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
-
-    }
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
@@ -504,6 +480,36 @@ public class MainActivity extends AppCompatActivity {
 
                 .setIcon(R.drawable.ic_save_white)
                 .show();
+
+    }
+
+    private void NightMode() {
+        toolBar.setBackgroundColor(Color.BLACK);
+        scrollView1.setBackgroundColor(Color.BLACK);
+        // titleTextView.setTextColor(Color.RED);
+
+        textView1.setText("Ships LogBook");
+        textView2.setText("Log");
+        textView3.setText("Navigation");
+        textView4.setText("Maintenance Log");
+
+        MRL1.setBackgroundColor(Color.BLACK);
+        RL1.setBackgroundResource(R.color.card_background);
+        RL2.setBackgroundResource(R.color.card_background);
+        RL3.setBackgroundResource(R.color.card_background);
+        RL4.setBackgroundResource(R.color.card_background);
+
+        textView1.setTextColor(Color.RED);
+        textView2.setTextColor(Color.RED);
+        textView3.setTextColor(Color.RED);
+        textView4.setTextColor(Color.RED);
+
+        img_thumbnail1.setImageResource(R.drawable.book);
+        img_thumbnail2.setImageResource(R.drawable.log);
+        img_thumbnail3.setImageResource(R.drawable.waypoints);
+        img_thumbnail4.setImageResource(R.drawable.test1);
+
+        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 
     }
 

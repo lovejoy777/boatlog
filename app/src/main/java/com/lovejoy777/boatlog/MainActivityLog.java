@@ -149,29 +149,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         mFragment.getMapAsync(this);
     }
 
-    private void NightMode() {
 
-
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-
-        MLL1.setBackgroundColor(Color.BLACK);
-        MLL2.setBackgroundColor(Color.BLACK);
-        MLL3.setBackgroundColor(Color.BLACK);
-
-        textViewLat.setTextColor(Color.RED);
-        textViewLon.setTextColor(Color.RED);
-        textViewSpeed.setTextColor(Color.RED);
-        textViewHeading.setTextColor(Color.RED);
-        textViewCompass.setTextColor(Color.RED);
-
-        textViewPos.setTextColor(Color.RED);
-        textViewSped.setTextColor(Color.RED);
-        textViewHead.setTextColor(Color.RED);
-        textViewComp.setTextColor(Color.RED);
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
-
-    }
 
 
     private void screenOn() {
@@ -436,6 +414,30 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Toast.makeText(this, "ConnectionFailed", Toast.LENGTH_SHORT).show();
+    }
+
+    private void NightMode() {
+
+
+        toolBar.setBackgroundColor(Color.BLACK);
+        titleTextView.setTextColor(Color.RED);
+
+        MLL1.setBackgroundColor(Color.BLACK);
+        MLL2.setBackgroundColor(Color.BLACK);
+        MLL3.setBackgroundColor(Color.BLACK);
+
+        textViewLat.setTextColor(Color.RED);
+        textViewLon.setTextColor(Color.RED);
+        textViewSpeed.setTextColor(Color.RED);
+        textViewHeading.setTextColor(Color.RED);
+        textViewCompass.setTextColor(Color.RED);
+
+        textViewPos.setTextColor(Color.RED);
+        textViewSped.setTextColor(Color.RED);
+        textViewHead.setTextColor(Color.RED);
+        textViewComp.setTextColor(Color.RED);
+        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+
     }
 
     @Override
