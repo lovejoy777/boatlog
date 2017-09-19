@@ -195,9 +195,13 @@ public class MainActivity extends AppCompatActivity {
         RL4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Coming Soon", Toast.LENGTH_LONG).show();
-                //Intent bootanimactivity = new Intent(MainActivity.this, MainActivityMaint.class);
+                //  Toast.makeText(MainActivity.this, "Coming Soon", Toast.LENGTH_LONG).show();
+                //Intent bootanimactivity = new Intent(MainActivity.this, MainActivityManLog.class);
+                Intent bootanimactivity = new Intent(MainActivity.this, MainActivityManLog.class);
 
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                startActivity(bootanimactivity, bndlanimation);
                 //Bundle bndlanimation =
                 //        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 //startActivity(bootanimactivity, bndlanimation);

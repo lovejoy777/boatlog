@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BoatLogDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "SQLiteBoatLog.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public static final String ENTRY_TABLE_NAME = "entries";
     public static final String ENTRY_COLUMN_ID = "_id";
@@ -42,6 +42,18 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
     public static final String WAYPOINT_COLUMN_LONGMIN = "longmin";
     public static final String WAYPOINT_COLUMN_LONGSEC = "longsec";
     public static final String WAYPOINT_COLUMN_LONGEW = "longew";
+
+    public static final String MANLOG_TABLE_NAME = "manlog";
+    public static final String MANLOG_COLUMN_ID = "_id";
+    public static final String MANLOG_COLUMN_NAME = "name";
+    public static final String MANLOG_COLUMN_DESCRIPTION = "description";
+    public static final String MANLOG_COLUMN_PARTS_ID = "parts_id";
+    public static final String MANLOG_COLUMN_PROGRESS = "progress";
+
+    public static final String PARTS_TABLE_NAME = "parts";
+    public static final String PARTS_COLUMN_ID = "_id";
+    public static final String PARTS_COLUMN_NAME = "name";
+    public static final String PARTS_COLUMN_PART = "part";
 
     public BoatLogDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -86,6 +98,22 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
                         WAYPOINT_COLUMN_LONGSEC + " TEXT, "  +
                         WAYPOINT_COLUMN_LONGEW + " TEXT)"
         );
+
+        db.execSQL(
+                "CREATE TABLE " + MANLOG_TABLE_NAME +
+                        "(" + MANLOG_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        MANLOG_COLUMN_NAME + " TEXT, " +
+                        MANLOG_COLUMN_DESCRIPTION + " TEXT, " +
+                        MANLOG_COLUMN_PARTS_ID + " TEXT, " +
+                        MANLOG_COLUMN_PROGRESS + " TEXT)"
+        );
+
+        db.execSQL(
+                "CREATE TABLE " + PARTS_TABLE_NAME +
+                        "(" + PARTS_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        PARTS_COLUMN_NAME + " TEXT, " +
+                        PARTS_COLUMN_PART + " TEXT)"
+        );
     }
 
     @Override
@@ -93,6 +121,8 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ENTRY_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TRIPS_TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + WAYPOINT_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MANLOG_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PARTS_TABLE_NAME);
         onCreate(db);
     }
 
@@ -150,6 +180,30 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         contentValues.put(WAYPOINT_COLUMN_LONGEW, longew);
 
         db.insert(WAYPOINT_TABLE_NAME, null, contentValues);
+        return true;
+    }
+
+    public boolean insertManLog(String name, String description, String parts_id, String progress) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(MANLOG_COLUMN_NAME, name);
+        contentValues.put(MANLOG_COLUMN_DESCRIPTION, description);
+        contentValues.put(MANLOG_COLUMN_PARTS_ID, parts_id);
+        contentValues.put(MANLOG_COLUMN_PROGRESS, progress);
+
+        db.insert(MANLOG_TABLE_NAME, null, contentValues);
+        return true;
+    }
+
+    public boolean insertParts(String name, String part) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(PARTS_COLUMN_NAME, name);
+        contentValues.put(PARTS_COLUMN_PART, part);
+
+        db.insert(PARTS_TABLE_NAME, null, contentValues);
         return true;
     }
 
@@ -218,6 +272,28 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+
+    public boolean updateManLog(Integer id, String name, String description, String parts_id, String progress) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MANLOG_COLUMN_NAME, name);
+        contentValues.put(MANLOG_COLUMN_DESCRIPTION, description);
+        contentValues.put(MANLOG_COLUMN_PARTS_ID, parts_id);
+        contentValues.put(MANLOG_COLUMN_PROGRESS, progress);
+        db.update(MANLOG_TABLE_NAME, contentValues, MANLOG_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
+        return true;
+    }
+
+
+    public boolean updateParts(Integer id, String name, String part) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(PARTS_COLUMN_NAME, name);
+        contentValues.put(PARTS_COLUMN_PART, part);
+        db.update(PARTS_TABLE_NAME, contentValues, PARTS_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
+        return true;
+    }
+
     public Integer deleteEntry(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(ENTRY_TABLE_NAME,
@@ -239,6 +315,13 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
                 new String[] { Integer.toString(id) });
     }
 
+    public Integer deleteManLog(Integer id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(MANLOG_TABLE_NAME,
+                MANLOG_COLUMN_ID + " = ? ",
+                new String[]{Integer.toString(id)});
+    }
+
     public Integer deleteAllTripEntries(Integer id) {
       //  new String query = "Select * FROM " + ENTRY_TABLE_NAME + " WHERE " + ENTRY_COLUMN_TRIP_ID + " =  \"" + id + "\"";
 
@@ -246,6 +329,7 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return db.delete(ENTRY_TABLE_NAME,
                  ENTRY_COLUMN_TRIP_ID + "=?", new String[] { Integer.toString(id) });
     }
+
 
     public Cursor getEntry(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -277,6 +361,13 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getManLog(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + MANLOG_TABLE_NAME + " WHERE " +
+                MANLOG_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        return res;
+    }
+
     public Cursor getAllEntries() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "SELECT * FROM " + ENTRY_TABLE_NAME, null );
@@ -295,10 +386,18 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getAllManLog() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + MANLOG_TABLE_NAME, null);
+        return res;
+    }
+
     public Cursor getTripEntry(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + ENTRY_TABLE_NAME + " WHERE " +
                 ENTRY_COLUMN_TRIP_ID + "=?", new String[]{Integer.toString(id)});
         return res;
     }
+
+
 }

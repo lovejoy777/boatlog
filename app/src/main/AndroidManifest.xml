@@ -87,12 +87,12 @@
         </activity>
 
         <activity
-            android:name=".MainActivityMaint"
+            android:name=".MainActivityManLog"
             android:label="@string/app_name"
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
             android:parentActivityName=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAINMAINT" />
+                <action android:name="android.intent.action.MAINMANLOG" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -171,7 +171,17 @@
         <activity
             android:name=".EditWaypointActivity"
             android:label="Edit"
-            android:parentActivityName=".MainActivityWaypoint" >
+            android:parentActivityName=".MainActivityWaypoint" ></activity>
+
+        <activity
+            android:name=".CreateManLogActivity"
+            android:label="Create"
+            android:parentActivityName=".MainActivityManLog"></activity>
+
+        <activity
+            android:name=".EditManLogActivity"
+            android:label="Edit"
+            android:parentActivityName=".MainActivityManLog">
         </activity>
 
         <activity

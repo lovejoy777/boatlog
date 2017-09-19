@@ -54,4 +54,12 @@
     <string name="title_edit_trips">Edit trip</string>
     <string name="title_edit_entries">Edit entry</string>
 
+    <string name="progress_prompt">Prompt</string>
+
+    <string-array name="progress_array">
+        <item>Not Started</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+    </string-array>
+
 </resources>

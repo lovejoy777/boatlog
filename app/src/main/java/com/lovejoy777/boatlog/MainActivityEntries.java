@@ -188,7 +188,7 @@ public class MainActivityEntries extends AppCompatActivity {
                 }
 
                 builder.setTitle("      Select a Favourite");
-                builder.setIcon(android.R.drawable.btn_star_big_off);
+                builder.setIcon(android.R.drawable.btn_star_big_on);
                 if (favnames == null) {
                     builder.create();
                 }

@@ -142,7 +142,9 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         // pre fill text fields
         trip_idText.setText("" + tripID);
-        nameEditText.setText("" + entryName);
+        if (entryName != null && !entryName.isEmpty()) {
+            nameEditText.setText("" + entryName);
+        }
         timeEditText.setText("" + formattedTime);
         dateEditText.setText("" + formattedDate);
         locationEditText.setText("" + formattedLocation);
