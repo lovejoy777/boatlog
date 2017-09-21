@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     private int ACCESS_FINE_LOCATION_CODE = 23;
-    private int ACCESS_COARSE_LOCATION_CODE = 24;
 
 
     Toolbar toolBar;
@@ -161,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent bootanimactivity = new Intent(MainActivity.this, MainActivityTrips.class);
-
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(bootanimactivity, bndlanimation);
@@ -171,9 +169,7 @@ public class MainActivity extends AppCompatActivity {
         RL2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent bootanimactivity = new Intent(MainActivity.this, MainActivityLog.class);
-
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(bootanimactivity, bndlanimation);
@@ -183,9 +179,7 @@ public class MainActivity extends AppCompatActivity {
         RL3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent bootanimactivity = new Intent(MainActivity.this, MainActivityWaypoint.class);
-
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(bootanimactivity, bndlanimation);
@@ -195,23 +189,15 @@ public class MainActivity extends AppCompatActivity {
         RL4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //  Toast.makeText(MainActivity.this, "Coming Soon", Toast.LENGTH_LONG).show();
-                //Intent bootanimactivity = new Intent(MainActivity.this, MainActivityManLog.class);
                 Intent bootanimactivity = new Intent(MainActivity.this, MainActivityManLog.class);
-
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(bootanimactivity, bndlanimation);
-                //Bundle bndlanimation =
-                //        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                //startActivity(bootanimactivity, bndlanimation);
             }
         });
 
 
     }
-
-
 
     private void loadToolbarNavDrawer() {
         //set Toolbar

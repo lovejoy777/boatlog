@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -56,10 +57,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private boolean fabExpanded = false;
     private FloatingActionButton fabEntries; //fabMain
-    private FloatingActionButton fabFav; //fabSub
+    private FloatingActionButton fabEntries_fav; //fabSub
     private LinearLayout layoutFabPrintPdf;
     private LinearLayout layoutFabAddNew;
-    private LinearLayout layoutFabFav;
 
     private ListView listView;
     BoatLogDBHelper dbHelper;
@@ -88,8 +88,6 @@ public class MainActivityEntries extends AppCompatActivity {
         tripID = getIntent().getIntExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_NAME);
 
-        //Toast.makeText(getApplicationContext(), "Trip " + tripName, Toast.LENGTH_SHORT).show();
-
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -99,13 +97,11 @@ public class MainActivityEntries extends AppCompatActivity {
         dbHelper = new BoatLogDBHelper(this);
 
         fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
-        fabFav = (FloatingActionButton) this.findViewById(R.id.fabFav);
+        fabEntries_fav = (FloatingActionButton) this.findViewById(R.id.fabEntriesfav);
         layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
         layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
-        layoutFabFav = (LinearLayout) this.findViewById(R.id.layoutFabFav);
 
-        //  fabFav.setBackgroundResource(android.R.drawable.btn_star_big_off);
-        fabFav.setImageResource(android.R.drawable.btn_star_big_on);
+        fabEntries_fav.setImageResource(android.R.drawable.btn_star_big_off);
 
         fabEntries.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +111,133 @@ public class MainActivityEntries extends AppCompatActivity {
                 } else {
                     openSubMenusFab();
                 }
+            }
+        });
+
+        fabEntries_fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                } else {
+                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                }
+                builder.setTitle("  Delete & Create")
+                        .setMessage("      Favourites")
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                android.support.v7.app.AlertDialog.Builder builder;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                } else {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                }
+
+                                builder.setTitle("      Create a Favourite");
+
+                                final EditText input = new EditText(MainActivityEntries.this);
+                                input.setTextColor(getResources().getColor(R.color.white));
+                                input.setTextSize(20);
+
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.MATCH_PARENT);
+                                input.setLayoutParams(lp);
+                                builder.setView(input);
+                                builder.setIcon(android.R.drawable.btn_star_big_on);
+
+                                builder.setPositiveButton("SAVE",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                if (dbHelper.insertFavEntry(input.getText().toString())) {
+                                                    Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                                builder.setNegativeButton("CANCEL",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                                builder.show();
+
+                            }
+                        })
+                        .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Cursor rs = dbHelper.getAllFavEntry();
+                                ArrayList<String> favArray = new ArrayList<String>();
+                                while (rs.moveToNext()) {
+
+                                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
+                                    favArray.add(fav);
+
+                                }
+                                if (!rs.isClosed()) {
+                                    rs.close();
+                                }
+                                final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+                                android.support.v7.app.AlertDialog.Builder builder;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                } else {
+                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                }
+
+                                builder.setTitle("      Select a Favourite");
+                                builder.setIcon(android.R.drawable.btn_star_big_on);
+                                if (favnames == null) {
+                                    builder.create();
+                                }
+                                builder.setItems(favnames, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        final String mChosenFavourite = favnames[which];
+
+                                        android.support.v7.app.AlertDialog.Builder builder;
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                        } else {
+                                            builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                        }
+                                        builder.setTitle("   Delete Favourite")
+                                                .setMessage("    " + mChosenFavourite)
+
+                                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+
+                                                        dbHelper.deleteFavEntry(mChosenFavourite);
+                                                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+
+                                                    }
+                                                })
+
+                                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        // cancelled by user
+                                                    }
+                                                })
+
+                                                .setIcon(R.drawable.ic_delete_white)
+                                                .show();
+                                    }
+                                });
+                                builder.show();
+                            }
+                        })
+                        .setIcon(android.R.drawable.btn_star_big_on)
+                        .show();
+                closeSubMenusFab();
             }
         });
 
@@ -161,57 +284,6 @@ public class MainActivityEntries extends AppCompatActivity {
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(intent, bndlanimation);
                 closeSubMenusFab();
-            }
-        });
-
-        layoutFabFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String on = "on";
-                Cursor rs = dbHelper.getFavEntries(on);
-                ArrayList<String> favArray = new ArrayList<String>();
-                while (rs.moveToNext()) {
-                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
-                    favArray.add(fav);
-                }
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-                final String[] favnames = favArray.toArray(new String[favArray.size()]);
-
-                android.support.v7.app.AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                }
-
-                builder.setTitle("      Select a Favourite");
-                builder.setIcon(android.R.drawable.btn_star_big_on);
-                if (favnames == null) {
-                    builder.create();
-                }
-                builder.setItems(favnames, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String mChosenFavourite = favnames[which];
-
-                        Intent createEntry = new Intent(MainActivityEntries.this, CreateEntriesActivity.class);
-
-                        createEntry.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
-                        createEntry.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                        createEntry.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                        createEntry.putExtra(KEY_EXTRA_ENTRY_NAME, mChosenFavourite);
-
-                        Bundle bndlanimation =
-                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                        startActivity(createEntry, bndlanimation);
-                        closeSubMenusFab();
-                    }
-                });
-
-                builder.show();
-
             }
         });
 
@@ -573,7 +645,6 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private void NightMode() {
 
-
         MRL1.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
@@ -586,7 +657,6 @@ public class MainActivityEntries extends AppCompatActivity {
     private void closeSubMenusFab(){
         layoutFabPrintPdf.setVisibility(View.INVISIBLE);
         layoutFabAddNew.setVisibility(View.INVISIBLE);
-        layoutFabFav.setVisibility(View.INVISIBLE);
         fabEntries.setImageResource(R.drawable.ic_menu_white);
         fabExpanded = false;
     }
@@ -595,7 +665,6 @@ public class MainActivityEntries extends AppCompatActivity {
     private void openSubMenusFab(){
         layoutFabPrintPdf.setVisibility(View.VISIBLE);
         layoutFabAddNew.setVisibility(View.VISIBLE);
-        layoutFabFav.setVisibility(View.VISIBLE);
         fabEntries.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
     }
@@ -605,5 +674,4 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
     }
-
 }

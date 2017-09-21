@@ -381,14 +381,12 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
-
         MainRL.setBackgroundColor(Color.BLACK);
         MLL1.setBackgroundColor(Color.BLACK);
         MLL2.setBackgroundColor(Color.BLACK);
         MLL3.setBackgroundColor(Color.BLACK);
 
         textViewGoTo.setTextColor(Color.RED);
-
         textViewLat.setTextColor(Color.RED);
         textViewLon.setTextColor(Color.RED);
         textViewSpeed.setTextColor(Color.RED);

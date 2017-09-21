@@ -23,13 +23,15 @@
             android:layout_marginTop="60dp"
             android:text="@string/splashTitle"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/textMain"
+            android:textColor="@color/white"
+            android:layout_weight="0.6"
             android:textSize="40sp" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="152dp"
             android:layout_height="124dp"
+            android:layout_weight="3"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:src="@mipmap/ic_launcher" />

@@ -178,11 +178,11 @@
                         android:layout_height="wrap_content"
                         android:spinnerMode="dropdown"
                         android:textColor="@color/textMain"
+                        android:popupBackground="@color/cardview_dark_background"
                         android:textSize="23sp"
                         android:textStyle="italic"
                         android:typeface="serif"
                         android:entries="@array/progress_array"
-
                         android:prompt="@string/progress_prompt" />
 
 

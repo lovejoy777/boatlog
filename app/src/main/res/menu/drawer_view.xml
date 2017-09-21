@@ -19,16 +19,12 @@
 
     <group android:checkableBehavior="single">
         <item
-
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_action_menu"
             android:title="@string/Home" />
-
     </group>
 
-
-
-    <item android:title="@string/General">
+    <item android:title="Functions">
         <menu>
             <item
                 android:id="@+id/nav_night_switch"
@@ -40,11 +36,30 @@
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_tv_light"
                 android:title="ScreenOn" />
+        </menu>
+    </item>
+
+    <item android:title="Advanced">
+        <menu>
+            <item
+                android:id="@+id/nav_backup"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Backup Data" />
+
+            <item
+                android:id="@+id/nav_restore"
+                android:icon="@drawable/ic_save_black_24dp"
+                android:title="Restore Data" />
+        </menu>
+    </item>
+
+    <item android:title="@string/General">
+        <menu>
             <item
                 android:id="@+id/nav_tutorial"
                 android:icon="@drawable/ic_drawer_help"
-                android:title="@string/Tutorial"
-                />
+                android:title="@string/Tutorial" />
+
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_drawer_about"
@@ -54,25 +69,6 @@
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_drawer_settings"
                 android:title="@string/Settings" />
-
-        </menu>
-    </item>
-
-    <item android:title="Advanced">
-        <menu>
-            <item
-                android:id="@+id/nav_backup"
-                android:icon="@drawable/ic_save_black_24dp"
-                android:title="Backup Data"
-                />
-
-            <item
-                android:id="@+id/nav_restore"
-                android:icon="@drawable/ic_save_black_24dp"
-
-                android:title="Restore Data"
-                />
-
         </menu>
     </item>
 

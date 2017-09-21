@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BoatLogDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "SQLiteBoatLog.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     public static final String ENTRY_TABLE_NAME = "entries";
     public static final String ENTRY_COLUMN_ID = "_id";
@@ -54,6 +54,10 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
     public static final String PARTS_COLUMN_ID = "_id";
     public static final String PARTS_COLUMN_NAME = "name";
     public static final String PARTS_COLUMN_PART = "part";
+
+    public static final String FAVENTRY_TABLE_NAME = "faventry";
+    public static final String FAVENTRY_COLUMN_ID = "_id";
+    public static final String FAVENTRY_COLUMN_NAME = "name";
 
     public BoatLogDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -113,6 +117,12 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
                         "(" + PARTS_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                         PARTS_COLUMN_NAME + " TEXT, " +
                         PARTS_COLUMN_PART + " TEXT)"
+        );
+
+        db.execSQL(
+                "CREATE TABLE " + FAVENTRY_TABLE_NAME +
+                        "(" + FAVENTRY_COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                        FAVENTRY_COLUMN_NAME + " TEXT)"
         );
     }
 
@@ -207,6 +217,16 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean insertFavEntry(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(FAVENTRY_COLUMN_NAME, name);
+
+        db.insert(FAVENTRY_TABLE_NAME, null, contentValues);
+        return true;
+    }
+
     public int numberOfRows() {
         SQLiteDatabase db = this.getReadableDatabase();
         int numRows = (int) DatabaseUtils.queryNumEntries(db, ENTRY_TABLE_NAME);
@@ -294,6 +314,14 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateFavEntry(Integer id, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(FAVENTRY_COLUMN_NAME, name);
+        db.update(FAVENTRY_TABLE_NAME, contentValues, FAVENTRY_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
+        return true;
+    }
+
     public Integer deleteEntry(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(ENTRY_TABLE_NAME,
@@ -320,6 +348,21 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return db.delete(MANLOG_TABLE_NAME,
                 MANLOG_COLUMN_ID + " = ? ",
                 new String[]{Integer.toString(id)});
+    }
+
+    public Integer deleteFavEntry(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(FAVENTRY_TABLE_NAME,
+                FAVENTRY_COLUMN_NAME + " = ? ",
+                new String[]{id});
+    }
+
+    public Long getIdFromFavName(String myName) {
+        String query = "SELECT rowid" +
+                " FROM " + FAVENTRY_TABLE_NAME +
+                " WHERE " + FAVENTRY_COLUMN_NAME + " = ?;";
+        SQLiteDatabase db = this.getReadableDatabase();
+        return DatabaseUtils.longForQuery(db, query, new String[]{myName});
     }
 
     public Integer deleteAllTripEntries(Integer id) {
@@ -354,6 +397,13 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getFavID(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + ENTRY_TABLE_NAME + " WHERE " +
+                FAVENTRY_COLUMN_NAME + "=?", new String[]{id});
+        return res;
+    }
+
     public Cursor getWaypoint(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery("SELECT * FROM " + WAYPOINT_TABLE_NAME + " WHERE " +
@@ -365,6 +415,13 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + MANLOG_TABLE_NAME + " WHERE " +
                 MANLOG_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        return res;
+    }
+
+    public Cursor getFavEntry(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + FAVENTRY_TABLE_NAME + " WHERE " +
+                FAVENTRY_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
         return res;
     }
 
@@ -389,6 +446,12 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
     public Cursor getAllManLog() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + MANLOG_TABLE_NAME, null);
+        return res;
+    }
+
+    public Cursor getAllFavEntry() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + FAVENTRY_TABLE_NAME, null);
         return res;
     }
 

@@ -2,14 +2,17 @@ package com.lovejoy777.boatlog;
 
 import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -25,7 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+
 
 /**
  * Created by steve on 07/09/17.
@@ -39,6 +44,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
     private BoatLogDBHelper dbHelper;
 
     private FloatingActionButton fabSave; //fabMainDeleteEditSave
+    private FloatingActionButton fabSavefav; //fabMainDeleteEditSave
     FrameLayout fabFrame;
 
     ScrollView scrollView1;
@@ -66,7 +72,6 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_entries);
 
-        // Toast.makeText(getApplicationContext(), "Trip used " + tripID, Toast.LENGTH_SHORT).show();
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
@@ -90,6 +95,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
+        fabSavefav = (FloatingActionButton) this.findViewById(R.id.fabSavefav);
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
         titleTextView.setText("Create New Entry");
 
@@ -149,11 +155,54 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         dateEditText.setText("" + formattedDate);
         locationEditText.setText("" + formattedLocation);
 
+        // SAVE ENTRY FAB BUTTON
         fabSave.setImageResource(R.drawable.ic_save_white);
         fabSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 persistEntry();
+            }
+        });
+
+        // FAVOURITES LIST FAB BUTTON
+        fabSavefav.setImageResource(android.R.drawable.btn_star_big_off);
+        fabSavefav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Cursor rs = dbHelper.getAllFavEntry();
+                ArrayList<String> favArray = new ArrayList<String>();
+                while (rs.moveToNext()) {
+
+                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
+                    favArray.add(fav);
+
+                }
+                if (!rs.isClosed()) {
+                    rs.close();
+                }
+                final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+                android.support.v7.app.AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                } else {
+                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                }
+
+                builder.setTitle("      Select a Favourite");
+                builder.setIcon(android.R.drawable.btn_star_big_on);
+                if (favnames == null) {
+                    builder.create();
+                }
+                builder.setItems(favnames, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String mChosenFavourite = favnames[which];
+                        nameEditText.setText(mChosenFavourite);
+                    }
+                });
+
+                builder.show();
             }
         });
     }
@@ -264,7 +313,6 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        //  fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 

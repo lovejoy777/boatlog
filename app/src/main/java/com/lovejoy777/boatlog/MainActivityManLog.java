@@ -36,7 +36,7 @@ public class MainActivityManLog extends AppCompatActivity {
     Toolbar toolBar;
 
     private boolean fabExpanded = false;
-    private FloatingActionButton fabTrips; //main
+    private FloatingActionButton fabManLog; //main
     private LinearLayout layoutFabAddNew; //sub2
 
     ListView listViewManLog;
@@ -50,9 +50,9 @@ public class MainActivityManLog extends AppCompatActivity {
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         toolBar = (Toolbar) findViewById(R.id.toolbar);
 
-        fabTrips = (FloatingActionButton) this.findViewById(R.id.fabTrips);
+        fabManLog = (FloatingActionButton) this.findViewById(R.id.fabManLog);
         layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
-        fabTrips.setOnClickListener(new View.OnClickListener() {
+        fabManLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (fabExpanded == true) {
@@ -164,21 +164,21 @@ public class MainActivityManLog extends AppCompatActivity {
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
         listViewManLog.setBackgroundColor(Color.BLACK);
-        fabTrips.setBackgroundColor(Color.RED);
+        fabManLog.setBackgroundColor(Color.RED);
 
     }
 
     //closes FAB submenus
     private void closeSubMenusFab() {
         layoutFabAddNew.setVisibility(View.INVISIBLE);
-        fabTrips.setImageResource(R.drawable.ic_menu_white);
+        fabManLog.setImageResource(R.drawable.ic_menu_white);
         fabExpanded = false;
     }
 
     //Opens FAB submenus
     private void openSubMenusFab() {
         layoutFabAddNew.setVisibility(View.VISIBLE);
-        fabTrips.setImageResource(R.drawable.ic_close_white);
+        fabManLog.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
     }
 

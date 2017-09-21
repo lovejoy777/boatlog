@@ -10,6 +10,7 @@
     <string name="FabPrint">Export to Pdf</string>
     <string name="FabNewEntry">Create New Entry</string>
     <string name="FabNewTrip">Create New Trip</string>
+    <string name="FabNewManLog">Create New Entry</string>
     <string name="FabNewWaypoints">Create New Waypoints</string>
     <string name="FabDelete">Delete</string>
     <string name="FabEdit">Edit</string>

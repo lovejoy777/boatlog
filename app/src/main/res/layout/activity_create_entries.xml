@@ -198,7 +198,7 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-            <include layout="@layout/layout_fabsave" />
+            <include layout="@layout/layout_fabsave_fav" />
 
         </LinearLayout>
     </RelativeLayout>

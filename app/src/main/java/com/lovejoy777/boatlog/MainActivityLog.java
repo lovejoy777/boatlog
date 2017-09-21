@@ -418,10 +418,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     private void NightMode() {
 
-
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
-
         MLL1.setBackgroundColor(Color.BLACK);
         MLL2.setBackgroundColor(Color.BLACK);
         MLL3.setBackgroundColor(Color.BLACK);

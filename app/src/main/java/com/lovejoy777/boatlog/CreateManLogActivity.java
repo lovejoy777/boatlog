@@ -74,7 +74,7 @@ public class CreateManLogActivity extends AppCompatActivity {
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
         partsEditText = (EditText) findViewById(R.id.editTextParts);
         // progressEditText = (EditText) findViewById(R.id.editTextProgress);
-        spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
+        // spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
@@ -87,14 +87,10 @@ public class CreateManLogActivity extends AppCompatActivity {
             NightMode();
         }
 
-        //spinnerProgress.setOnItemSelectedListener(this);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
+        spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.progress_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
+                R.array.progress_array, R.layout.progress_spinner_item);
+        adapter.setDropDownViewResource(R.layout.progress_spinner_dropdown_item);
         spinnerProgress.setAdapter(adapter);
 
         dbHelper = new BoatLogDBHelper(this);

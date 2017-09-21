@@ -51,7 +51,6 @@ public class EditManLogActivity extends AppCompatActivity {
     EditText nameEditText;
     EditText descriptionEditText;
     EditText partsEditText;
-    // EditText progressEditText;
     private Spinner spinnerProgress;
 
     TextView titleTextView;
@@ -83,7 +82,6 @@ public class EditManLogActivity extends AppCompatActivity {
         nameEditText = (EditText) findViewById(R.id.editTextName);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
         partsEditText = (EditText) findViewById(R.id.editTextParts);
-        // progressEditText = (EditText) findViewById(R.id.editTextProgress);
         spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
 
         fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
@@ -105,19 +103,21 @@ public class EditManLogActivity extends AppCompatActivity {
                     "In Progress",
                     "Completed"
             };
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            adapter.addAll(progressArray);
+
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.progress_array, R.layout.progress_spinner_item);
+            adapter.setDropDownViewResource(R.layout.progress_spinner_dropdown_item);
             spinnerProgress.setAdapter(adapter);
+
         } else if (manlogProgress.equals("In Progress")) {
             String[] progressArray = {
                     "In Progress",
                     "Not Started",
                     "Completed"
             };
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            adapter.addAll(progressArray);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.progress_array, R.layout.progress_spinner_item);
+            adapter.setDropDownViewResource(R.layout.progress_spinner_dropdown_item);
             spinnerProgress.setAdapter(adapter);
         } else {
             String[] progressArray = {
@@ -125,9 +125,9 @@ public class EditManLogActivity extends AppCompatActivity {
                     "In Progress",
                     "Not Started"
             };
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            adapter.addAll(progressArray);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.progress_array, R.layout.progress_spinner_item);
+            adapter.setDropDownViewResource(R.layout.progress_spinner_dropdown_item);
             spinnerProgress.setAdapter(adapter);
         }
 
@@ -142,9 +142,6 @@ public class EditManLogActivity extends AppCompatActivity {
 
         partsEditText.setFocusableInTouchMode(true);
         partsEditText.setClickable(true);
-
-        // progressEditText.setFocusableInTouchMode(true);
-        // progressEditText.setClickable(true);
 
         Cursor rs = dbHelper.getManLog(manlogID);
         rs.moveToFirst();
@@ -266,7 +263,6 @@ public class EditManLogActivity extends AppCompatActivity {
 
         scrollView1.setBackgroundColor(Color.BLACK);
         MRL1.setBackgroundColor(Color.BLACK);
-        // fabFrame.setBackgroundColor(Color.BLACK);
         toolBar.setBackgroundColor(Color.BLACK);
         titleTextView.setTextColor(Color.RED);
 
@@ -278,7 +274,6 @@ public class EditManLogActivity extends AppCompatActivity {
         nameEditText.setTextColor(Color.RED);
         descriptionEditText.setTextColor(Color.RED);
         partsEditText.setTextColor(Color.RED);
-        //progressEditText.setTextColor(Color.RED);
 
     }
 

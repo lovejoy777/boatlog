@@ -48,6 +48,6 @@
     </ListView>
 
 
-    <include layout="@layout/layout_fabentries_submenu"/>
+    <include layout="@layout/layout_fabentries_fav" />
 
 </RelativeLayout>
