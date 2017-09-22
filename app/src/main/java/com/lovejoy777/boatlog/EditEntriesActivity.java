@@ -25,7 +25,7 @@ import android.widget.Toast;
  * Created by steve on 07/09/17.
  */
 
-public class EditEntriesActivity  extends AppCompatActivity {
+public class EditEntriesActivity extends AppCompatActivity {
 
 
     private BoatLogDBHelper dbHelper;
@@ -126,68 +126,68 @@ public class EditEntriesActivity  extends AppCompatActivity {
         locationEditText.setText(entryLocation + "");
         trip_idText.setText(entryTrip_ID);
 
-            fabDeleteSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (fabExpanded == true){
-                        closeSubMenusFabDeleteSave();
-                    } else {
-                        openSubMenusFabDeleteSave();
-                    }
+        fabDeleteSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabExpanded == true) {
+                    closeSubMenusFabDeleteSave();
+                } else {
+                    openSubMenusFabDeleteSave();
                 }
-            });
+            }
+        });
 
 
-            // DELETE subFab button
-            layoutFabDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        // DELETE subFab button
+        layoutFabDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    android.support.v7.app.AlertDialog.Builder builder;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
-                    } else {
-                        builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
-                    }
-                    builder.setTitle("Delete Entry?")
-                            .setMessage(entryName)
-
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dbHelper.deleteEntry(entryID);
-                                    Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                                    intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                                    Bundle bndlanimation =
-                                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                                    startActivity(intent, bndlanimation);
-                                    startActivity(intent);
-                                }
-                            })
-
-                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // cancelled by user
-                                }
-                            })
-
-                            .setIcon(R.drawable.ic_delete_white)
-                            .show();
-
+                android.support.v7.app.AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
+                } else {
+                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
                 }
-            });
+                builder.setTitle("Delete Entry?")
+                        .setMessage(entryName)
 
-            // ADD NEW subFab button
-            layoutFabSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbHelper.deleteEntry(entryID);
+                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+                                Bundle bndlanimation =
+                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                startActivity(intent, bndlanimation);
+                                startActivity(intent);
+                            }
+                        })
 
-                    fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
-                    persistEntry();
-                }
-            });
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
+                            }
+                        })
+
+                        .setIcon(R.drawable.ic_delete_white)
+                        .show();
+
+            }
+        });
+
+        // ADD NEW subFab button
+        layoutFabSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+                persistEntry();
+            }
+        });
 
         //Only main FAB is visible in the beginning
         closeSubMenusFabDeleteSave();
@@ -205,21 +205,21 @@ public class EditEntriesActivity  extends AppCompatActivity {
         }
 
         if (dbHelper.updateEntry(entryID, fab, nameEditText.getText().toString(),
-                    timeEditText.getText().toString(),
-                    dateEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Edited Successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                timeEditText.getText().toString(),
+                dateEditText.getText().toString(),
+                locationEditText.getText().toString(),
+                trip_idText.getText().toString())) {
+            Toast.makeText(getApplicationContext(), "Entry Edited Successful", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+            intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
             Bundle bndlanimation =
                     ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
             startActivity(intent, bndlanimation);
-            } else {
-                Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
-            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -257,7 +257,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
     }
 
     //closes FAB submenus delete & edit
-    private void closeSubMenusFabDeleteSave(){
+    private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
@@ -265,7 +265,7 @@ public class EditEntriesActivity  extends AppCompatActivity {
     }
 
     //Opens FAB submenus
-    private void openSubMenusFabDeleteSave(){
+    private void openSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);

@@ -19,8 +19,9 @@ public class CustomRedListAdapter extends ArrayAdapter<String> {
     private final String[] web;
     private final Integer[] imageId;
     private final String[] subtext;
+
     public CustomRedListAdapter(Activity context,
-                             String[] web, String[] subtext, Integer[] imageId) {
+                                String[] web, String[] subtext, Integer[] imageId) {
         super(context, R.layout.adapter_listview_about, web);
         this.context = context;
         this.web = web;
@@ -31,7 +32,7 @@ public class CustomRedListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.adapter_listview_about, null, true);
+        View rowView = inflater.inflate(R.layout.adapter_listview_about, null, true);
         TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
         ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         TextView txtSub = (TextView) rowView.findViewById(R.id.description);

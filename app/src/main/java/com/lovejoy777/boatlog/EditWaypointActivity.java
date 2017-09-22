@@ -101,7 +101,7 @@ public class EditWaypointActivity extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
-   Cursor rs = dbHelper.getWaypoint(waypointID);
+        Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();
         final String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
         String waypointDescription = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
@@ -134,7 +134,7 @@ public class EditWaypointActivity extends AppCompatActivity {
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true){
+                if (fabExpanded == true) {
                     closeSubMenusFabDeleteSave();
                 } else {
                     openSubMenusFabDeleteSave();
@@ -154,7 +154,7 @@ public class EditWaypointActivity extends AppCompatActivity {
                     builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Delete Waypoint?")
-                       // .setMessage(waypointName)
+                        // .setMessage(waypointName)
 
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -196,28 +196,28 @@ public class EditWaypointActivity extends AppCompatActivity {
     }
 
     public void persistWaypoint() {
-            if (dbHelper.updateWaypoint(
-                    waypointID,
-                    nameEditText.getText().toString(),
-                    descriptionEditText.getText().toString(),
-                    latdegEditText.getText().toString(),
-                    latminEditText.getText().toString(),
-                    latsecEditText.getText().toString(),
-                    latnsEditText.getText().toString(),
-                    longdegEditText.getText().toString(),
-                    longminEditText.getText().toString(),
-                    longsecEditText.getText().toString(),
-                    longewEditText.getText().toString()
-                    )) {
-                Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                Bundle bndlanimation =
-                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                startActivity(intent, bndlanimation);
-            } else {
-                Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
-            }
+        if (dbHelper.updateWaypoint(
+                waypointID,
+                nameEditText.getText().toString(),
+                descriptionEditText.getText().toString(),
+                latdegEditText.getText().toString(),
+                latminEditText.getText().toString(),
+                latsecEditText.getText().toString(),
+                latnsEditText.getText().toString(),
+                longdegEditText.getText().toString(),
+                longminEditText.getText().toString(),
+                longsecEditText.getText().toString(),
+                longewEditText.getText().toString()
+        )) {
+            Toast.makeText(getApplicationContext(), "Waypoint Edited Successful", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Bundle bndlanimation =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+            startActivity(intent, bndlanimation);
+        } else {
+            Toast.makeText(getApplicationContext(), "Waypoint Edit Failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /* Request updates at startup */
@@ -259,7 +259,7 @@ public class EditWaypointActivity extends AppCompatActivity {
     }
 
     //closes FAB submenus delete & edit
-    private void closeSubMenusFabDeleteSave(){
+    private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
@@ -267,7 +267,7 @@ public class EditWaypointActivity extends AppCompatActivity {
     }
 
     //Opens FAB submenus
-    private void openSubMenusFabDeleteSave(){
+    private void openSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);

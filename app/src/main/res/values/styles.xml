@@ -75,11 +75,11 @@
     </style>
 
     <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/accent</item>
     </style>
 
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/red</item>
+        <item name="android:textColor">@color/accent</item>
     </style>
 
     <style name="progressSpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">

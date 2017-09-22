@@ -150,8 +150,6 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
     }
 
 
-
-
     private void screenOn() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
@@ -277,6 +275,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         }
 
     }
+
     private void Speedlt() {
 
         textViewSpeed.setText("0.0    (Kn)");
@@ -326,8 +325,8 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         ra.setFillAfter(true);
 
         // Start the animation
-      //  image.startAnimation(ra);
-     //   currentDegree = -degree;
+        //  image.startAnimation(ra);
+        //   currentDegree = -degree;
 
     }
 

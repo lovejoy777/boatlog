@@ -15,7 +15,7 @@ import com.lovejoy777.boatlog.R;
  */
 
 public class SettingsActivity extends PreferenceActivity implements
-       SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
         getListView().setBackgroundColor(Color.BLACK);
         setTheme(R.style.DarkTheme);
-               // Toast.makeText(SettingsActivity.this, "Night Mode Active", Toast.LENGTH_LONG).show();
+        // Toast.makeText(SettingsActivity.this, "Night Mode Active", Toast.LENGTH_LONG).show();
     }
 
     private void screenOn() {
@@ -61,11 +61,10 @@ public class SettingsActivity extends PreferenceActivity implements
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String key)
-    {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        Boolean ScreenOn = myPrefs.getBoolean("switch2",false);
+        Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
 
         // Restart app to load day/night modes
         Intent restart = getBaseContext().getPackageManager()

@@ -16,7 +16,7 @@ import com.lovejoy777.boatlog.activities.Apps;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>{
+public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     List<Apps> mItems;
 

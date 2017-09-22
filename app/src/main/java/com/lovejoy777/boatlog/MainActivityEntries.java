@@ -106,7 +106,7 @@ public class MainActivityEntries extends AppCompatActivity {
         fabEntries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true){
+                if (fabExpanded == true) {
                     closeSubMenusFab();
                 } else {
                     openSubMenusFab();
@@ -341,7 +341,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private void populateListView() {
         final Cursor cursor = dbHelper.getTripEntry(tripID);
-        String [] columns = new String[] {
+        String[] columns = new String[]{
                 BoatLogDBHelper.ENTRY_COLUMN_ID,
                 BoatLogDBHelper.ENTRY_COLUMN_NAME,
                 BoatLogDBHelper.ENTRY_COLUMN_TIME,
@@ -349,7 +349,7 @@ public class MainActivityEntries extends AppCompatActivity {
                 BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID
 
         };
-        int [] widgets = new int[] {
+        int[] widgets = new int[]{
                 R.id.entryID,
                 R.id.entryName,
                 R.id.entryTime,
@@ -358,7 +358,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info,
                 cursor, columns, widgets, 0);
-        listView = (ListView)findViewById(R.id.listViewEntries);
+        listView = (ListView) findViewById(R.id.listViewEntries);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
@@ -366,7 +366,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
     private void populateListViewRed() {
         final Cursor cursor = dbHelper.getTripEntry(tripID);
-        String [] columns = new String[] {
+        String[] columns = new String[]{
                 BoatLogDBHelper.ENTRY_COLUMN_ID,
                 BoatLogDBHelper.ENTRY_COLUMN_NAME,
                 BoatLogDBHelper.ENTRY_COLUMN_TIME,
@@ -374,7 +374,7 @@ public class MainActivityEntries extends AppCompatActivity {
                 BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID
 
         };
-        int [] widgets = new int[] {
+        int[] widgets = new int[]{
                 R.id.entryID,
                 R.id.entryName,
                 R.id.entryTime,
@@ -384,7 +384,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info1,
                 cursor, columns, widgets, 0);
-        listView = (ListView)findViewById(R.id.listViewEntries);
+        listView = (ListView) findViewById(R.id.listViewEntries);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
@@ -411,7 +411,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
                 // Get the Image from data
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 // Get the cursor
                 Cursor cursor = getContentResolver().query(selectedImage,
@@ -438,8 +438,7 @@ public class MainActivityEntries extends AppCompatActivity {
         }
     }
 
-    public void createPDF()
-    {
+    public void createPDF() {
 
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
@@ -453,11 +452,11 @@ public class MainActivityEntries extends AppCompatActivity {
         try {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
             File dir = new File(path);
-            if(!dir.exists())
+            if (!dir.exists())
                 dir.mkdirs();
             Log.d("PDFCreator", "PDF Path: " + path);
 
-            File file = new File(dir, "" + tripName + ".pdf" );
+            File file = new File(dir, "" + tripName + ".pdf");
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter.getInstance(doc, fOut);
 
@@ -466,14 +465,14 @@ public class MainActivityEntries extends AppCompatActivity {
 
             //R.color.accent
             //Font myFont = FontFactory.getFont(FUTURA_LIGHT, BaseFont.IDENTITY_H);
-            Font paraFont= new Font(Font.COURIER,16.0f,Color.RED);
-            Paragraph p1 = new Paragraph("" + tripName,paraFont);
+            Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
+            Paragraph p1 = new Paragraph("" + tripName, paraFont);
             p1.setAlignment(Paragraph.ALIGN_CENTER);
             //add paragraph 1 to document
             doc.add(p1);
 
             Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-            Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
+            Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
             p2.setAlignment(Paragraph.ALIGN_LEFT);
             p2.setFont(paraFont2);
             //add paragraph 2 to document
@@ -481,7 +480,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
             // SPACE
             Paragraph p3 = new Paragraph(" ");
-            Font paraFont3= new Font(Font.BOLDITALIC,16.0f,R.color.accent);
+            Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
             p3.setAlignment(Paragraph.ALIGN_CENTER);
             p3.setFont(paraFont3);
             //add space to document
@@ -526,9 +525,7 @@ public class MainActivityEntries extends AppCompatActivity {
             Log.e("PDFCreator", "DocumentException:" + de);
         } catch (IOException e) {
             Log.e("PDFCreator", "ioException:" + e);
-        }
-        finally
-        {
+        } finally {
             doc.close();
         }
 
@@ -536,8 +533,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
     }
 
-    public void createPDFimage(String image_path)
-    {
+    public void createPDFimage(String image_path) {
 
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
@@ -551,11 +547,11 @@ public class MainActivityEntries extends AppCompatActivity {
         try {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
             File dir = new File(path);
-            if(!dir.exists())
+            if (!dir.exists())
                 dir.mkdirs();
             Log.d("PDFCreator", "PDF Path: " + path);
 
-            File file = new File(dir, "" + tripName + ".pdf" );
+            File file = new File(dir, "" + tripName + ".pdf");
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter.getInstance(doc, fOut);
 
@@ -565,7 +561,7 @@ public class MainActivityEntries extends AppCompatActivity {
             //add image
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             Bitmap bitmap = BitmapFactory.decodeFile(image_path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             //Bitmap resized = Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*0.5), (int)(bitmap.getHeight()*0.5), true);
             Image myImg = Image.getInstance(stream.toByteArray());
             myImg.setAlignment(Image.MIDDLE);
@@ -573,14 +569,14 @@ public class MainActivityEntries extends AppCompatActivity {
             //add image to document
             doc.add(myImg);
 
-            Font paraFont= new Font(Font.COURIER,16.0f,Color.RED);
-            Paragraph p1 = new Paragraph("" + tripName,paraFont);
+            Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
+            Paragraph p1 = new Paragraph("" + tripName, paraFont);
             p1.setAlignment(Paragraph.ALIGN_CENTER);
             //add paragraph 1 to document
             doc.add(p1);
 
             Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-            Font paraFont2= new Font(Font.COURIER,14.0f,Color.GREEN);
+            Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
             p2.setAlignment(Paragraph.ALIGN_LEFT);
             p2.setFont(paraFont2);
             //add paragraph 2 to document
@@ -588,7 +584,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
             // SPACE
             Paragraph p3 = new Paragraph(" ");
-            Font paraFont3= new Font(Font.BOLDITALIC,16.0f,R.color.accent);
+            Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
             p3.setAlignment(Paragraph.ALIGN_CENTER);
             p3.setFont(paraFont3);
             //add space to document
@@ -633,9 +629,7 @@ public class MainActivityEntries extends AppCompatActivity {
             Log.e("PDFCreator", "DocumentException:" + de);
         } catch (IOException e) {
             Log.e("PDFCreator", "ioException:" + e);
-        }
-        finally
-        {
+        } finally {
             doc.close();
         }
 
@@ -654,7 +648,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
 
     //closes FAB submenus
-    private void closeSubMenusFab(){
+    private void closeSubMenusFab() {
         layoutFabPrintPdf.setVisibility(View.INVISIBLE);
         layoutFabAddNew.setVisibility(View.INVISIBLE);
         fabEntries.setImageResource(R.drawable.ic_menu_white);
@@ -662,7 +656,7 @@ public class MainActivityEntries extends AppCompatActivity {
     }
 
     //Opens FAB submenus
-    private void openSubMenusFab(){
+    private void openSubMenusFab() {
         layoutFabPrintPdf.setVisibility(View.VISIBLE);
         layoutFabAddNew.setVisibility(View.VISIBLE);
         fabEntries.setImageResource(R.drawable.ic_close_white);

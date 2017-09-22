@@ -24,7 +24,7 @@ import android.widget.Toast;
 public class CreateTripsActivity extends AppCompatActivity {
 
 
-    private BoatLogDBHelper dbHelper ;
+    private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -90,8 +90,8 @@ public class CreateTripsActivity extends AppCompatActivity {
     }
 
     public void persistTrip() {
-        if(tripID > 0) {
-            if(dbHelper.updateTrip(tripID, nameEditText.getText().toString(),
+        if (tripID > 0) {
+            if (dbHelper.updateTrip(tripID, nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
                     destinationEditText.getText().toString())) {
                 Toast.makeText(getApplicationContext(), "Trip Edited Successful", Toast.LENGTH_SHORT).show();
@@ -100,18 +100,15 @@ public class CreateTripsActivity extends AppCompatActivity {
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(intent, bndlanimation);
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Trip Edit Failed", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
-            if(dbHelper.insertTrip(nameEditText.getText().toString(),
+        } else {
+            if (dbHelper.insertTrip(nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
-                    destinationEditText.getText().toString())){
+                    destinationEditText.getText().toString())) {
                 Toast.makeText(getApplicationContext(), "Trip Saved", Toast.LENGTH_SHORT).show();
-            }
-            else{
+            } else {
                 Toast.makeText(getApplicationContext(), "Could not Save trip", Toast.LENGTH_SHORT).show();
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
@@ -121,6 +118,7 @@ public class CreateTripsActivity extends AppCompatActivity {
             startActivity(intent, bndlanimation);
         }
     }
+
     /* Request updates at startup */
     @Override
     protected void onResume() {

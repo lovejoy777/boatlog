@@ -27,7 +27,7 @@ import android.widget.Toast;
 public class EditTripsActivity extends AppCompatActivity {
 
 
-    private BoatLogDBHelper dbHelper ;
+    private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -50,6 +50,7 @@ public class EditTripsActivity extends AppCompatActivity {
     TextView titleTextView;
 
     int tripID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,18 +112,18 @@ public class EditTripsActivity extends AppCompatActivity {
         departureEditText.setText(tripDeparture);
         destinationEditText.setText(tripDestination + "");
 
-            fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
 
-            fabDeleteSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (fabExpanded == true){
-                        closeSubMenusFabDeleteSave();
-                    } else {
-                        openSubMenusFabDeleteSave();
-                    }
+        fabDeleteSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabExpanded == true) {
+                    closeSubMenusFabDeleteSave();
+                } else {
+                    openSubMenusFabDeleteSave();
                 }
-            });
+            }
+        });
 
         // DELETE subFab button
         layoutFabDelete.setOnClickListener(new View.OnClickListener() {
@@ -179,8 +180,8 @@ public class EditTripsActivity extends AppCompatActivity {
     }
 
     public void persistTrip() {
-        if(tripID > 0) {
-            if(dbHelper.updateTrip(tripID, nameEditText.getText().toString(),
+        if (tripID > 0) {
+            if (dbHelper.updateTrip(tripID, nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
                     destinationEditText.getText().toString())) {
                 Toast.makeText(getApplicationContext(), "Trip Edited Successful", Toast.LENGTH_SHORT).show();
@@ -189,18 +190,15 @@ public class EditTripsActivity extends AppCompatActivity {
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(intent, bndlanimation);
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Trip Edit Failed", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
-            if(dbHelper.insertTrip(nameEditText.getText().toString(),
+        } else {
+            if (dbHelper.insertTrip(nameEditText.getText().toString(),
                     departureEditText.getText().toString(),
-                    destinationEditText.getText().toString())){
+                    destinationEditText.getText().toString())) {
                 Toast.makeText(getApplicationContext(), "Trip Saved", Toast.LENGTH_SHORT).show();
-            }
-            else{
+            } else {
                 Toast.makeText(getApplicationContext(), "Could not Save trip", Toast.LENGTH_SHORT).show();
             }
             Intent intent = new Intent(getApplicationContext(), MainActivityTrips.class);
@@ -230,7 +228,7 @@ public class EditTripsActivity extends AppCompatActivity {
     }
 
     //closes FAB submenus delete & edit
-    private void closeSubMenusFabDeleteSave(){
+    private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
@@ -238,7 +236,7 @@ public class EditTripsActivity extends AppCompatActivity {
     }
 
     //Opens FAB submenus
-    private void openSubMenusFabDeleteSave(){
+    private void openSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);

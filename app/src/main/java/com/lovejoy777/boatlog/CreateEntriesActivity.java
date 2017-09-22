@@ -36,7 +36,7 @@ import java.util.Calendar;
  * Created by steve on 07/09/17.
  */
 
-public class CreateEntriesActivity  extends AppCompatActivity implements LocationListener {
+public class CreateEntriesActivity extends AppCompatActivity implements LocationListener {
 
 
     private LocationManager locationManager;
@@ -120,13 +120,7 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         Location location = locationManager.getLastKnownLocation(provider);
@@ -139,11 +133,6 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
             Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
         }
 
-        String formattedLocation = null;
-        if (location != null) {
-            formattedLocation = FormattedLocation(location.getLatitude(), location.getLongitude());
-        }
-
         dbHelper = new BoatLogDBHelper(this);
 
         // pre fill text fields
@@ -151,9 +140,10 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         if (entryName != null && !entryName.isEmpty()) {
             nameEditText.setText("" + entryName);
         }
+
         timeEditText.setText("" + formattedTime);
         dateEditText.setText("" + formattedDate);
-        locationEditText.setText("" + formattedLocation);
+        locationEditText.setText("No GPS");
 
         // SAVE ENTRY FAB BUTTON
         fabSave.setImageResource(R.drawable.ic_save_white);
@@ -169,14 +159,11 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         fabSavefav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Cursor rs = dbHelper.getAllFavEntry();
                 ArrayList<String> favArray = new ArrayList<String>();
                 while (rs.moveToNext()) {
-
                     String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
                     favArray.add(fav);
-
                 }
                 if (!rs.isClosed()) {
                     rs.close();
@@ -189,7 +176,6 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
                 } else {
                     builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
                 }
-
                 builder.setTitle("      Select a Favourite");
                 builder.setIcon(android.R.drawable.btn_star_big_on);
                 if (favnames == null) {
@@ -212,18 +198,18 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
         String fav = "off";
         if (dbHelper.insertEntry(fav,
                 nameEditText.getText().toString(),
-                    timeEditText.getText().toString(),
-                    dateEditText.getText().toString(),
-                    locationEditText.getText().toString(),
-                    trip_idText.getText().toString())) {
-                Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Could not Save Entry", Toast.LENGTH_SHORT).show();
-            }
-            Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-            intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                timeEditText.getText().toString(),
+                dateEditText.getText().toString(),
+                locationEditText.getText().toString(),
+                trip_idText.getText().toString())) {
+            Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Could not Save Entry", Toast.LENGTH_SHORT).show();
+        }
+        Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+        intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
         Bundle bndlanimation =
                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
         startActivity(intent, bndlanimation);
@@ -282,11 +268,12 @@ public class CreateEntriesActivity  extends AppCompatActivity implements Locatio
 
     @Override
     public void onLocationChanged(Location location) {
-        int lat = (int) (location.getLatitude());
-        int lng = (int) (location.getLongitude());
-        String strLongitude = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
-        String strLatitude = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
-        // Toast.makeText(this, "" + strLatitude + strLongitude, Toast.LENGTH_LONG).show();
+        String formattedLocation = null;
+        if (location != null) {
+            formattedLocation = FormattedLocation(location.getLatitude(), location.getLongitude());
+            locationEditText.setText("" + formattedLocation);
+        }
+
 
     }
 

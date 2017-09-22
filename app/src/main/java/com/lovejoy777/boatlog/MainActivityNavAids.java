@@ -39,7 +39,7 @@ public class MainActivityNavAids extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1",false);
+        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
             setContentView(R.layout.activity_main_navaids);

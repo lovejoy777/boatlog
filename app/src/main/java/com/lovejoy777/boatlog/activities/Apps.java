@@ -1,4 +1,5 @@
 package com.lovejoy777.boatlog.activities;
+
 /**
  * Created by lovejoy777 on 10/08/15.
  */

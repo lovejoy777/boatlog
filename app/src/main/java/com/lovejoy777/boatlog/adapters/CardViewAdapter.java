@@ -50,7 +50,7 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.Contac
         return new ContactViewHolder(itemView);
     }
 
-    public static class ContactViewHolder extends RecyclerView.ViewHolder{
+    public static class ContactViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView vName;
         protected TextView vSurname;
@@ -60,8 +60,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.Contac
 
         public ContactViewHolder(View v) {
             super(v);
-            vName =  (TextView) v.findViewById(R.id.txtName);
-            vSurname = (TextView)  v.findViewById(R.id.txtSurname);
+            vName = (TextView) v.findViewById(R.id.txtName);
+            vSurname = (TextView) v.findViewById(R.id.txtSurname);
             vImage = (ImageView) v.findViewById(R.id.iv_themeImage);
             vMessage = (TextView) v.findViewById(R.id.textView);
             vMessage2 = (TextView) v.findViewById(R.id.textView2);

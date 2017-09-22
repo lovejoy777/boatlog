@@ -58,7 +58,7 @@ public class AboutActivity extends AppCompatActivity {
 
         String[] Developer1 = {
                 "Steve Lovejoy"
-        } ;
+        };
         String[] AppDeveloper = {
                 "App Developer"
         };
@@ -73,8 +73,8 @@ public class AboutActivity extends AppCompatActivity {
 
         if (NightModeOn) {
             CustomRedListAdapter adapter1 = new
-                    CustomRedListAdapter(AboutActivity.this, Developer1,AppDeveloper, developerImage1);
-            list1=(ListView)findViewById(R.id.listView_Developer1);
+                    CustomRedListAdapter(AboutActivity.this, Developer1, AppDeveloper, developerImage1);
+            list1 = (ListView) findViewById(R.id.listView_Developer1);
             list1.setAdapter(adapter1);
             list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -88,8 +88,8 @@ public class AboutActivity extends AppCompatActivity {
         if (!NightModeOn) {
 
             CustomListAdapter adapter1 = new
-                    CustomListAdapter(AboutActivity.this, Developer1,AppDeveloper, developerImage1);
-            list1=(ListView)findViewById(R.id.listView_Developer1);
+                    CustomListAdapter(AboutActivity.this, Developer1, AppDeveloper, developerImage1);
+            list1 = (ListView) findViewById(R.id.listView_Developer1);
             list1.setAdapter(adapter1);
             list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -100,7 +100,6 @@ public class AboutActivity extends AppCompatActivity {
         }
 
         //1
-
 
 
         //app version textView
@@ -116,13 +115,18 @@ public class AboutActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        MRL1.setBackgroundColor(Color.BLACK);;
-        scrollView1.setBackgroundColor(Color.BLACK);;
-        RL1.setBackgroundColor(Color.BLACK);;
+        MRL1.setBackgroundColor(Color.BLACK);
+        ;
+        scrollView1.setBackgroundColor(Color.BLACK);
+        ;
+        RL1.setBackgroundColor(Color.BLACK);
+        ;
         tv_caption1.setTextColor(Color.RED);
-        listView_Developer1.setBackgroundColor(Color.BLACK);;
+        listView_Developer1.setBackgroundColor(Color.BLACK);
+        ;
         tv_caption2.setTextColor(Color.RED);
-        listView_link1.setBackgroundColor(Color.BLACK);;
+        listView_link1.setBackgroundColor(Color.BLACK);
+        ;
 
         // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
 

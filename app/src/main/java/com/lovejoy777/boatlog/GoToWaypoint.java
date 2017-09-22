@@ -132,11 +132,11 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         double intLongMin = Double.parseDouble(waypointLongMin);
         double intLongSec = Double.parseDouble(waypointLongSec);
 
-        doublelat = DMSToDecimal(intLatDeg,intLatMin,intLatSec,waypointLatNS);
-        doublelong = DMSToDecimal(intLongDeg,intLongMin,intLongSec,waypointLongEW);
+        doublelat = DMSToDecimal(intLatDeg, intLatMin, intLatSec, waypointLatNS);
+        doublelong = DMSToDecimal(intLongDeg, intLongMin, intLongSec, waypointLongEW);
 
-        String stringlatdms =  waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
-        String stringlongdms =  waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
+        String stringlatdms = waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
+        String stringlongdms = waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
 
         textViewGoTo.setText(waypointName + " @ " + stringlatdms + " " + stringlongdms);
 
@@ -309,20 +309,20 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
         float[] results = new float[1];
         Location.distanceBetween(
-                location.getLatitude(),location.getLongitude(),
+                location.getLatitude(), location.getLongitude(),
                 doublelat, doublelong, results);
         String sttotal = String.valueOf(results[0]);
 
         // DISTANCE TO
         double doubleDistTo = Double.parseDouble(sttotal) / 1852; // 1852m per NM //nm to meters
-        String stringDistTo = String.format( "%.2f", doubleDistTo);
+        String stringDistTo = String.format("%.2f", doubleDistTo);
         textViewDistance.setText(stringDistTo + (" NM"));
 
         // BEARING TO
         double doubleBearTo = location.bearingTo(locationB);
-        int intBearTo = (int)doubleBearTo;
+        int intBearTo = (int) doubleBearTo;
         String stringBearTo = String.valueOf(intBearTo);
-        textViewCourseTo.setText(stringBearTo +(" (M)"));
+        textViewCourseTo.setText(stringBearTo + (" (M)"));
 
     }
 

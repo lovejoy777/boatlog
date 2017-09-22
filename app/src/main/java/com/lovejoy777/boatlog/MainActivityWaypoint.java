@@ -52,7 +52,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
         fabWaypoints.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true){
+                if (fabExpanded == true) {
                     closeSubMenusFab();
                 } else {
                     openSubMenusFab();
@@ -158,10 +158,10 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void populateListView() {
         final Cursor cursor = dbHelper.getAllWaypoint();
-        String [] columns = new String[] {BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
-        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName};
+        String[] columns = new String[]{BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
+        int[] widgets = new int[]{R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info, cursor, columns, widgets, 0);
-        listView = (ListView)findViewById(R.id.listViewWaypoint);
+        listView = (ListView) findViewById(R.id.listViewWaypoint);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
@@ -169,10 +169,10 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void populateListViewRed() {
         final Cursor cursor = dbHelper.getAllWaypoint();
-        String [] columns = new String[] {BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
-        int [] widgets = new int[] {R.id.waypointID, R.id.waypointName};
+        String[] columns = new String[]{BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
+        int[] widgets = new int[]{R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info1, cursor, columns, widgets, 0);
-        listView = (ListView)findViewById(R.id.listViewWaypoint);
+        listView = (ListView) findViewById(R.id.listViewWaypoint);
         listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
@@ -188,14 +188,14 @@ public class MainActivityWaypoint extends AppCompatActivity {
     }
 
     //closes FAB submenus
-    private void closeSubMenusFab(){
+    private void closeSubMenusFab() {
         layoutFabAddNew.setVisibility(View.INVISIBLE);
         fabWaypoints.setImageResource(R.drawable.ic_menu_white);
         fabExpanded = false;
     }
 
     //Opens FAB submenus
-    private void openSubMenusFab(){
+    private void openSubMenusFab() {
         layoutFabAddNew.setVisibility(View.VISIBLE);
         fabWaypoints.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
