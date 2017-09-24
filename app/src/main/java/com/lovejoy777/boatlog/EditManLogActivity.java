@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -261,19 +260,20 @@ public class EditManLogActivity extends AppCompatActivity {
     private void NightMode() {
 
 
-        scrollView1.setBackgroundColor(Color.BLACK);
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
 
-        textViewName.setTextColor(Color.RED);
-        textViewDescription.setTextColor(Color.RED);
-        textViewParts.setTextColor(Color.RED);
-        textViewProgress.setTextColor(Color.RED);
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
 
-        nameEditText.setTextColor(Color.RED);
-        descriptionEditText.setTextColor(Color.RED);
-        partsEditText.setTextColor(Color.RED);
+        textViewName.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+        textViewParts.setTextColor(getResources().getColor(R.color.night_text));
+        textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
+
+        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+        partsEditText.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

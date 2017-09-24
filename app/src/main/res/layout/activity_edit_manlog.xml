@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
-                        android:text="Progress    "
+                        android:text="Progress      "
                         android:textColor="@color/textMain"
                         android:textSize="23sp"
                         android:textStyle="italic"
@@ -177,7 +177,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:spinnerMode="dropdown"
-                        app:popupTheme="@style/AlertDialogTheme"
+                        android:popupTheme="@style/AlertDialogTheme"
                         android:entries="@array/progress_array"
                         android:prompt="@string/progress_prompt" />
 

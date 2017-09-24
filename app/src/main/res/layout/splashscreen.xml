@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff2D2D2D"
+    android:background="@color/card_background"
     android:orientation="vertical"
     tools:context="com.lovejoy777.boatlog.MainActivity">
 
@@ -58,14 +58,13 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textViewVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-
             android:text="@string/version"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/accent" />
+            android:textColor="@color/night_text" />
 
     </LinearLayout>
 

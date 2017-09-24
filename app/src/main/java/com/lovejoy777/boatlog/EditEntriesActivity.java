@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -239,20 +238,20 @@ public class EditEntriesActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(Color.BLACK);
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewName.setTextColor(Color.RED);
-        textViewTime.setTextColor(Color.RED);
-        textViewDate.setTextColor(Color.RED);
-        textViewLocation.setTextColor(Color.RED);
+        textViewName.setTextColor(getResources().getColor(R.color.night_text));
+        textViewTime.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDate.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
 
-        nameEditText.setTextColor(Color.RED);
-        timeEditText.setTextColor(Color.RED);
-        dateEditText.setTextColor(Color.RED);
-        locationEditText.setTextColor(Color.RED);
+        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+        timeEditText.setTextColor(getResources().getColor(R.color.night_text));
+        dateEditText.setTextColor(getResources().getColor(R.color.night_text));
+        locationEditText.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

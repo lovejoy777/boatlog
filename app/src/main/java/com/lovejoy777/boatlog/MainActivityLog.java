@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -246,15 +245,15 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         textViewLat.setText("" + formattedLocationLat);
         textViewLon.setText("" + formattedLocationLon);
 
-        textViewHeading.setText("" + degree + "     (T)");
+        textViewHeading.setText("" + degree + " (T)");
 
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + "    (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("" + 0.0f + "     ns(Kn)");
+            textViewSpeed.setText("" + 0.0f + " (Kn)");
             // Speed information not available.
 
         }
@@ -265,11 +264,11 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + "    (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("0.0f    (Kn)");
+            textViewSpeed.setText("0.0f (Kn)");
             // Speed information not available.
 
         }
@@ -278,7 +277,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     private void Speedlt() {
 
-        textViewSpeed.setText("0.0    (Kn)");
+        textViewSpeed.setText("0.0 (Kn)");
         // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
 
     }
@@ -308,7 +307,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-        textViewCompass.setText("" + Float.toString(degree) + "     (M)");
+        textViewCompass.setText("" + Float.toString(degree) + " (M)");
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(
@@ -417,23 +416,22 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     private void NightMode() {
 
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-        MLL1.setBackgroundColor(Color.BLACK);
-        MLL2.setBackgroundColor(Color.BLACK);
-        MLL3.setBackgroundColor(Color.BLACK);
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        MLL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MLL2.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MLL3.setBackgroundColor(getResources().getColor(R.color.card_background));
 
-        textViewLat.setTextColor(Color.RED);
-        textViewLon.setTextColor(Color.RED);
-        textViewSpeed.setTextColor(Color.RED);
-        textViewHeading.setTextColor(Color.RED);
-        textViewCompass.setTextColor(Color.RED);
+        textViewLat.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLon.setTextColor(getResources().getColor(R.color.night_text));
+        textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
+        textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
+        textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewPos.setTextColor(Color.RED);
-        textViewSped.setTextColor(Color.RED);
-        textViewHead.setTextColor(Color.RED);
-        textViewComp.setTextColor(Color.RED);
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+        textViewPos.setTextColor(getResources().getColor(R.color.night_text));
+        textViewSped.setTextColor(getResources().getColor(R.color.night_text));
+        textViewHead.setTextColor(getResources().getColor(R.color.night_text));
+        textViewComp.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

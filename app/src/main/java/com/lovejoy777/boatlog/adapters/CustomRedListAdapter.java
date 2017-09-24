@@ -1,7 +1,6 @@
 package com.lovejoy777.boatlog.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +36,9 @@ public class CustomRedListAdapter extends ArrayAdapter<String> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         TextView txtSub = (TextView) rowView.findViewById(R.id.description);
         txtTitle.setText(web[position]);
-        txtTitle.setTextColor(Color.RED);
+        txtTitle.setTextColor(context.getResources().getColor(R.color.night_text));
         txtSub.setText((subtext[position]));
-        txtSub.setTextColor(Color.RED);
+        txtSub.setTextColor(context.getResources().getColor(R.color.night_text));
         imageView.setImageResource(imageId[position]);
         return rowView;
     }

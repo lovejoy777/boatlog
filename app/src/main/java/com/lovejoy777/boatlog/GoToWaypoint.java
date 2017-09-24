@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -379,28 +378,28 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
     private void NightMode() {
 
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-        MainRL.setBackgroundColor(Color.BLACK);
-        MLL1.setBackgroundColor(Color.BLACK);
-        MLL2.setBackgroundColor(Color.BLACK);
-        MLL3.setBackgroundColor(Color.BLACK);
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MainRL.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MLL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MLL2.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MLL3.setBackgroundColor(getResources().getColor(R.color.card_background));
 
-        textViewGoTo.setTextColor(Color.RED);
-        textViewLat.setTextColor(Color.RED);
-        textViewLon.setTextColor(Color.RED);
-        textViewSpeed.setTextColor(Color.RED);
-        textViewHeading.setTextColor(Color.RED);
-        textViewCompass.setTextColor(Color.RED);
-        textViewCourseTo.setTextColor(Color.RED);
-        textViewDistance.setTextColor(Color.RED);
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLat.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLon.setTextColor(getResources().getColor(R.color.night_text));
+        textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
+        textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
+        textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
+        textViewCourseTo.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDistance.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewDest.setTextColor(Color.RED);
-        textViewSped.setTextColor(Color.RED);
-        textViewHead.setTextColor(Color.RED);
-        textViewComp.setTextColor(Color.RED);
-        textViewCourse.setTextColor(Color.RED);
-        textViewDist.setTextColor(Color.RED);
+        textViewDest.setTextColor(getResources().getColor(R.color.night_text));
+        textViewSped.setTextColor(getResources().getColor(R.color.night_text));
+        textViewHead.setTextColor(getResources().getColor(R.color.night_text));
+        textViewComp.setTextColor(getResources().getColor(R.color.night_text));
+        textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDist.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

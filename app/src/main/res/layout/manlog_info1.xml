@@ -13,7 +13,7 @@
         android:textStyle="italic"
         android:text="Name"
         android:typeface="serif"
-        android:textColor="@color/red" />
+        android:textColor="@color/night_text" />
 
     <TextView
         android:id="@+id/manlogID"
@@ -28,7 +28,7 @@
         android:layout_weight="1"
         android:layout_gravity="end"
         android:layout_marginEnd="10dp"
-        android:textColor="@color/red"
+        android:textColor="@color/night_text"
         android:textSize="20sp"
         android:textStyle="italic"
         android:typeface="serif" />

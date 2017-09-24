@@ -4,7 +4,6 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -160,11 +159,11 @@ public class MainActivityManLog extends AppCompatActivity {
 
     private void NightMode() {
 
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-        listViewManLog.setBackgroundColor(Color.BLACK);
-        fabManLog.setBackgroundColor(Color.RED);
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        listViewManLog.setBackgroundColor(getResources().getColor(R.color.card_background));
+        fabManLog.setBackgroundColor(getResources().getColor(R.color.night_text));
 
     }
 

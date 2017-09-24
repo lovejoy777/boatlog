@@ -76,7 +76,7 @@
 
         <activity
             android:name=".MainActivityEntries"
-            android:label="@string/app_name"
+            android:label=""
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
             android:parentActivityName=".MainActivity">
             <intent-filter>

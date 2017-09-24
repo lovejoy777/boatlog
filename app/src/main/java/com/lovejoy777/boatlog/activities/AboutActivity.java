@@ -3,7 +3,6 @@ package com.lovejoy777.boatlog.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -115,20 +114,15 @@ public class AboutActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        MRL1.setBackgroundColor(Color.BLACK);
-        ;
-        scrollView1.setBackgroundColor(Color.BLACK);
-        ;
-        RL1.setBackgroundColor(Color.BLACK);
-        ;
-        tv_caption1.setTextColor(Color.RED);
-        listView_Developer1.setBackgroundColor(Color.BLACK);
-        ;
-        tv_caption2.setTextColor(Color.RED);
-        listView_link1.setBackgroundColor(Color.BLACK);
-        ;
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        RL1.setBackgroundColor(getResources().getColor(R.color.card_background));
 
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+        tv_caption1.setTextColor(getResources().getColor(R.color.night_text));
+        listView_Developer1.setBackgroundColor(getResources().getColor(R.color.card_background));
+
+        tv_caption2.setTextColor(getResources().getColor(R.color.night_text));
+        listView_link1.setBackgroundColor(getResources().getColor(R.color.card_background));
 
     }
 

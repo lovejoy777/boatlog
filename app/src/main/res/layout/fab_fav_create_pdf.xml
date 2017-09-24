@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fabFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical">
 
+
+    <!-- ******************************************CREATE NEW MAIN LAYOUT ******************************-->
+
+
     <LinearLayout
-        android:id="@+id/layoutFabSave"
+        android:id="@+id/layoutFabAddNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -20,19 +25,23 @@
         android:layout_marginEnd="8dp"
         android:orientation="horizontal">
 
+
+        <!-- Create new card view -->
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/card_background"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:cardElevation="@dimen/cardElevation"
-            app:cardUseCompatPadding="true" >
+            app:cardUseCompatPadding="true">
+
+            <!-- Create new texView -->
             <TextView
-                android:id="@+id/editTV"
+                android:id="@+id/addNewTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/fab_card_text"
-                android:text="@string/FabSave"
+                android:text="@string/FabNewEntry"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:paddingRight="@dimen/cardview_horizontal_padding"
@@ -41,18 +50,21 @@
                 android:paddingTop="@dimen/cardview_vertical_padding" />
         </android.support.v7.widget.CardView>
 
+        <!-- Create new entry button FAB -->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabSave"
+            android:id="@+id/fabAddNew"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_save_white"
-            app:backgroundTint="@color/primary"
+            android:src="@drawable/ic_format_align_left_white"
+            app:backgroundTint="@color/fab"
             app:fabSize="mini" />
 
     </LinearLayout>
 
+
+    <!-- ************************************PDF MAIN LAYOUT ****************************************-->
     <LinearLayout
-        android:id="@+id/layoutFabDelete"
+        android:id="@+id/layoutFabPrintPdf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -62,20 +74,23 @@
         android:layout_marginBottom="150dp"
         android:orientation="horizontal">
 
+
+        <!-- PDF CARD LAYOUT -->
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/card_background"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:cardElevation="@dimen/cardElevation"
-            app:cardUseCompatPadding="true" >
+            app:cardUseCompatPadding="true">
 
+            <!-- PDF Create textView -->
             <TextView
-                android:id="@+id/deleteTV"
+                android:id="@+id/CreateFavfTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/fab_card_text"
-                android:text="@string/FabDelete"
+                android:text="Create a PDF"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:paddingRight="@dimen/cardview_horizontal_padding"
@@ -85,20 +100,21 @@
 
         </android.support.v7.widget.CardView>
 
+        <!-- PDF create button FAB -->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabDelete"
+            android:id="@+id/fabCreateFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_delete_white"
+            android:src="@drawable/ic_picture_as_pdf_white"
             app:backgroundTint="@color/fab"
             app:fabSize="mini" />
-
     </LinearLayout>
 
 
-
+    <!-- *******************************************************************
+    ******************MAIN BUTTONS BOTTOM LAYOUT ***************************-->
     <LinearLayout
-        android:id="@+id/layoutFabDeleteSave"
+        android:id="@+id/layoutFabEntries"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -106,15 +122,29 @@
         android:layout_marginBottom="30dp"
         android:orientation="horizontal">
 
+
+        <!-- Main Favourites create/delete -->
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabDeleteSave"
+            android:id="@+id/fabEntriesfav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:src="@android:drawable/btn_star_big_off"
+            app:backgroundTint="@color/fab"
+            app:fabSize="normal" />
+
+
+        <!-- main entries button -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabEntries"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             app:backgroundTint="@color/fab"
             app:fabSize="normal" />
 
+
     </LinearLayout>
-    <!--android:src="@drawable/ic_close_black_24dp"
-    android:src="@drawable/ic_menu_white"-->
+    <!--android:src="@drawable/ic_close_black_24dp"-->
 </FrameLayout>

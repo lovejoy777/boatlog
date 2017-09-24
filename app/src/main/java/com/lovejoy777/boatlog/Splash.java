@@ -3,7 +3,9 @@ package com.lovejoy777.boatlog;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.TextView;
 
 /**
  * Created by steve on 17/09/17.
@@ -16,6 +18,16 @@ public class Splash extends Activity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
+
+        //app version textView
+        TextView tv_version = (TextView) findViewById(R.id.textViewVersion);
+        try {
+            String versionName = Splash.this.getPackageManager()
+                    .getPackageInfo(Splash.this.getPackageName(), 0).versionName;
+            tv_version.setText("Version " + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         Thread timerThread = new Thread() {
             public void run() {

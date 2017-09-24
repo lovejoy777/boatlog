@@ -2,7 +2,6 @@ package com.lovejoy777.boatlog.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -35,7 +34,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
     private void NightMode() {
 
-        getListView().setBackgroundColor(Color.BLACK);
+        getListView().setBackgroundColor(getResources().getColor(R.color.card_background));
         setTheme(R.style.DarkTheme);
         // Toast.makeText(SettingsActivity.this, "Night Mode Active", Toast.LENGTH_LONG).show();
     }

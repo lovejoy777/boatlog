@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -180,10 +179,10 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     private void NightMode() {
 
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
-        listViewWaypoint.setBackgroundColor(Color.BLACK);
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        listViewWaypoint.setBackgroundColor(getResources().getColor(R.color.card_background));
 
     }
 

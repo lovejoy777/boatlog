@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -278,27 +277,27 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(Color.BLACK);
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewName.setTextColor(Color.RED);
-        textViewDescription.setTextColor(Color.RED);
-        textViewLocationLat.setTextColor(Color.RED);
-        textViewLocationLong.setTextColor(Color.RED);
+        textViewName.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
 
 
-        nameEditText.setTextColor(Color.RED);
-        descriptionEditText.setTextColor(Color.RED);
-        latdegEditText.setTextColor(Color.RED);
-        latminEditText.setTextColor(Color.RED);
-        latsecEditText.setTextColor(Color.RED);
-        latnsEditText.setTextColor(Color.RED);
-        longdegEditText.setTextColor(Color.RED);
-        longminEditText.setTextColor(Color.RED);
-        longsecEditText.setTextColor(Color.RED);
-        longewEditText.setTextColor(Color.RED);
+        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+        latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+        latminEditText.setTextColor(getResources().getColor(R.color.night_text));
+        latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+        latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
+        longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+        longminEditText.setTextColor(getResources().getColor(R.color.night_text));
+        longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+        longewEditText.setTextColor(getResources().getColor(R.color.night_text));
     }
 
     @Override

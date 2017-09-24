@@ -22,10 +22,8 @@
     <string name="stevelovejoy">Steve Lovejoy</string>
     <string name="General">General</string>
     <string name="version">Version: Alpha</string>
-
     <string name="name">Name</string>
     <string name="destination">Destination</string>
-
 
     <string name="yes">Confirm</string>
     <string name="no">Cancel</string>

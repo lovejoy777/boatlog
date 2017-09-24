@@ -125,21 +125,21 @@ public class MainActivityNavAids extends AppCompatActivity {
     private void NightMode() {
 
 
-        toolBar.setBackgroundColor(Color.BLACK);
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
         // titleTextView.setTextColor(Color.RED);
 
         textView1.setText("Waypoints");
         textView2.setText("test1");
         textView3.setText("test2");
 
-        MRL1.setBackgroundColor(Color.BLACK);
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
         RL1.setBackgroundResource(R.color.card_background);
         RL2.setBackgroundResource(R.color.card_background);
         RL3.setBackgroundResource(R.color.card_background);
 
-        textView1.setTextColor(Color.RED);
-        textView2.setTextColor(Color.RED);
-        textView3.setTextColor(Color.RED);
+        textView1.setTextColor(getResources().getColor(R.color.night_text));
+        textView2.setTextColor(getResources().getColor(R.color.night_text));
+        textView3.setTextColor(getResources().getColor(R.color.night_text));
 
         img_thumbnail1.setImageResource(R.drawable.waypoints);
         img_thumbnail2.setImageResource(R.drawable.test1);

@@ -82,6 +82,41 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        toolBar = (Toolbar) findViewById(R.id.toolbar);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+
+        scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
+        MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
+        RL1 = (RelativeLayout) findViewById(R.id.RL1);
+        RL2 = (RelativeLayout) findViewById(R.id.RL2);
+        RL3 = (RelativeLayout) findViewById(R.id.RL3);
+        RL4 = (RelativeLayout) findViewById(R.id.RL4);
+
+        textView1 = (TextView) findViewById(R.id.textView1);
+        img_thumbnail1 = (ImageView) findViewById(R.id.img_thumbnail1);
+        textView2 = (TextView) findViewById(R.id.textView2);
+        img_thumbnail2 = (ImageView) findViewById(R.id.img_thumbnail2);
+        textView3 = (TextView) findViewById(R.id.textView3);
+        img_thumbnail3 = (ImageView) findViewById(R.id.img_thumbnail3);
+        textView4 = (TextView) findViewById(R.id.textView4);
+        img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
+
+        textView1.setText("Ships LogBook");
+        textView2.setText("Log");
+        textView3.setText("Navigation");
+        textView4.setText("Maintenance Log");
+
+        img_thumbnail1.setImageResource(R.drawable.book);
+        img_thumbnail2.setImageResource(R.drawable.log);
+        img_thumbnail3.setImageResource(R.drawable.waypoints);
+        img_thumbnail4.setImageResource(R.drawable.test1);
+
+        RL1.setBackgroundResource(R.color.white);
+        RL2.setBackgroundResource(R.color.white);
+        RL3.setBackgroundResource(R.color.white);
+        RL4.setBackgroundResource(R.color.white);
 
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
@@ -91,68 +126,12 @@ public class MainActivity extends AppCompatActivity {
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
-            setContentView(R.layout.activity_main);
             loadToolbarNavDrawerRed();
-
-            toolBar = (Toolbar) findViewById(R.id.toolbar);
-            titleTextView = (TextView) findViewById(R.id.titleTextView);
-
-            scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
-            MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-            RL1 = (RelativeLayout) findViewById(R.id.RL1);
-            RL2 = (RelativeLayout) findViewById(R.id.RL2);
-            RL3 = (RelativeLayout) findViewById(R.id.RL3);
-            RL4 = (RelativeLayout) findViewById(R.id.RL4);
-
-            textView1 = (TextView) findViewById(R.id.textView1);
-            img_thumbnail1 = (ImageView) findViewById(R.id.img_thumbnail1);
-            textView2 = (TextView) findViewById(R.id.textView2);
-            img_thumbnail2 = (ImageView) findViewById(R.id.img_thumbnail2);
-            textView3 = (TextView) findViewById(R.id.textView3);
-            img_thumbnail3 = (ImageView) findViewById(R.id.img_thumbnail3);
-            textView4 = (TextView) findViewById(R.id.textView4);
-            img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
-
             NightMode();
-
         }
 
         if (!NightModeOn) {
-            setContentView(R.layout.activity_main);
             loadToolbarNavDrawer();
-
-            toolBar = (Toolbar) findViewById(R.id.toolbar);
-            titleTextView = (TextView) findViewById(R.id.titleTextView);
-
-            MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-            RL1 = (RelativeLayout) findViewById(R.id.RL1);
-            RL2 = (RelativeLayout) findViewById(R.id.RL2);
-            RL3 = (RelativeLayout) findViewById(R.id.RL3);
-            RL4 = (RelativeLayout) findViewById(R.id.RL4);
-
-            textView1 = (TextView) findViewById(R.id.textView1);
-            img_thumbnail1 = (ImageView) findViewById(R.id.img_thumbnail1);
-            textView2 = (TextView) findViewById(R.id.textView2);
-            img_thumbnail2 = (ImageView) findViewById(R.id.img_thumbnail2);
-            textView3 = (TextView) findViewById(R.id.textView3);
-            img_thumbnail3 = (ImageView) findViewById(R.id.img_thumbnail3);
-            textView4 = (TextView) findViewById(R.id.textView4);
-            img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
-
-            RL1.setBackgroundColor(Color.WHITE);
-            RL2.setBackgroundColor(Color.WHITE);
-            RL3.setBackgroundColor(Color.WHITE);
-            RL4.setBackgroundColor(Color.WHITE);
-
-            textView1.setText("Ships LogBook");
-            textView2.setText("Log");
-            textView3.setText("Navigation");
-            textView4.setText("Maintenance Log");
-
-            img_thumbnail1.setImageResource(R.drawable.book);
-            img_thumbnail2.setImageResource(R.drawable.log);
-            img_thumbnail3.setImageResource(R.drawable.waypoints);
-            img_thumbnail4.setImageResource(R.drawable.test1);
 
         }
 
@@ -367,9 +346,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            navigationView.setItemTextColor(ColorStateList.valueOf(Color.RED));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.RED));
-            navigationView.setBackgroundColor(Color.BLACK);
+            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
         }
     }
 
@@ -624,8 +603,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void NightMode() {
-        toolBar.setBackgroundColor(Color.BLACK);
-        scrollView1.setBackgroundColor(Color.BLACK);
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
         // titleTextView.setTextColor(Color.RED);
 
         textView1.setText("Ships LogBook");
@@ -633,23 +612,16 @@ public class MainActivity extends AppCompatActivity {
         textView3.setText("Navigation");
         textView4.setText("Maintenance Log");
 
-        MRL1.setBackgroundColor(Color.BLACK);
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
         RL1.setBackgroundResource(R.color.card_background);
         RL2.setBackgroundResource(R.color.card_background);
         RL3.setBackgroundResource(R.color.card_background);
         RL4.setBackgroundResource(R.color.card_background);
 
-        textView1.setTextColor(Color.RED);
-        textView2.setTextColor(Color.RED);
-        textView3.setTextColor(Color.RED);
-        textView4.setTextColor(Color.RED);
-
-        img_thumbnail1.setImageResource(R.drawable.book);
-        img_thumbnail2.setImageResource(R.drawable.log);
-        img_thumbnail3.setImageResource(R.drawable.waypoints);
-        img_thumbnail4.setImageResource(R.drawable.test1);
-
-        // Toast.makeText(MainActivityLog.this, "Night Mode", Toast.LENGTH_LONG).show();
+        textView1.setTextColor(getResources().getColor(R.color.night_text));
+        textView2.setTextColor(getResources().getColor(R.color.night_text));
+        textView3.setTextColor(getResources().getColor(R.color.night_text));
+        textView4.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

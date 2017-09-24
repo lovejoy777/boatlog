@@ -24,7 +24,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/cardview_light_background"
+            android:backgroundTint="@color/card_background"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:cardElevation="@dimen/cardElevation"
             app:cardUseCompatPadding="true">
@@ -33,6 +33,7 @@
                 android:id="@+id/addNewTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/fab_card_text"
                 android:text="@string/FabNewEntry"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
@@ -58,24 +59,27 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:layout_gravity="bottom|end"
+
         android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="150dp"
         android:orientation="horizontal">
 
+
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/cardview_light_background"
+            android:backgroundTint="@color/card_background"
             app:cardCornerRadius="@dimen/cardCornerRadius"
             app:cardElevation="@dimen/cardElevation"
             app:cardUseCompatPadding="true">
 
             <TextView
-                android:id="@+id/printPdfTV"
+                android:id="@+id/CreateFavfTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/FabPrint"
+                android:textColor="@color/fab_card_text"
+                android:text="Create a PDF"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:paddingRight="@dimen/cardview_horizontal_padding"
@@ -86,13 +90,12 @@
         </android.support.v7.widget.CardView>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabPrintPdf"
+            android:id="@+id/fabCreateFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_picture_as_pdf_white"
             app:backgroundTint="@color/fab"
             app:fabSize="mini" />
-
     </LinearLayout>
 
 
@@ -104,16 +107,6 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="30dp"
         android:orientation="horizontal">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabEntriesfav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:src="@android:drawable/btn_star_big_off"
-            app:backgroundTint="@color/fab"
-            app:fabSize="normal" />
 
 
         <android.support.design.widget.FloatingActionButton

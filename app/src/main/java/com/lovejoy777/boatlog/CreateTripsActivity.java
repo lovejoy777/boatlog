@@ -3,7 +3,6 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -133,19 +132,18 @@ public class CreateTripsActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(Color.BLACK);
-        MRL1.setBackgroundColor(Color.BLACK);
-        // fabFrame.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewName.setTextColor(Color.RED);
-        textViewDeparture.setTextColor(Color.RED);
-        textViewDestination.setTextColor(Color.RED);
+        textViewName.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDeparture.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDestination.setTextColor(getResources().getColor(R.color.night_text));
 
-        nameEditText.setTextColor(Color.RED);
-        departureEditText.setTextColor(Color.RED);
-        destinationEditText.setTextColor(Color.RED);
+        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+        departureEditText.setTextColor(getResources().getColor(R.color.night_text));
+        destinationEditText.setTextColor(getResources().getColor(R.color.night_text));
 
     }
 

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -37,6 +36,7 @@ import java.util.Calendar;
  */
 
 public class CreateEntriesActivity extends AppCompatActivity implements LocationListener {
+
 
 
     private LocationManager locationManager;
@@ -71,6 +71,7 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_entries);
+
 
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
@@ -296,22 +297,23 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
                 Toast.LENGTH_SHORT).show();
     }
 
+
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(Color.BLACK);
-        MRL1.setBackgroundColor(Color.BLACK);
-        toolBar.setBackgroundColor(Color.BLACK);
-        titleTextView.setTextColor(Color.RED);
+        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
 
-        textViewName.setTextColor(Color.RED);
-        textViewTime.setTextColor(Color.RED);
-        textViewDate.setTextColor(Color.RED);
-        textViewLocation.setTextColor(Color.RED);
+        textViewName.setTextColor(getResources().getColor(R.color.night_text));
+        textViewTime.setTextColor(getResources().getColor(R.color.night_text));
+        textViewDate.setTextColor(getResources().getColor(R.color.night_text));
+        textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
 
-        nameEditText.setTextColor(Color.RED);
-        timeEditText.setTextColor(Color.RED);
-        dateEditText.setTextColor(Color.RED);
-        locationEditText.setTextColor(Color.RED);
+        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+        timeEditText.setTextColor(getResources().getColor(R.color.night_text));
+        dateEditText.setTextColor(getResources().getColor(R.color.night_text));
+        locationEditText.setTextColor(getResources().getColor(R.color.night_text));
     }
 
     @Override
