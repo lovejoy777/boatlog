@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,6 +36,11 @@ import static java.lang.Math.floor;
 public class GoToWaypoint extends AppCompatActivity implements LocationListener, SensorEventListener {
 
     private BoatLogDBHelper dbHelper;
+
+    public static ImageView arrow;
+
+    // record the compass picture angle turned
+    private float currentDegreeNeedle = 0f;
 
     // GPS location
     private LocationManager locationManager;
@@ -89,6 +96,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         MLL1 = (LinearLayout) findViewById(R.id.MLL1);
         MLL2 = (LinearLayout) findViewById(R.id.MLL2);
         MLL3 = (LinearLayout) findViewById(R.id.MLL3);
+        arrow = (ImageView) findViewById(R.id.needle);
 
         textViewLat = (TextView) findViewById(R.id.textViewLat);
         textViewLon = (TextView) findViewById(R.id.textViewLon);
@@ -105,6 +113,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewDist = (TextView) findViewById(R.id.textViewDist);
 
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
+
+        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -137,7 +147,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         String stringlatdms = waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
         String stringlongdms = waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
 
-        textViewGoTo.setText(waypointName + " @ " + stringlatdms + " " + stringlongdms);
+        textViewGoTo.setText(waypointName + " @ " + stringlatdms + ", " + stringlongdms);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -207,7 +217,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             int latMinutes = latSeconds / 60;
             latSeconds %= 60;
 
-            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String latDegree = latitude >= 0 ? "N" : "S";
 
             return abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
                     + "\"" + latDegree;
@@ -224,7 +234,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             longSeconds = abs(longSeconds % 3600);
             int longMinutes = longSeconds / 60;
             longSeconds %= 60;
-            String lonDegrees = longDegrees >= 0 ? "W" : "E";
+            String lonDegrees = longitude >= 0 ? "E" : "W";
 
             return abs(longDegrees) + "°" + longMinutes
                     + "'" + longSeconds + "\"" + lonDegrees;
@@ -281,23 +291,24 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     @Override
     public void onLocationChanged(Location location) {
 
-        float degree = location.getBearing();
-
+        // CURRENT POSITION
         textViewLat.setText(FormattedLocationLat(location.getLatitude()));
         textViewLon.setText(FormattedLocationLon(location.getLongitude()));
 
-        textViewHeading.setText("" + degree + " (T)");
 
+        // SPEED
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " KN");
+
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("0.0 (Kn)");
+            textViewSpeed.setText("0.0 KN");
 
         }
 
+        // DISTANCE TO WAYPOINT
         Location locationA = new Location("point A");
         locationA.setLatitude(location.getLatitude());
         locationA.setLongitude(location.getLongitude());
@@ -311,17 +322,51 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
                 location.getLatitude(), location.getLongitude(),
                 doublelat, doublelong, results);
         String sttotal = String.valueOf(results[0]);
-
-        // DISTANCE TO
         double doubleDistTo = Double.parseDouble(sttotal) / 1852; // 1852m per NM //nm to meters
         String stringDistTo = String.format("%.2f", doubleDistTo);
         textViewDistance.setText(stringDistTo + (" NM"));
 
-        // BEARING TO
-        double doubleBearTo = location.bearingTo(locationB);
-        int intBearTo = (int) doubleBearTo;
+        // BEARING TO WAYPOINT
+        float floatBearTo = location.bearingTo(locationB);
+        int intBearTo = (int) floatBearTo;
+        if (intBearTo < 0) {
+            intBearTo = intBearTo + 360;
+            //bearTo = -100 + 360  = 260;
+        }
         String stringBearTo = String.valueOf(intBearTo);
-        textViewCourseTo.setText(stringBearTo + (" (M)"));
+        textViewCourseTo.setText(stringBearTo + (" T"));
+
+        // CURRENT HEADING OVER GROUND
+        float degree = location.getBearing();
+        if (degree < 0) {
+            degree = degree + 360;
+            //bearTo = -100 + 360  = 260;
+        }
+
+        //float direction = degree - floatBearTo;
+
+        textViewHeading.setText("" + degree + " T");
+
+        if (degree > 0) {
+            // create a rotation animation (reverse turn degree degrees)
+            RotateAnimation ra = new RotateAnimation(
+                    degree, // fromDegrees
+                    floatBearTo, // toDegress
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF, 0.5f);
+
+            // how long the animation will take place
+            ra.setDuration(210);
+
+            // set the animation after the end of the reservation status
+            ra.setFillAfter(true);
+
+            // Start the animation
+
+            arrow.startAnimation(ra);
+            degree = floatBearTo;
+        }
+
 
     }
 
@@ -350,7 +395,15 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-        textViewCompass.setText("" + Float.toString(degree) + "     (M)");
+
+        String result = "0";
+        if (degree == Math.floor(degree)) {
+            result = Integer.toString((int) degree);
+        } else {
+            result = Float.toString(degree);
+        }
+
+        textViewCompass.setText("" + result + " M");
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(
@@ -400,6 +453,8 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewComp.setTextColor(getResources().getColor(R.color.night_text));
         textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
         textViewDist.setTextColor(getResources().getColor(R.color.night_text));
+
+        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
 
     }
 

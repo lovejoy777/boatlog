@@ -96,7 +96,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/material_blue_grey_800"
+                android:background="@color/primary"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true">
             </LinearLayout>
@@ -110,7 +110,7 @@
         android:orientation="horizontal"
         android:layout_width="2dp"
         android:layout_height="80dp"
-        android:background="@color/material_blue_grey_800">
+        android:background="@color/primary">
         </LinearLayout>
 
     <LinearLayout
@@ -155,7 +155,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/material_blue_grey_800"
+                android:background="@color/primary"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true">
             </LinearLayout>
@@ -216,7 +216,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/material_blue_grey_800"
+                    android:background="@color/primary"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -230,7 +230,7 @@
             android:orientation="horizontal"
             android:layout_width="2dp"
             android:layout_height="80dp"
-            android:background="@color/material_blue_grey_800">
+            android:background="@color/primary">
         </LinearLayout>
 
         <LinearLayout
@@ -248,7 +248,7 @@
                     android:id="@+id/textViewComp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bearing"
+                    android:text="Compass"
                     android:gravity="center_vertical"
                     android:textSize="16sp"
                     android:textStyle="italic"
@@ -275,7 +275,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/material_blue_grey_800"
+                    android:background="@color/primary"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>

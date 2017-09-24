@@ -163,7 +163,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
             int latMinutes = latSeconds / 60;
             latSeconds %= 60;
 
-            String latDegree = latDegrees >= 0 ? "N" : "S";
+            String latDegree = latitude >= 0 ? "N" : "S";
 
             return Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
                     + "\"" + latDegree;
@@ -180,7 +180,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
             longSeconds = Math.abs(longSeconds % 3600);
             int longMinutes = longSeconds / 60;
             longSeconds %= 60;
-            String lonDegrees = longDegrees >= 0 ? "W" : "E";
+            String lonDegrees = longitude >= 0 ? "E" : "W";
 
             return Math.abs(longDegrees) + "°" + longMinutes
                     + "'" + longSeconds + "\"" + lonDegrees;
@@ -236,24 +236,30 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     @Override
     public void onLocationChanged(Location location) {
+        // String formattedLocationLatnew = location.convert(location.getLatitude(), location.FORMAT_SECONDS);
         String formattedLocationLat = FormattedLocationLat(location.getLatitude());
         String formattedLocationLon = FormattedLocationLon(location.getLongitude());
+        // String formattedLocationLonnew = location.convert(location.getLongitude(), location.FORMAT_SECONDS);
         //float formattedSpeed = FormattedSpeed(location.getSpeed());
         float degree = location.getBearing();
 
+        if (degree < 0) {
+            degree = degree + 360;
+            //bearTo = -100 + 360  = 260;
+        }
 
-        textViewLat.setText("" + formattedLocationLat);
-        textViewLon.setText("" + formattedLocationLon);
+        textViewLat.setText(formattedLocationLat);
+        textViewLon.setText(formattedLocationLon);
 
-        textViewHeading.setText("" + degree + " (T)");
+        textViewHeading.setText("" + degree + " T");
 
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " Kn");
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("" + 0.0f + " (Kn)");
+            textViewSpeed.setText("" + 0.0f + " Kn");
             // Speed information not available.
 
         }
@@ -264,11 +270,11 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
         if (location.hasSpeed()) {
             float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + " (Kn)");
+            textViewSpeed.setText("" + formattedSpeed + " Kn");
             // process data
         }
         if (!location.hasSpeed()) {
-            textViewSpeed.setText("0.0f (Kn)");
+            textViewSpeed.setText("0.0f Kn");
             // Speed information not available.
 
         }
@@ -277,7 +283,7 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
 
     private void Speedlt() {
 
-        textViewSpeed.setText("0.0 (Kn)");
+        textViewSpeed.setText("0.0f Kn");
         // Toast.makeText(MainActivityLog.this, "Day Mode", Toast.LENGTH_LONG).show();
 
     }
@@ -307,7 +313,15 @@ public class MainActivityLog extends AppCompatActivity implements LocationListen
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
 
-        textViewCompass.setText("" + Float.toString(degree) + " (M)");
+        //  int deg = degree.intValue();
+        String result = "0";
+        if (degree == Math.floor(degree)) {
+            result = Integer.toString((int) degree);
+        } else {
+            result = Float.toString(degree);
+        }
+
+        textViewCompass.setText("" + result + " M");
 
         // create a rotation animation (reverse turn degree degrees)
         RotateAnimation ra = new RotateAnimation(

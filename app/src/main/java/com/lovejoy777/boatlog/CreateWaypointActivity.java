@@ -167,8 +167,8 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             longSeconds = Math.abs(longSeconds % 3600);
             int longMinutes = longSeconds / 60;
             longSeconds %= 60;
-            String latDegree = latDegrees >= 0 ? "N" : "S";
-            String lonDegree = longDegrees >= 0 ? "W" : "E";
+            String latDegree = latitude >= 0 ? "N" : "S";
+            String lonDegree = longitude >= 0 ? "E" : "W";
 
             return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
                     + " " + latDegree + "/" + Math.abs(longDegrees) + "." + longMinutes

@@ -80,9 +80,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textViewDest"
@@ -90,13 +92,13 @@
                         android:layout_height="wrap_content"
                         android:text="Location"
                         android:gravity="center_vertical"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="italic"
                         android:typeface="serif"
                         android:textColor="@color/textMain"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/textViewLat"
@@ -104,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:text="Lat"
                         android:gravity="center_vertical"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:layout_below="@id/textViewDest"
                         android:textColor="@color/text_color_secondary"
                         android:layout_centerHorizontal="true" />
@@ -115,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:text="Long"
                         android:gravity="center_vertical"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textColor="@color/text_color_secondary"
                         android:layout_below="@id/textViewLat"
                         android:layout_centerHorizontal="true" />
@@ -125,9 +127,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -138,7 +142,9 @@
                 android:orientation="horizontal"
                 android:layout_width="2dp"
                 android:layout_height="120dp"
-                android:background="@color/material_blue_grey_800"></LinearLayout>
+                android:background="@color/primary">
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/LL2"
@@ -156,9 +162,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textViewSped"
@@ -172,7 +180,7 @@
                         android:textColor="@color/textMain"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/textViewSpeed"
@@ -191,9 +199,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -232,7 +242,7 @@
                         android:textColor="@color/textMain"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/textViewHeading"
@@ -251,9 +261,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -264,7 +276,9 @@
                 android:orientation="horizontal"
                 android:layout_width="2dp"
                 android:layout_height="120dp"
-                android:background="@color/material_blue_grey_800"></LinearLayout>
+                android:background="@color/primary">
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/LL4"
@@ -281,7 +295,7 @@
                         android:id="@+id/textViewComp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bearing"
+                        android:text="Compass"
                         android:gravity="center_vertical"
                         android:textSize="20sp"
                         android:textStyle="italic"
@@ -289,7 +303,7 @@
                         android:textColor="@color/textMain"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/textViewCompass"
@@ -308,9 +322,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -349,7 +365,7 @@
                         android:textColor="@color/textMain"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="2dp" />
 
                     <TextView
                         android:id="@+id/textViewCourseTo"
@@ -368,9 +384,11 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
@@ -380,8 +398,10 @@
                 android:id="@+id/LLG8"
                 android:orientation="horizontal"
                 android:layout_width="2dp"
-                android:layout_height="120dp"
-                android:background="@color/material_blue_grey_800"></LinearLayout>
+                android:layout_height="80dp"
+                android:background="@color/primary">
+
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/LL6"
@@ -404,7 +424,7 @@
                         android:textStyle="italic"
                         android:typeface="serif"
                         android:textColor="@color/textMain"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="2dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true" />
 
@@ -425,16 +445,41 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="@color/material_blue_grey_800"
+                        android:background="@color/primary"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"></LinearLayout>
+                        android:layout_alignParentEnd="true">
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 
             </LinearLayout>
 
+
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/LLG10"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/primary"></LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:layout_marginTop="2dp"
+            android:scaleType="centerInside">
+
+            <ImageView
+                android:id="@+id/needle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/redarrowup" />
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
