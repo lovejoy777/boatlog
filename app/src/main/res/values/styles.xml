@@ -1,9 +1,9 @@
 <resources>
 
     <style name="DarkTheme">
-        <item name="android:textColor">#ff0000</item>
-        <item name="android:textColorPrimary">#ff0000</item>
-        <item name="android:textColorSecondary">#ff0000</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:textColorPrimary">@color/accent</item>
+        <item name="android:textColorSecondary">@color/accent</item>
     </style>
 
     <!-- Toolbars -->
@@ -47,7 +47,8 @@
     </style>
 
     <!-- About -->
-    <style name="Toolbar2" parent="Theme.AppCompat.Light.NoActionBar">                                  <!-- MaterialLight: Theme.Material.Light.DarkActionBar | MaterialDark: Theme.Material -->
+    <!-- MaterialLight: Theme.Material.Light.DarkActionBar | MaterialDark: Theme.Material -->
+    <style name="Toolbar2" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:windowNoTitle">true</item>
     <item name="android:windowActionBar">false</item>
     <item name="android:colorPrimary">@color/primary</item>
@@ -102,17 +103,6 @@
     </style>
 
     <style name="CustomAlertDialogStyle">
-        <!--   <item name="android:bottomBright">@color/cardview_dark_background</item>
-           <item name="android:bottomDark">@color/cardview_dark_background</item>
-           <item name="android:bottomMedium">@color/cardview_dark_background</item>
-           <item name="android:centerBright">@color/cardview_dark_background</item>
-
-           <item name="android:centerMedium">@color/cardview_dark_background</item>
-           <item name="android:fullBright">@color/cardview_dark_background</item>
-
-           <item name="android:topBright">@color/cardview_dark_background</item>
-           <item name="android:topDark">@color/cardview_dark_background</item>
-        <item name="android:centerDark">@color/cardview_dark_background</item> -->
         <item name="android:fullDark">@color/cardview_dark_background</item>
     </style>
 

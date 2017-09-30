@@ -1,6 +1,7 @@
 package com.lovejoy777.boatlog;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -39,16 +41,14 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
     public static ImageView arrow;
 
-    // record the compass picture angle turned
-    private float currentDegreeNeedle = 0f;
-
     // GPS location
     private LocationManager locationManager;
     private String provider;
 
-    // compass heading
     private float currentDegree = 0f;
     private SensorManager mSensorManager;
+    // record the arrow drawable angle turned
+    private float currentDegreeNeedle = 0f;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -57,6 +57,20 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     LinearLayout MLL1;
     LinearLayout MLL2;
     LinearLayout MLL3;
+
+    // GRID OUTLINES LAYOUTS
+    LinearLayout LLG;
+    LinearLayout LLG0;
+    LinearLayout LLG1;
+    LinearLayout LLG2;
+    LinearLayout LLG3;
+    LinearLayout LLG4;
+    LinearLayout LLG5;
+    LinearLayout LLG6;
+    LinearLayout LLG7;
+    LinearLayout LLG8;
+    LinearLayout LLG9;
+    LinearLayout LLG10;
 
     //textViews
     TextView textViewDest;
@@ -74,6 +88,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     TextView textViewCourseTo;
     TextView textViewDistance;
     TextView textViewGoTo;
+    ImageView imageViewAccu;
 
     int waypointID;
     String waypointName;
@@ -96,7 +111,24 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         MLL1 = (LinearLayout) findViewById(R.id.MLL1);
         MLL2 = (LinearLayout) findViewById(R.id.MLL2);
         MLL3 = (LinearLayout) findViewById(R.id.MLL3);
+
+        // GRID OUTLINE LAYOUTS
+        LLG = (LinearLayout) findViewById(R.id.LLG);
+        LLG0 = (LinearLayout) findViewById(R.id.LLG0);
+        LLG1 = (LinearLayout) findViewById(R.id.LLG1);
+        LLG2 = (LinearLayout) findViewById(R.id.LLG2);
+        LLG3 = (LinearLayout) findViewById(R.id.LLG3);
+        LLG4 = (LinearLayout) findViewById(R.id.LLG4);
+        LLG5 = (LinearLayout) findViewById(R.id.LLG5);
+        LLG6 = (LinearLayout) findViewById(R.id.LLG6);
+        LLG7 = (LinearLayout) findViewById(R.id.LLG7);
+        LLG8 = (LinearLayout) findViewById(R.id.LLG8);
+        LLG9 = (LinearLayout) findViewById(R.id.LLG9);
+        LLG10 = (LinearLayout) findViewById(R.id.LLG10);
+
+
         arrow = (ImageView) findViewById(R.id.needle);
+        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
 
         textViewLat = (TextView) findViewById(R.id.textViewLat);
         textViewLon = (TextView) findViewById(R.id.textViewLon);
@@ -111,11 +143,11 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewComp = (TextView) findViewById(R.id.textViewComp);
         textViewCourse = (TextView) findViewById(R.id.textViewCourse);
         textViewDist = (TextView) findViewById(R.id.textViewDist);
+        imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
 
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
 
-        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
-
+        // GET WAYPOINT DATA FROM DATABASE
         dbHelper = new BoatLogDBHelper(this);
 
         Cursor rs = dbHelper.getWaypoint(waypointID);
@@ -147,7 +179,17 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         String stringlatdms = waypointLatDeg + "°" + waypointLatMin + "'" + waypointLatSec + "\"" + waypointLatNS;
         String stringlongdms = waypointLongDeg + "°" + waypointLongMin + "'" + waypointLongSec + "\"" + waypointLongEW;
 
+        // PREFILL TEXT FIELDS
         textViewGoTo.setText(waypointName + " @ " + stringlatdms + ", " + stringlongdms);
+        textViewLat.setText("No GPS");
+        textViewLon.setText("No GPS");
+        textViewDistance.setText("0 NM");
+        textViewSpeed.setText("0 KN");
+        textViewHeading.setText("00 T");
+        textViewCourseTo.setText("00 T");
+        //imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+        //textViewAccu.setText("bad");
+
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -185,9 +227,15 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
 
+
+            //  location.
+
             onLocationChanged(location);
+
+
+
         } else {
-            Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Waiting for GPS ", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -288,86 +336,163 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         mSensorManager.unregisterListener(this);
     }
 
+
     @Override
     public void onLocationChanged(Location location) {
 
-        // CURRENT POSITION
-        textViewLat.setText(FormattedLocationLat(location.getLatitude()));
-        textViewLon.setText(FormattedLocationLon(location.getLongitude()));
 
+        float accu = location.getAccuracy();
+        int intaccu = (int) accu;
 
-        // SPEED
-        if (location.hasSpeed()) {
-            float formattedSpeed = FormattedSpeed(location.getSpeed());
-            textViewSpeed.setText("" + formattedSpeed + " KN");
+        if (intaccu > 25) {
+            location.reset();
+            //BackgroundTaskGpsSignal taskGpsSig = new BackgroundTaskGpsSignal(GoToWaypoint.this);
+            //taskGpsSig.execute();
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+            //Toast.makeText(getApplicationContext(), "Waiting for GPS ", Toast.LENGTH_LONG).show();
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+            if (NightModeOn) {
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+            }
+        }
+        if (intaccu < 25) {
 
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+            if (NightModeOn) {
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            }
+            //imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+            textViewLat.setText(FormattedLocationLat(location.getLatitude()));
+            textViewLon.setText(FormattedLocationLon(location.getLongitude()));
+
+            // DISTANCE TO WAYPOINT
+            Location locationA = new Location("point A");
+            locationA.setLatitude(location.getLatitude());
+            locationA.setLongitude(location.getLongitude());
+
+            Location locationB = new Location("point B");
+            locationB.setLatitude(doublelat);
+            locationB.setLongitude(doublelong);
+
+            float[] results = new float[1];
+            Location.distanceBetween(
+                    location.getLatitude(), location.getLongitude(),
+                    doublelat, doublelong, results);
+            String sttotal = String.valueOf(results[0]);
+            double doubleDistTo = Double.parseDouble(sttotal) / 1852; // 1852m per NM //nm to meters
+            String stringDistTo = String.format("%.2f", doubleDistTo);
+            textViewDistance.setText(stringDistTo + (" NM"));
+
+            // SPEED
+            if (location.hasSpeed()) {
+
+                float formattedSpeed = FormattedSpeed(location.getSpeed());
+                textViewSpeed.setText("" + formattedSpeed + " KN");
+
+                //arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+
+            }
             // process data
-        }
-        if (!location.hasSpeed()) {
-            textViewSpeed.setText("0.0 KN");
+            if (!location.hasSpeed()) {
+                // arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                textViewSpeed.setText("0.0 KN");
+                textViewHeading.setText("00 T");
+                //arrow.setRotation(0);
+            }
 
-        }
+            // CURRENT TRACK OVER GROUND
+            float heading = location.getBearing();
+            int intheading = (int) heading;
+            if (intheading < 0) {
+                intheading = intheading + 360;
+            }
+            // FILL TEXTVIEW TRACK OVER GROUND
+            String stringHeading = String.valueOf(intheading);
+            textViewHeading.setText(stringHeading + " T");
 
-        // DISTANCE TO WAYPOINT
-        Location locationA = new Location("point A");
-        locationA.setLatitude(location.getLatitude());
-        locationA.setLongitude(location.getLongitude());
+            // BEARING TO WAYPOINT
+            float BearTo = location.bearingTo(locationB);
+            int intBearTo = (int) BearTo;
+            if (intBearTo < 0) {
+                intBearTo = intBearTo + 360;
+            }
 
-        Location locationB = new Location("point B");
-        locationB.setLatitude(doublelat);
-        locationB.setLongitude(doublelong);
+            // FILL TEXTVIEW BEARING TO
+            String stringBearTo = String.valueOf(intBearTo);
+            textViewCourseTo.setText(stringBearTo + (" T"));
+            // If the bearTo is smaller than 0, add 360 to get the rotation clockwise.
+            //This is where we choose to point it
+            //float direction = (BearTo - heading) - 360;
+            // If the direction is smaller than 0, add 360 to get the rotation clockwise.
 
-        float[] results = new float[1];
-        Location.distanceBetween(
-                location.getLatitude(), location.getLongitude(),
-                doublelat, doublelong, results);
-        String sttotal = String.valueOf(results[0]);
-        double doubleDistTo = Double.parseDouble(sttotal) / 1852; // 1852m per NM //nm to meters
-        String stringDistTo = String.format("%.2f", doubleDistTo);
-        textViewDistance.setText(stringDistTo + (" NM"));
+            // GET POINTER ANGLE
+            if (heading < 0) {
+                heading = 360 + heading;
+            }
+            if (BearTo < 0) {
+                BearTo = 360 + BearTo;
+            }
+            float direction = (BearTo - heading) - 360;
 
-        // BEARING TO WAYPOINT
-        float floatBearTo = location.bearingTo(locationB);
-        int intBearTo = (int) floatBearTo;
-        if (intBearTo < 0) {
-            intBearTo = intBearTo + 360;
-            //bearTo = -100 + 360  = 260;
-        }
-        String stringBearTo = String.valueOf(intBearTo);
-        textViewCourseTo.setText(stringBearTo + (" T"));
 
-        // CURRENT HEADING OVER GROUND
-        float degree = location.getBearing();
-        if (degree < 0) {
-            degree = degree + 360;
-            //bearTo = -100 + 360  = 260;
-        }
-
-        //float direction = degree - floatBearTo;
-
-        textViewHeading.setText("" + degree + " T");
-
-        if (degree > 0) {
+            // ROTATE POINTER
             // create a rotation animation (reverse turn degree degrees)
             RotateAnimation ra = new RotateAnimation(
-                    degree, // fromDegrees
-                    floatBearTo, // toDegress
+                    currentDegreeNeedle,
+                    direction,
                     Animation.RELATIVE_TO_SELF, 0.5f,
                     Animation.RELATIVE_TO_SELF, 0.5f);
-
             // how long the animation will take place
             ra.setDuration(210);
-
             // set the animation after the end of the reservation status
             ra.setFillAfter(true);
-
-            // Start the animation
-
             arrow.startAnimation(ra);
-            degree = floatBearTo;
+            // Start the animation
+            currentDegreeNeedle = direction;
+            arrow.startAnimation(ra);
+            // Toast.makeText(getApplicationContext(), "accuracy " + accu, Toast.LENGTH_SHORT).show();
         }
 
 
+        // CURRENT POSITION
+
+
+
+    }
+
+    // CREATE PDF WITH IMAGE BACKGROUND TASK WITH PROGRESS SPINNER
+    private class BackgroundTaskGpsSignal extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog dialog;
+
+        public BackgroundTaskGpsSignal(GoToWaypoint activity) {
+            dialog = new ProgressDialog(activity, R.style.StyledDialog);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setTitle("Weak or no Gps");
+            dialog.setMessage("please wait");
+            dialog.setIcon(R.drawable.ic_gps_fixed);
+            dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            return null;
+        }
     }
 
     @Override
@@ -392,10 +517,9 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     @Override
     public void onSensorChanged(SensorEvent event) {
 
+        // COMPASS
         // get the angle around the z-axis rotated
         float degree = Math.round(event.values[0]);
-
-
         String result = "0";
         if (degree == Math.floor(degree)) {
             result = Integer.toString((int) degree);
@@ -404,23 +528,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         }
 
         textViewCompass.setText("" + result + " M");
-
-        // create a rotation animation (reverse turn degree degrees)
-        RotateAnimation ra = new RotateAnimation(
-                currentDegree,
-                -degree,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f);
-
-        // how long the animation will take place
-        ra.setDuration(210);
-
-        // set the animation after the end of the reservation status
-        ra.setFillAfter(true);
-
-        // Start the animation
-        currentDegree = -degree;
 
     }
 
@@ -436,6 +543,20 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         MLL1.setBackgroundColor(getResources().getColor(R.color.card_background));
         MLL2.setBackgroundColor(getResources().getColor(R.color.card_background));
         MLL3.setBackgroundColor(getResources().getColor(R.color.card_background));
+
+        LLG.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG0.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG1.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG2.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG3.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG4.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG5.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG6.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG7.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG8.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG9.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG10.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+
 
         titleTextView.setTextColor(getResources().getColor(R.color.night_text));
         textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
@@ -454,6 +575,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
         textViewDist.setTextColor(getResources().getColor(R.color.night_text));
 
+        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
         arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
 
     }
@@ -462,5 +584,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
+        locationManager.removeUpdates(this);
+        // to stop the listener and save battery
+        mSensorManager.unregisterListener(this);
     }
+
 }
+

@@ -82,7 +82,7 @@ public class MainActivityManLog extends AppCompatActivity {
 
         listViewManLog = (ListView) findViewById(R.id.listViewManLog);
 
-        titleTextView.setText("Maintenance");
+        titleTextView.setText("Maintenance Log");
 
         dbHelper = new BoatLogDBHelper(this);
 

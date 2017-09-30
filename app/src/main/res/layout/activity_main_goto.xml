@@ -35,6 +35,18 @@
         android:padding="12dp"
         android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
+    <ImageView
+        android:id="@+id/imageViewAccu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_gps_fixed"
+        android:tint="@color/night_text"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="5dp" />
+
     <TextView
         android:id="@+id/textViewGoTo"
         android:layout_width="wrap_content"
@@ -84,7 +96,7 @@
                     android:id="@+id/textViewDest"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Location"
+                    android:text="Current Location"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textStyle="italic"
@@ -165,7 +177,7 @@
                     android:id="@+id/textViewSped"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Speed"
+                    android:text="Speed Over Ground"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textStyle="italic"
@@ -179,7 +191,7 @@
                     android:id="@+id/textViewSpeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No GPS"
+                    android:text="No Speed"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textColor="@color/text_color_secondary"
@@ -226,7 +238,7 @@
                     android:id="@+id/textViewHead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Heading"
+                    android:text="Track Over Ground"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textStyle="italic"
@@ -240,7 +252,7 @@
                     android:id="@+id/textViewHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No Heading"
+                    android:text="No Speed"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textColor="@color/text_color_secondary"
@@ -347,7 +359,7 @@
                     android:id="@+id/textViewCourse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Course"
+                    android:text="Bearing To"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textStyle="italic"
@@ -361,7 +373,7 @@
                     android:id="@+id/textViewCourseTo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="To Steer"
+                    android:text="No GPS"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textColor="@color/text_color_secondary"
@@ -407,7 +419,7 @@
                     android:id="@+id/textViewDist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Distance"
+                    android:text="Distance To"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textStyle="italic"
@@ -421,7 +433,7 @@
                     android:id="@+id/textViewDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="To Waypoint"
+                    android:text="No GPS"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
                     android:textColor="@color/text_color_secondary"
@@ -460,8 +472,17 @@
             android:layout_height="80dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/redarrowup" />
+            android:src="@drawable/white_pointer" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/LLG10"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/card_background">
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"

@@ -127,8 +127,7 @@ public class CreateManLogActivity extends AppCompatActivity {
                     descriptionEditText.getText().toString(),
                     partsEditText.getText().toString(),
                     progressString)) {
-                Toast.makeText(getApplicationContext(), progressString, Toast.LENGTH_SHORT).show();
-                //  Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entry Saved", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Could not Save Entry", Toast.LENGTH_SHORT).show();
             }

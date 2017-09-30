@@ -5,7 +5,6 @@
         android:title="@string/General"
         android:key="first_category">
 
-
         <SwitchPreference
             android:key="switch1"
             android:title="Night Mode"
@@ -22,9 +21,6 @@
             android:summary="Keep screen on when using Log Screen."
             />
 
-
     </PreferenceCategory>
-
-
 
 </PreferenceScreen>

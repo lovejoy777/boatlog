@@ -64,7 +64,7 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/version"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/night_text" />
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

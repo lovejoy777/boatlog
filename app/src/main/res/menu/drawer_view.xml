@@ -29,7 +29,7 @@
             <item
                 android:id="@+id/nav_night_switch"
                 app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_cast_dark"
+                android:icon="@drawable/ic_brightness_3"
                 android:title="NightMode" />
             <item
                 android:id="@+id/nav_screen_on_switch"
@@ -43,12 +43,12 @@
         <menu>
             <item
                 android:id="@+id/nav_backup"
-                android:icon="@drawable/ic_save_black_24dp"
+                android:icon="@drawable/ic_save_white"
                 android:title="Backup Data" />
 
             <item
                 android:id="@+id/nav_restore"
-                android:icon="@drawable/ic_save_black_24dp"
+                android:icon="@drawable/ic_save_white"
                 android:title="Restore Data" />
         </menu>
     </item>

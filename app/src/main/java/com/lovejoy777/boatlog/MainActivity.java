@@ -391,6 +391,11 @@ public class MainActivity extends AppCompatActivity {
                                 // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
+                            case R.id.nav_tutorial:
+                                Intent tutorial = new Intent(MainActivity.this, Tutorial.class);
+                                startActivity(tutorial, bndlanimation);
+                                break;
+
                             case R.id.nav_about:
                                 Intent about = new Intent(MainActivity.this, AboutActivity.class);
                                 startActivity(about, bndlanimation);
