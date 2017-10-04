@@ -39,12 +39,13 @@
         android:id="@+id/imageViewAccu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_gps_fixed"
-        android:tint="@color/accent"
+        android:tint="@color/night_text"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:padding="12dp" />
+        android:layout_margin="15dp" />
 
     <TextView
         android:id="@+id/textViewGoTo"
@@ -501,6 +502,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
+
 
     </LinearLayout>
 

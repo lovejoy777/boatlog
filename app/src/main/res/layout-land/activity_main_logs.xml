@@ -277,6 +277,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/LLG1"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/primary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LLG2"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/primary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"></LinearLayout>
+
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/MLL3"

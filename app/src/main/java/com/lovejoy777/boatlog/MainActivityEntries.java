@@ -448,7 +448,7 @@ public class MainActivityEntries extends AppCompatActivity {
         private ProgressDialog dialog;
 
         public BackgroundTaskPDF(MainActivityEntries activity) {
-            dialog = new ProgressDialog(activity, R.style.StyledDialog);
+            dialog = new ProgressDialog(MainActivityEntries.this, R.style.AlertDialogTheme);
         }
 
         @Override
@@ -563,7 +563,7 @@ public class MainActivityEntries extends AppCompatActivity {
         private ProgressDialog dialog;
 
         public BackgroundTaskPDFimage(MainActivityEntries activity) {
-            dialog = new ProgressDialog(activity, R.style.StyledDialog);
+            dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
         }
 
         @Override
