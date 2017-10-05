@@ -35,6 +35,19 @@
         android:padding="12dp"
         android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
+    <TextView
+        android:id="@+id/textViewGetTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nil"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"/>
+
     <ImageView
         android:id="@+id/imageViewAccu"
         android:layout_width="wrap_content"
@@ -55,8 +68,7 @@
         android:textSize="16sp"
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
-        android:padding="12dp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin" />
+        android:padding="12dp" />
 
 
 

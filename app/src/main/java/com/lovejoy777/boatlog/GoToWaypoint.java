@@ -1,5 +1,6 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +19,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
@@ -38,6 +38,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
+import java.math.BigDecimal;
+
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 
@@ -48,12 +50,14 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
         SensorEventListener {
 
     // SQLITE DATABASE
-    private BoatLogDBHelper dbHelper;
+    BoatLogDBHelper dbHelper;
 
-    // GOOGLE MAPS
+    // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
-    private long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+    long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
+    long FASTEST_INTERVAL = 2000; /* 2 sec */
+    long FALLBACK_INTERVAL = 20000; // 2 seconds
+    long INDICATOR_INTERVAL = 200; // .2 seconds
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;
@@ -100,6 +104,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     TextView textViewCourseTo;
     TextView textViewDistance;
     TextView textViewGoTo;
+    TextView textViewGetTime;
 
     // IMAGEVIEWS
     ImageView imageViewAccu;
@@ -109,8 +114,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     String waypointName;
     double doublelat;
     double doublelong;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +166,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
         imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
 
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
+        textViewGetTime = (TextView) findViewById(R.id.textViewGetTime);
 
         // GET WAYPOINT DATA FROM DATABASE
         dbHelper = new BoatLogDBHelper(this);
@@ -228,8 +232,8 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
 
         isGooglePlayServicesAvailable();
 
-        if (!isLocationEnabled())
-            showAlert();
+       // if (!isLocationEnabled())
+         //   showAlert();
 
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -237,7 +241,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
                 .setFastestInterval(FASTEST_INTERVAL);
         EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
                 .setLocationRequest(locationRequest)
-                .setFallBackToLastLocationTime(10000)
+                .setFallBackToLastLocationTime(FALLBACK_INTERVAL)
                 .build();
         requestLocationUpdates(easyLocationRequest);
     }
@@ -245,13 +249,13 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     @Override
     public void onLocationReceived(Location location) {
 
-
-
         if (location != null) {
             long locationAge = System.currentTimeMillis() - location.getTime();
-            String locAge = String.valueOf(locationAge);
+            long newLocationAge = locationAge;
+            String locAge = String.valueOf(newLocationAge);
+            textViewGetTime.setText(locAge);
             // showToast(locAge);
-            if (locationAge < 9) {
+            if (newLocationAge < INDICATOR_INTERVAL) {
                 updateUI(location);
 
             } else {
@@ -316,7 +320,10 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
         // HAS SPEED
             if (location.hasSpeed()) {
                 float formattedSpeed = FormattedSpeed(location.getSpeed());
-                textViewSpeed.setText("" + formattedSpeed + " KN");
+                BigDecimal result;
+                result=round(formattedSpeed,2);
+                System.out.println(result);
+                textViewSpeed.setText("" + result + " KN");
 
             }
 
@@ -369,9 +376,15 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
 
     }
 
+    public static BigDecimal round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd;
+    }
+
     // CONVERT FROM METERS PER SECOND TO KNOTS PER HOUR
     public static float FormattedSpeed(float mps) {
-        int mpsSped = (int) abs(mps * 1.943844f);
+        float mpsSped = abs(mps * 1.943844f);
         return abs(mpsSped);
     }
 
@@ -481,24 +494,31 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     }
 
     private void showAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(GoToWaypoint.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(GoToWaypoint.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Enable Location Services")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
                         "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(myIntent);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(myIntent, bndlanimation);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
                     }
-                });
-        dialog.show();
+                })
+                .setIcon(R.drawable.ic_location_on_white)
+                .show();
     }
 
     // PERMISSIONS CHECK
@@ -576,6 +596,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
         LLG9.setBackgroundColor(getResources().getColor(R.color.grid_outline));
         LLG10.setBackgroundColor(getResources().getColor(R.color.grid_outline));
 
+        textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
         titleTextView.setTextColor(getResources().getColor(R.color.night_text));
         textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
         textViewLat.setTextColor(getResources().getColor(R.color.night_text));
