@@ -16,12 +16,9 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
@@ -33,12 +30,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akhgupta.easylocation.EasyLocationAppCompatActivity;
+import com.akhgupta.easylocation.EasyLocationRequest;
+import com.akhgupta.easylocation.EasyLocationRequestBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
@@ -46,9 +44,8 @@ import static java.lang.Math.floor;
 /**
  * Created by lovejoy777 on 14/10/15.
  */
-public class GoToWaypoint extends AppCompatActivity implements LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, SensorEventListener {
+public class GoToWaypoint extends EasyLocationAppCompatActivity implements LocationListener,
+        SensorEventListener {
 
     // SQLITE DATABASE
     private BoatLogDBHelper dbHelper;
@@ -57,12 +54,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     final String TAG = "GPS";
     private long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
-    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
-
-    GoogleApiClient gac;
-    LocationRequest locationRequest;
-
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;
@@ -118,6 +109,7 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     String waypointName;
     double doublelat;
     double doublelong;
+
 
 
     @Override
@@ -233,106 +225,71 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
-        /** dialog = new ProgressDialog(this, R.style.AlertDialogTheme);
-         dialog.setTitle(" searching for gps");
-         dialog.setMessage("   please wait");
-         dialog.setIcon(R.drawable.ic_gps_off);
-         dialog.show(); */
 
         isGooglePlayServicesAvailable();
 
         if (!isLocationEnabled())
             showAlert();
 
-
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(UPDATE_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        gac = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
+        LocationRequest locationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+        EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
+                .setLocationRequest(locationRequest)
+                .setFallBackToLastLocationTime(10000)
                 .build();
-
-
-
+        requestLocationUpdates(easyLocationRequest);
     }
 
-
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationReceived(Location location) {
+
+
+
         if (location != null) {
-            updateUI(location);
+            long locationAge = System.currentTimeMillis() - location.getTime();
+            String locAge = String.valueOf(locationAge);
+            // showToast(locAge);
+            if (locationAge < 9) {
+                updateUI(location);
+
+            } else {
+                textViewLat.setText("searching");
+                textViewLon.setText("for gps");
+                textViewDistance.setText("0.0 NM");
+                textViewSpeed.setText("0.0 KN");
+                textViewHeading.setText("00 T");
+                textViewCourseTo.setText("00 T");
+
+                SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+                arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+                if (NightModeOn) {
+                    arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
+                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
+                }
+
+            }
         }
-    }
-
-    @Override
-    // GOOGLE MAPS CONNECTION SUSPENDED
-    public void onConnectionSuspended(int i) {
-
-        Toast.makeText(this, "GPS Connection Suspended", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(GoToWaypoint.this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-            return;
-        }
-        Log.d(TAG, "onConnected");
-
-        Location ll = LocationServices.FusedLocationApi.getLastLocation(gac);
-        Log.d(TAG, "LastLocation: " + (ll == null ? "NO LastLocation" : ll.toString()));
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(gac, locationRequest, this);
-
-
-
     }
 
     // UPDATE UI
     private void updateUI(Location location) {
         Log.d(TAG, "updateUI");
-
-
         // PRESET TEXT VIEWS
-        textViewLat.setText("searching");
-        textViewLon.setText("for gps");
-        textViewDistance.setText("0.0 NM");
-        textViewSpeed.setText("0.0 KN");
-        textViewHeading.setText("00 T");
-        textViewCourseTo.setText("00 T");
-        // location.reset();
-        /**
-
-         } else {
-         dialog.dismiss();
-         GET SHARED PREFS FOR NIGHT MODE
-
-
-         float accu = location.getAccuracy();
-         int intaccu = (int) accu;
-
-         //long locationAge = System.currentTimeMillis() - location.getTime();
-         // if (locationAge >= 15 * 1000) { // older than 10 seconds
-
-         */
-
-            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
-            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-            if (NightModeOn) {
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
 
-            }
+        if (NightModeOn) {
+            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
+
+        }
 
         // SET TEXT VIEWS LATITUDE & LONGITUDE WITH LOCATION
         textViewLat.setText(FormattedLocationLat(location.getLatitude()));
@@ -362,11 +319,6 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
                 textViewSpeed.setText("" + formattedSpeed + " KN");
 
             }
-        // NO SPEED
-        //   if (!location.hasSpeed()) {
-        //      textViewSpeed.setText("0.0 KN");
-        //      textViewHeading.setText("00 T");
-        //  }
 
         // CURRENT TRACK OVER GROUND
         float heading = location.getBearing();
@@ -415,142 +367,12 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
             String stringBearTo = String.valueOf(intBearTo);
             textViewCourseTo.setText(stringBearTo + (" T"));
 
-
     }
 
-    private boolean isLocationEnabled() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-    private boolean isGooglePlayServicesAvailable() {
-        final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
-                        .show();
-            } else {
-                Log.d(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        Log.d(TAG, "This device is supported.");
-        return true;
-    }
-
-    private void showAlert() {
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                        "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-
-                    }
-                });
-        dialog.show();
-    }
-
-    // MAPS CONNECTION FAILED
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, "GPS Connection Failed", Toast.LENGTH_SHORT).show();
-    }
-
-    // PERMISSIONS CHECK
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
-    public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Asking user if explanation is needed
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                //Prompt the user once explanation has been shown
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // PERMISSIONS RESULT
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(GoToWaypoint.this, "Permission was granted!", Toast.LENGTH_LONG).show();
-
-                    try {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(
-                                gac, locationRequest, this);
-                    } catch (SecurityException e) {
-                        Toast.makeText(GoToWaypoint.this, "SecurityException:\n" + e.toString(), Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(GoToWaypoint.this, "Permission denied!", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-        }
-    }
-
-    // COMPASS SENSOR CHANGED
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-        // get the angle around the z-axis rotated
-        float degree = Math.round(sensorEvent.values[0]);
-
-        //  int deg = degree.intValue();
-        String result = "0";
-        if (degree == Math.floor(degree)) {
-            result = Integer.toString((int) degree);
-        } else {
-            result = Float.toString(degree);
-        }
-
-        textViewCompass.setText("" + result + " M");
-
-    }
-
-    // COMPASS ACCURACY CHANGE
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-        // not in use
+    // CONVERT FROM METERS PER SECOND TO KNOTS PER HOUR
+    public static float FormattedSpeed(float mps) {
+        int mpsSped = (int) abs(mps * 1.943844f);
+        return abs(mpsSped);
     }
 
     // CONVERT DMS TO DECIMAL
@@ -603,10 +425,133 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
         }
     }
 
-    // CONVERT FROM METERS PER SECOND TO KNOTS PER HOUR
-    public static float FormattedSpeed(float mps) {
-        int mpsSped = (int) abs(mps * 1.943844f);
-        return abs(mpsSped);
+    // EASYLOCATION LIB METHODS
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLocationPermissionGranted() {
+        showToast("Location permission granted");
+    }
+
+    @Override
+    public void onLocationPermissionDenied() {
+        showToast("Location permission denied");
+    }
+
+    @Override
+    public void onLocationProviderEnabled() {
+        showToast("Location services are now ON");
+    }
+
+    @Override
+    public void onLocationProviderDisabled() {
+        showToast("Location services are still Off");
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.d(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        Log.d(TAG, "This device is supported.");
+        return true;
+    }
+
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+
+                    }
+                });
+        dialog.show();
+    }
+
+    // PERMISSIONS CHECK
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // COMPASS SENSOR CHANGED
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        // get the angle around the z-axis rotated
+        float degree = Math.round(sensorEvent.values[0]);
+
+        //  int deg = degree.intValue();
+        String result = "0";
+        if (degree == Math.floor(degree)) {
+            result = Integer.toString((int) degree);
+        } else {
+            result = Float.toString(degree);
+        }
+
+        textViewCompass.setText("" + result + " M");
+
+    }
+
+    // COMPASS ACCURACY CHANGE
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+        // not in use
     }
 
     // NIGHT MODE
@@ -659,22 +604,10 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
 
     }
 
-    @Override
-    protected void onStart() {
-        gac.connect();
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        gac.disconnect();
-        super.onStop();
-    }
-
     // COMPASS REQUEST UPDATES AT STARTUP
     @Override
     protected void onResume() {
-        gac.connect();
+
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
         super.onResume();
@@ -684,18 +617,18 @@ public class GoToWaypoint extends AppCompatActivity implements LocationListener,
     // COMPASS UNREGESTER LISTENER
     @Override
     protected void onPause() {
-        gac.disconnect();
+        stopLocationUpdates();
         mSensorManager.unregisterListener(this);
         super.onPause();
     }
 
     @Override
     public void onBackPressed() {
-        gac.disconnect();
+        stopLocationUpdates();
         mSensorManager.unregisterListener(this);
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 
-
 }
+

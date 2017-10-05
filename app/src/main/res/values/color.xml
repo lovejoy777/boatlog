@@ -21,6 +21,9 @@
     <!-- Backgrounds -->
     <color name="background">#ffffffff</color>
     <color name="red">#ffff0000</color>
+    <color name="black">#ff000000</color>
+    <color name="light_green_500">#8BC34A</color>
+
     <color name="fab_card_text">@color/white</color>
     <color name="card_background">@color/grey800</color>
     <color name="grid_outline">@color/accent</color>
