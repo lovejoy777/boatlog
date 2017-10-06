@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +24,6 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
         android:layout_marginTop="3dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
@@ -33,6 +39,31 @@
         android:layout_centerHorizontal="true"
         android:padding="12dp"
         android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+    <TextView
+        android:id="@+id/textViewGetTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nil"
+        android:textSize="12sp"
+        android:textColor="@color/white"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"/>
+
+    <ImageView
+        android:id="@+id/imageViewAccu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_gps_fixed"
+        android:tint="@color/night_text"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="15dp" />
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/MLL1"
@@ -306,30 +337,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:context="com.lovejoy777.boatlog.Main" />
-                <!--
-                                <ImageView
-                                                    android:id="@+id/imageViewCompassMark"
-                                                    android:layout_width="3dp"
-                                                    android:layout_height="4dp"
-                                                    android:src="@drawable/red"
-                                                    android:elevation="2dp"
-                                                    android:layout_marginTop="2dp"
-                                                    android:layout_centerHorizontal="true" />
-
-                                        <ImageView
-                                            android:id="@+id/imageViewCompass"
-                                            android:layout_width="320dp"
-                                            android:layout_height="320dp"
-                                            android:src="@drawable/compassblack1"
-                                            android:layout_below="@+id/imageViewCompassMark"
-                                            android:layout_marginTop="4dp"
-                                            android:layout_centerHorizontal="true" />
-
-                -->
 
                             </RelativeLayout>
 
                         </LinearLayout>
 
                     </RelativeLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_log"
+        app:theme="@style/NavigationViewTheme" />
+
+</android.support.v4.widget.DrawerLayout>
 

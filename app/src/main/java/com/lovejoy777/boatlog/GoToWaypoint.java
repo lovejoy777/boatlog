@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,10 +18,19 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -35,8 +45,9 @@ import com.akhgupta.easylocation.EasyLocationRequest;
 import com.akhgupta.easylocation.EasyLocationRequestBuilder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.lovejoy777.boatlog.activities.AboutActivity;
+import com.lovejoy777.boatlog.activities.SettingsActivity;
 
 import java.math.BigDecimal;
 
@@ -46,18 +57,20 @@ import static java.lang.Math.floor;
 /**
  * Created by lovejoy777 on 14/10/15.
  */
-public class GoToWaypoint extends EasyLocationAppCompatActivity implements LocationListener,
-        SensorEventListener {
+public class GoToWaypoint extends EasyLocationAppCompatActivity implements SensorEventListener {
+
+    private DrawerLayout mDrawerLayout;
+    private SwitchCompat switcher1, switcher2;
 
     // SQLITE DATABASE
     BoatLogDBHelper dbHelper;
 
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
-    long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
-    long FASTEST_INTERVAL = 2000; /* 2 sec */
-    long FALLBACK_INTERVAL = 20000; // 2 seconds
-    long INDICATOR_INTERVAL = 200; // .2 seconds
+    long UPDATE_INTERVAL = 2 * 1000;  // 10 secs
+    long FASTEST_INTERVAL = 2000; // 2 sec
+    long FALLBACK_INTERVAL = 10000; // 10 seconds
+    long INDICATOR_INTERVAL = 800; // .8 seconds
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;
@@ -215,6 +228,9 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
 
         if (NightModeOn) {
             NightMode();
+            loadToolbarNavDrawerRed();
+        } else {
+            loadToolbarNavDrawer();
         }
 
         Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
@@ -251,6 +267,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
 
         if (location != null) {
             long locationAge = System.currentTimeMillis() - location.getTime();
+
             long newLocationAge = locationAge;
             String locAge = String.valueOf(newLocationAge);
             textViewGetTime.setText(locAge);
@@ -321,11 +338,15 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
             if (location.hasSpeed()) {
                 float formattedSpeed = FormattedSpeed(location.getSpeed());
                 BigDecimal result;
-                result=round(formattedSpeed,2);
+                result=round(formattedSpeed,1);
                 System.out.println(result);
                 textViewSpeed.setText("" + result + " KN");
 
             }
+
+        if (!location.hasSpeed()) {
+            textViewSpeed.setText("" + 0.0f + " Kn");
+        }
 
         // CURRENT TRACK OVER GROUND
         float heading = location.getBearing();
@@ -464,11 +485,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     }
 
 
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -574,6 +590,243 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
         // not in use
     }
 
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if (navigationView != null) {
+
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean switch1 = myPrefs.getBoolean("switch1", false);
+            Boolean switch2 = myPrefs.getBoolean("switch2", false);
+
+            setupDrawerContent(navigationView);
+            Menu menu = navigationView.getMenu();
+
+            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
+            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
+
+            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
+            switcher1.setChecked(switch1);
+            switcher1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", false);
+                        myPrefse.apply();
+                    }
+                    // Restart app to load day/night modes
+                    Intent intent = new Intent(GoToWaypoint.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    Bundle bndlanimation =
+                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                    startActivity(intent, bndlanimation);
+                    startActivity(intent);
+
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
+            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
+
+            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
+            switcher2.setChecked(switch2);
+            switcher2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher2.isChecked())) {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", false);
+                        myPrefse.apply();
+                    }
+
+
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+
+            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            //navigationView.setBackgroundColor(Color.BLACK);
+        }
+    }
+
+    private void loadToolbarNavDrawerRed() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if (navigationView != null) {
+
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean switch1 = myPrefs.getBoolean("switch1", false);
+            Boolean switch2 = myPrefs.getBoolean("switch2", false);
+
+            setupDrawerContent(navigationView);
+            Menu menu = navigationView.getMenu();
+
+            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
+            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
+
+            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
+            switcher1.setChecked(switch1);
+            switcher1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch1", false);
+                        myPrefse.apply();
+                    }
+
+                    // Restart app to load day/night modes
+                    Intent intent = new Intent(GoToWaypoint.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    Bundle bndlanimation =
+                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                    startActivity(intent, bndlanimation);
+                    startActivity(intent);
+
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
+            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
+
+            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
+            switcher2.setChecked(switch2);
+            switcher2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher2.isChecked())) {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch2", false);
+                        myPrefse.apply();
+                    }
+
+
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
+            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+        }
+    }
+
+    //navigationDrawerIcon Onclick
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+
+                mDrawerLayout.openDrawer(GravityCompat.START);
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home:
+                                // mDrawerLayout.closeDrawers();
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+
+                            case R.id.nav_night_switch:
+                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                break;
+
+                            case R.id.nav_screen_on_switch:
+                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                                break;
+
+                            case R.id.nav_tutorial:
+                                Intent tutorial = new Intent(GoToWaypoint.this, Tutorial.class);
+                                startActivity(tutorial, bndlanimation);
+                                break;
+
+                            case R.id.nav_about:
+                                Intent about = new Intent(GoToWaypoint.this, AboutActivity.class);
+                                startActivity(about, bndlanimation);
+                                break;
+
+                            case R.id.nav_settings:
+                                Intent settings = new Intent(GoToWaypoint.this, SettingsActivity.class);
+                                startActivity(settings, bndlanimation);
+                                break;
+
+
+
+                        }
+                        return false;
+                    }
+                });
+
+    }
+
     // NIGHT MODE
     private void NightMode() {
 
@@ -628,19 +881,19 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Locat
     // COMPASS REQUEST UPDATES AT STARTUP
     @Override
     protected void onResume() {
-
+        super.onResume();
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
                 SensorManager.SENSOR_DELAY_GAME);
-        super.onResume();
+       // requestLocationUpdates(easyLocationRequest);
 
     }
 
     // COMPASS UNREGESTER LISTENER
     @Override
     protected void onPause() {
-        stopLocationUpdates();
-        mSensorManager.unregisterListener(this);
         super.onPause();
+        //stopLocationUpdates();
+        mSensorManager.unregisterListener(this);
     }
 
     @Override

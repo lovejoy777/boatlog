@@ -50,8 +50,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private SwitchCompat switcher1;
-    private SwitchCompat switcher2;
+    private SwitchCompat switcher1, switcher2;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     private int ACCESS_FINE_LOCATION_CODE = 23;

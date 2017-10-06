@@ -20,7 +20,6 @@
 
     <!-- Backgrounds -->
     <color name="background">#ffffffff</color>
-    <color name="red">#ffff0000</color>
     <color name="black">#ff000000</color>
     <color name="light_green_500">#8BC34A</color>
 
@@ -28,10 +27,7 @@
     <color name="card_background">@color/grey800</color>
     <color name="grid_outline">@color/accent</color>
     <color name="night_text">@color/accent</color>
-    <color name="blue_grey800">#37474F</color>
-    <color name="blue_grey900">#263238</color>
     <color name="grey800">#424242</color>
-    <color name="grey900">#212121</color>
 
 
     <!-- other colors -->

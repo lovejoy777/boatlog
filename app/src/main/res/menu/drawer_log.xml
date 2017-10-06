@@ -21,7 +21,7 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_action_menu"
-            android:title="@string/Home" />
+            android:title="Navigation Log" />
     </group>
 
     <item android:title="Functions">
@@ -41,15 +41,7 @@
 
     <item android:title="Advanced">
         <menu>
-            <item
-                android:id="@+id/nav_backup"
-                android:icon="@drawable/ic_save_white"
-                android:title="Backup Data" />
 
-            <item
-                android:id="@+id/nav_restore"
-                android:icon="@drawable/ic_restore"
-                android:title="Restore Data" />
         </menu>
     </item>
 

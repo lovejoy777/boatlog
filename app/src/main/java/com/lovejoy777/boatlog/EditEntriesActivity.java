@@ -192,7 +192,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         closeSubMenusFabDeleteSave();
     }
 
-
     public void persistEntry() {
 
         Cursor rs = dbHelper.getEntry(entryID);
@@ -219,20 +218,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
         }
-
-    }
-
-    /* Request updates at startup */
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    /* Remove the locationlistener updates when Activity is paused */
-    @Override
-    protected void onPause() {
-        super.onPause();
 
     }
 
@@ -269,6 +254,20 @@ public class EditEntriesActivity extends AppCompatActivity {
         layoutFabSave.setVisibility(View.VISIBLE);
         fabDeleteSave.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;
+    }
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     @Override

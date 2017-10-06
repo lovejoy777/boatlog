@@ -180,30 +180,6 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         }
     }
 
-    /* Request updates at startup */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(provider, 400, 1, this);
-    }
-
-    /* Remove the locationlistener updates when Activity is paused */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        locationManager.removeUpdates(this);
-    }
-
     @Override
     public void onLocationChanged(Location location) {
 
@@ -300,6 +276,30 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         longewEditText.setTextColor(getResources().getColor(R.color.night_text));
     }
 
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        locationManager.requestLocationUpdates(provider, 400, 1, this);
+    }
+
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -307,31 +307,3 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
     }
 
 }
-
-/**
- * public static String FormattedLocation(double latitude, double longitude) {
- * try {
- * int latSeconds = (int) Math.round(latitude * 3600);
- * int latDegrees = latSeconds / 3600;
- * latSeconds = Math.abs(latSeconds % 3600);
- * int latMinutes = latSeconds / 60;
- * latSeconds %= 60;
- * <p>
- * int longSeconds = (int) Math.round(longitude * 3600);
- * int longDegrees = longSeconds / 3600;
- * longSeconds = Math.abs(longSeconds % 3600);
- * int longMinutes = longSeconds / 60;
- * longSeconds %= 60;
- * String latDegree = latDegrees >= 0 ? "N" : "S";
- * String lonDegrees = longDegrees >= 0 ? "W" : "E";
- * <p>
- * return Math.abs(latDegrees) + "." + latMinutes + "." + latSeconds
- * + " " + latDegree + "/" + Math.abs(longDegrees) + "." + longMinutes
- * + "." + longSeconds + " " + lonDegrees;
- * } catch (Exception e) {
- * <p>
- * return "" + String.format("%8.5f", latitude) + "  "
- * + String.format("%8.5f", longitude);
- * }
- * }
- */

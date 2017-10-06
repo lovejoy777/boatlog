@@ -163,18 +163,7 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean insertWaypoint(
-            String name,
-            String description,
-            String latdeg,
-            String latmin,
-            String latsec,
-            String latns,
-            String longdeg,
-            String longmin,
-            String longsec,
-            String longew
-    ) {
+    public boolean insertWaypoint(String name, String description, String latdeg, String latmin, String latsec, String latns, String longdeg, String longmin, String longsec, String longew) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -262,19 +251,7 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateWaypoint(
-            Integer id,
-            String name,
-            String description,
-            String latdeg,
-            String latmin,
-            String latsec,
-            String latns,
-            String longdeg,
-            String longmin,
-            String longsec,
-            String longew
-    ) {
+    public boolean updateWaypoint(Integer id, String name, String description, String latdeg, String latmin, String latsec, String latns, String longdeg, String longmin, String longsec, String longew) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(WAYPOINT_COLUMN_NAME, name);
@@ -303,7 +280,6 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         db.update(MANLOG_TABLE_NAME, contentValues, MANLOG_COLUMN_ID + " = ? ", new String[]{Integer.toString(id)});
         return true;
     }
-
 
     public boolean updateParts(Integer id, String name, String part) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -372,7 +348,6 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
         return db.delete(ENTRY_TABLE_NAME,
                 ENTRY_COLUMN_TRIP_ID + "=?", new String[]{Integer.toString(id)});
     }
-
 
     public Cursor getEntry(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -461,6 +436,5 @@ public class BoatLogDBHelper extends SQLiteOpenHelper {
                 ENTRY_COLUMN_TRIP_ID + "=?", new String[]{Integer.toString(id)});
         return res;
     }
-
 
 }

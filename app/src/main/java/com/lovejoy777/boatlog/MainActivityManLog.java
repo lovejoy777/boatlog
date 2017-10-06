@@ -25,7 +25,6 @@ import static com.lovejoy777.boatlog.R.id.manlogProgress;
 
 public class MainActivityManLog extends AppCompatActivity {
     public final static String KEY_EXTRA_MANLOG_ID = "KEY_EXTRA_MANLOG_ID";
-    public final static String KEY_EXTRA_MANLOG_NAME = "KEY_EXTRA_MANLOG_NAME";
     public final static String KEY_EXTRA_MANLOG_PROGRESS = "KEY_EXTRA_MANLOG_PROGRESS";
 
     private ListView listView;

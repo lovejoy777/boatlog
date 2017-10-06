@@ -43,7 +43,6 @@ public class CreateManLogActivity extends AppCompatActivity {
     EditText nameEditText;
     EditText descriptionEditText;
     EditText partsEditText;
-    //EditText progressEditText;
 
     TextView titleTextView;
 
@@ -139,18 +138,6 @@ public class CreateManLogActivity extends AppCompatActivity {
         }
     }
 
-    /* Request updates at startup */
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
     private void NightMode() {
 
         scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
@@ -169,6 +156,17 @@ public class CreateManLogActivity extends AppCompatActivity {
         //progressEditText.setTextColor(Color.RED);
         //spinnerProgress.colo(getResources().getColor(R.color.night_text));
 
+    }
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

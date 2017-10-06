@@ -118,18 +118,6 @@ public class CreateTripsActivity extends AppCompatActivity {
         }
     }
 
-    /* Request updates at startup */
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
     private void NightMode() {
 
         scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
@@ -145,6 +133,17 @@ public class CreateTripsActivity extends AppCompatActivity {
         departureEditText.setTextColor(getResources().getColor(R.color.night_text));
         destinationEditText.setTextColor(getResources().getColor(R.color.night_text));
 
+    }
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

@@ -103,8 +103,4 @@
 
     </style>
 
-    <style name="CustomAlertDialogStyle">
-        <item name="android:fullDark">@color/card_background</item>
-    </style>
-
 </resources>
