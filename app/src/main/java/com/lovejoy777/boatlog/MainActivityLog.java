@@ -1,12 +1,15 @@
 package com.lovejoy777.boatlog;
 
-
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,12 +27,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +50,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
@@ -59,25 +63,32 @@ import static java.lang.Math.abs;
  */
 public class MainActivityLog extends EasyLocationAppCompatActivity implements OnMapReadyCallback, SensorEventListener {
 
+    // NAVIGATION DRAWER
     private DrawerLayout mDrawerLayout;
     private SwitchCompat switcher1, switcher2;
 
+    // MAPS
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
     final String TAG = "GPS";
+    private GoogleMap mMap;
     long UPDATE_INTERVAL = 2 * 1000;  // 10 secs
     long FASTEST_INTERVAL = 1000; // 2 sec
     long FALLBACK_INTERVAL = 10000; // 10 seconds
-    long INDICATOR_INTERVAL = 800; // .8 seconds
+    long INDICATOR_INTERVAL = 1500; // .8 seconds
 
-    private GoogleMap mMap;
-    Marker mCurrLocationMarker;
+    // ZOOM SEEKBAR
+    private SeekBar zoomSeekbar;
+    ImageView zoomBtn;
+    View thumbView;
 
+    // COMPASS
     private SensorManager mSensorManager;
 
+    // TOOLBAR & TITLE TEXT VIEW
     Toolbar toolBar;
     TextView titleTextView;
 
+    // MAIN LAYOUTS
     LinearLayout MLL1;
     LinearLayout MLL2;
     LinearLayout MLL3;
@@ -90,7 +101,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     LinearLayout LLG5;
     LinearLayout LLG6;
 
-    //textViews
+    // TEXT VIEWS
     TextView textViewPos;
     TextView textViewSped;
     TextView textViewHead;
@@ -101,9 +112,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     TextView textViewSpeed;
     TextView textViewHeading;
     TextView textViewCompass;
-
     TextView textViewGetTime;
 
+    // GPS INDICATOR
     ImageView imageViewAccu;
 
     @Override
@@ -111,9 +122,30 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_logs);
 
-        // assign the views
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
+
+        // MAPS ZOOM CONTROLS
+        zoomBtn = (ImageView) findViewById(R.id.zoomBtn);
+        zoomSeekbar = (SeekBar) findViewById(R.id.zoomSeekbar);
+        zoomSeekbar.setOnSeekBarChangeListener(zoomSeekbarOnSeekBarChangeListener);
+        thumbView = LayoutInflater.from(MainActivityLog.this).inflate(R.layout.layout_seekbar_thumb, null, false);
+        zoomSeekbar.setVisibility(View.INVISIBLE);
+        zoomBtn.setVisibility(View.VISIBLE);
+        zoomBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (zoomSeekbar.getVisibility() == View.VISIBLE) {
+                    zoomSeekbar.setVisibility(View.INVISIBLE);
+                } else {
+                    int intZoomValue = getzoomValue();
+                    zoomSeekbar.setProgress(intZoomValue);
+                    zoomSeekbar.setThumb(getThumb(intZoomValue));
+                    zoomSeekbar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         MLL1 = (LinearLayout) findViewById(R.id.MLL1);
         MLL2 = (LinearLayout) findViewById(R.id.MLL2);
@@ -141,8 +173,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
         imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
+        // NIGHT MODE CALL
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
             NightMode();
@@ -151,26 +184,68 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             loadToolbarNavDrawer();
         }
 
+        // SCREEN WAKELOCK
         Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
-
         if (ScreenOn) {
             screenOn();
         }
 
-        // initialize your android device sensor capabilities
+        // COMPASS initialize your android device sensor capabilities
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
+        // RUNTIME PERMISSIONS CHECK
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
+        // IS GOOGLE SERVICES AVAILIBLE
         isGooglePlayServicesAvailable();
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
+
+    // GET ZOOM VALUE FROM SHARED PREFS
+    public int getzoomValue() {
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final int gotZoomValue = myPrefs.getInt("zoomValue", 18);
+        return gotZoomValue;
+    }
+
+    // THUMB IS USED FOR THE PROGRESS TEXT BACKGROUND
+    public Drawable getThumb(int progress) {
+        ((TextView) thumbView.findViewById(R.id.tvProgress)).setText("" + progress + "");
+        thumbView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        Bitmap bitmap = Bitmap.createBitmap(thumbView.getMeasuredWidth(), thumbView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        thumbView.layout(0, 0, thumbView.getMeasuredWidth(), thumbView.getMeasuredHeight());
+        thumbView.draw(canvas);
+        return new BitmapDrawable(getResources(), bitmap);
+    }
+
+    // ZOOM SEEKBAR CHANGED LISTENER
+    private final SeekBar.OnSeekBarChangeListener zoomSeekbarOnSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+            if (fromUser) {
+                seekBar.setThumb(getThumb(progress));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(seekBar.getProgress()), 500, null);
+            }
+        }
+        @Override
+        public void onStartTrackingTouch(final SeekBar seekBar) {
+        }
+        @Override
+        public void onStopTrackingTouch(final SeekBar seekBar) {
+            SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor myPrefse = myPrefs.edit();
+            myPrefse.putInt("zoomValue", seekBar.getProgress());
+            myPrefse.apply();
+            zoomSeekbar.setVisibility(View.INVISIBLE);
+        }
+    };
 
     // GOOGLE MAPS API METHODS
     /**
@@ -194,15 +269,17 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                     == PackageManager.PERMISSION_GRANTED) {
                 buildEasyLocationClient();
                 mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setZoomControlsEnabled(true);
+                mMap.getUiSettings().setCompassEnabled(true);
+
             }
         } else {
             buildEasyLocationClient();
             mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
         }
     }
 
+    // EASYLOCATION METHODS
     protected synchronized void buildEasyLocationClient() {
         Toast.makeText(this, "searching", Toast.LENGTH_SHORT).show();
         LocationRequest locationRequest = new LocationRequest()
@@ -216,7 +293,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         requestLocationUpdates(easyLocationRequest);
     }
 
-    // EASYLOCATION METHODS
     @Override
     public void onLocationReceived(Location location) {
 
@@ -251,6 +327,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        int zoomValue = myPrefs.getInt("zoomValue", 18);
 
         imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
 
@@ -258,39 +335,28 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
         }
 
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
-        //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-       // MarkerOptions markerOptions = new MarkerOptions();
-       // markerOptions.position(latLng);
-       // markerOptions.title("You");
-       // markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-      //  mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng).zoom(19).build();
-        mMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));
-
-        // FILL TEXT VIEWS
-        // LAT LONG
+        // GET LAT LONG STRINGS
         String formattedLocationLat = FormattedLocationLat(location.getLatitude());
         String formattedLocationLon = FormattedLocationLon(location.getLongitude());
 
+        // FILL LAT LONG TEXT VIEWS
         textViewLat.setText(formattedLocationLat);
         textViewLon.setText(formattedLocationLon);
 
-        // BET TRACK OVER GROUND
-        float degree = location.getBearing();
-        if (degree < 0) {
-            degree = degree + 360;
+        // CURRENT TRACK OVER GROUND
+        float heading = location.getBearing();
+        int intheading = (int) heading;
+        if (intheading < 0) {
+            intheading = intheading + 360;
         }
-        textViewHeading.setText("" + degree + " T");
+        // FILL TEXTVIEW TRACK OVER GROUND
+        String stringHeading = String.valueOf(intheading);
+        textViewHeading.setText(stringHeading + " T");
+
+        // MOVE & POSITION THE CAMERA
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(zoomValue).bearing(heading).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         // SPEED OVER GROUND
         if (location.hasSpeed()) {
@@ -303,11 +369,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         if (!location.hasSpeed()) {
             textViewSpeed.setText("" + 0.0f + " Kn");
         }
-
-        //stop location updates
-       // if (mGoogleApiClient != null) {
-       //     LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-       // }
 
     }
 

@@ -47,6 +47,9 @@
 
     <item android:title="@string/General">
         <menu>
+
+
+
             <item
                 android:id="@+id/nav_tutorial"
                 android:icon="@drawable/ic_videocam"

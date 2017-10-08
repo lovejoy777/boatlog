@@ -128,7 +128,7 @@ public class EditWaypointActivity extends AppCompatActivity {
         longsecEditText.setText(waypointLongSec);
         longewEditText.setText(waypointLongEW);
 
-        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
 
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,7 +261,7 @@ public class EditWaypointActivity extends AppCompatActivity {
     private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
         fabExpanded = false;
     }
 
@@ -269,7 +269,7 @@ public class EditWaypointActivity extends AppCompatActivity {
     private void openSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_close_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
         fabExpanded = true;
     }
 

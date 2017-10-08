@@ -70,7 +70,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     long UPDATE_INTERVAL = 2 * 1000;  // 10 secs
     long FASTEST_INTERVAL = 2000; // 2 sec
     long FALLBACK_INTERVAL = 10000; // 10 seconds
-    long INDICATOR_INTERVAL = 800; // .8 seconds
+    long INDICATOR_INTERVAL = 1500; // .8 seconds
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;

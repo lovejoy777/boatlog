@@ -7,7 +7,7 @@
     <color name="primary_dark">#ff303F9F</color>
     <color name="accent">#ffFF5252</color>
 
-    <color name="fab">#ff3F51B5</color>
+    <color name="fab">@color/night_text</color>
     <color name="textMain">#ff3F51B5</color>
     <color name="textMenuTitle">#ff3F51B5</color>
 

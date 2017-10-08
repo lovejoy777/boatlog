@@ -157,7 +157,7 @@ public class EditManLogActivity extends AppCompatActivity {
         partsEditText.setText(manlogParts);
         spinnerProgress.setPrompt("Progress");
 
-        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
 
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,7 +281,7 @@ public class EditManLogActivity extends AppCompatActivity {
     private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
         fabExpanded = false;
     }
 

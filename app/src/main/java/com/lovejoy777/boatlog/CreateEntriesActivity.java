@@ -154,7 +154,7 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
         });
 
         // FAVOURITES LIST FAB BUTTON
-        fabSavefav.setImageResource(android.R.drawable.btn_star_big_off);
+        fabSavefav.setImageResource(R.drawable.ic_favorite_border);
         fabSavefav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,7 +176,7 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
                     builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("      Select a Favourite");
-                builder.setIcon(android.R.drawable.btn_star_big_on);
+                builder.setIcon(R.drawable.ic_favorite_border);
                 if (favnames == null) {
                     builder.create();
                 }

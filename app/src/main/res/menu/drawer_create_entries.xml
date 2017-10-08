@@ -26,7 +26,7 @@
         <menu>
             <item
                 android:id="@+id/nav_create_favourites"
-                android:icon="@android:drawable/btn_star_big_off"
+                android:icon="@drawable/ic_favorite_border"
                 android:title="Create Favourite" />
             <item
                 android:id="@+id/nav_delete_favourites"

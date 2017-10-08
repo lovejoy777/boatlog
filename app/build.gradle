@@ -8,8 +8,8 @@ android {
         applicationId "com.lovejoy777.boatlog"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 11
-        versionName "2.00"
+        versionCode 13
+        versionName "2.02"
         multiDexEnabled true
     }
 

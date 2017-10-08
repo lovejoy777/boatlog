@@ -183,7 +183,7 @@ public class EditEntriesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+                fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
                 persistEntry();
             }
         });
@@ -244,7 +244,7 @@ public class EditEntriesActivity extends AppCompatActivity {
     private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
+        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
         fabExpanded = false;
     }
 
