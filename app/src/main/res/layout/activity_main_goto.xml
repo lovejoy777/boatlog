@@ -485,7 +485,7 @@
         android:layout_centerHorizontal="true">
 
         <ImageView
-            android:id="@+id/needle"
+            android:id="@+id/arrow"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_centerVertical="true"

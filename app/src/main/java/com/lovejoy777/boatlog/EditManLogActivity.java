@@ -151,7 +151,7 @@ public class EditManLogActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + manlogName);
+        titleTextView.setText("Edit " + manlogName + "");
         nameEditText.setText(manlogName);
         descriptionEditText.setText(manlogDescription);
         partsEditText.setText(manlogParts);
@@ -162,7 +162,7 @@ public class EditManLogActivity extends AppCompatActivity {
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFabDeleteSave();
                 } else {
                     openSubMenusFabDeleteSave();
@@ -259,21 +259,34 @@ public class EditManLogActivity extends AppCompatActivity {
 
     private void NightMode() {
 
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewParts.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewProgress.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            partsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
-        textViewParts.setTextColor(getResources().getColor(R.color.night_text));
-        textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+            textViewParts.setTextColor(getResources().getColor(R.color.night_text));
+            textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-        partsEditText.setTextColor(getResources().getColor(R.color.night_text));
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+            partsEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
+
+
 
     }
 

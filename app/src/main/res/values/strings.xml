@@ -24,6 +24,11 @@
     <string name="name">Name</string>
     <string name="destination">Destination</string>
 
+    <string name="create_entry">Create New Entry</string>
+    <string name="create_trip">Create New Trip</string>
+    <string name="create_waypoint">Create New Waypoint</string>
+    <string name="no_gps">No Gps</string>
+
     <string name="yes">Confirm</string>
     <string name="no">Cancel</string>
 

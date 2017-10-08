@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -53,7 +54,7 @@ public class MainActivityManLog extends AppCompatActivity {
         fabManLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFab();
                 } else {
                     openSubMenusFab();
@@ -78,9 +79,7 @@ public class MainActivityManLog extends AppCompatActivity {
         closeSubMenusFab();
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
-
         listViewManLog = (ListView) findViewById(R.id.listViewManLog);
-
         titleTextView.setText("Maintenance Log");
 
         dbHelper = new BoatLogDBHelper(this);
@@ -158,12 +157,16 @@ public class MainActivityManLog extends AppCompatActivity {
 
     private void NightMode() {
 
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-        listViewManLog.setBackgroundColor(getResources().getColor(R.color.card_background));
-        fabManLog.setBackgroundColor(getResources().getColor(R.color.night_text));
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
+        listViewManLog.setBackgroundResource(R.color.card_background);
+        fabManLog.setBackgroundResource(R.color.night_text);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        }
     }
 
     //closes FAB submenus

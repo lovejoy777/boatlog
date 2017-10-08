@@ -88,7 +88,7 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
 
-        // loadToolbarNavDrawer();
+         loadToolbarNavDrawer();
 
         tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
@@ -103,7 +103,7 @@ public class MainActivityEntries extends AppCompatActivity {
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
-        titleTextView.setText("" + tripName);
+        titleTextView.setText("" + tripName + "");
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -115,7 +115,7 @@ public class MainActivityEntries extends AppCompatActivity {
         fabEntries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFab();
                 } else {
                     openSubMenusFab();
@@ -148,7 +148,6 @@ public class MainActivityEntries extends AppCompatActivity {
                         .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // create pdf no image
-                                // createPDF();
                                 BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this);
                                 taskPDF.execute();
 
@@ -183,13 +182,7 @@ public class MainActivityEntries extends AppCompatActivity {
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
-        if (NightModeOn) {
-            NightMode();
-            loadToolbarNavDrawerRed();
-            populateListViewRed();
-        } else {
-            loadToolbarNavDrawer();
-        }
+
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -309,15 +302,20 @@ public class MainActivityEntries extends AppCompatActivity {
                 // Get the cursor
                 Cursor cursor = getContentResolver().query(selectedImage,
                         filePathColumn, null, null, null);
-                // Move to first row
-                cursor.moveToFirst();
+                if (cursor != null) {
+                    // Move to first row
+                    cursor.moveToFirst();
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                imgDecodableString = cursor.getString(columnIndex);
-                cursor.close();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imgDecodableString = cursor.getString(columnIndex);
+                    cursor.close();
 
-                BackgroundTaskPDFimage taskPDFimage = new BackgroundTaskPDFimage(MainActivityEntries.this);
-                taskPDFimage.execute();
+                    BackgroundTaskPDFimage taskPDFimage = new BackgroundTaskPDFimage(MainActivityEntries.this);
+                    taskPDFimage.execute();
+                } else {
+                    Toast.makeText(this, "Something went wrong.",
+                            Toast.LENGTH_LONG).show();
+                }
 
             } else {
 
@@ -330,13 +328,6 @@ public class MainActivityEntries extends AppCompatActivity {
 
                     .show();
         }
-    }
-
-    public void createPDF() {
-
-        BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this);
-        taskPDF.execute();
-
     }
 
     public void createPDFimage(String image_path) {
@@ -438,9 +429,6 @@ public class MainActivityEntries extends AppCompatActivity {
         } finally {
             doc.close();
         }
-
-        //  Snackbar.make((getApplicationContext(), "" + tripName + ".pdf saved to sdcard/boatLog", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        //Toast.makeText(getApplicationContext(), "" + tripName + ".pdf saved to sdcard/boatLog", Toast.LENGTH_LONG).show();
     }
 
     // CREATE PDF IN BACKGROUND TASK WITH PROGRESS SPINNER
@@ -604,10 +592,19 @@ public class MainActivityEntries extends AppCompatActivity {
         if (navigationView != null) {
 
             setupDrawerContent(navigationView);
-            Menu menu = navigationView.getMenu();
-            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            //navigationView.setBackgroundColor(Color.BLACK);
+
+            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
+
+            if (NightModeOn) {
+                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+            } else {
+                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            }
+
         }
     }
 
@@ -627,7 +624,6 @@ public class MainActivityEntries extends AppCompatActivity {
         if (navigationView != null) {
 
             setupDrawerContent(navigationView);
-            Menu menu = navigationView.getMenu();
             navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
             navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
             navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
@@ -656,8 +652,6 @@ public class MainActivityEntries extends AppCompatActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
                         menuItem.setChecked(true);
-                        Bundle bndlanimation =
-                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home_create_entries:
@@ -708,7 +702,6 @@ public class MainActivityEntries extends AppCompatActivity {
                                         });
 
                                 builder.show();
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             // ************************************************************************************
@@ -773,7 +766,6 @@ public class MainActivityEntries extends AppCompatActivity {
                                     }
                                 });
                                 builder1.show();
-                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                         }
@@ -785,10 +777,14 @@ public class MainActivityEntries extends AppCompatActivity {
 
 
     private void NightMode() {
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-        listViewEntries.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
+        listViewEntries.setBackgroundResource(R.color.card_background);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        }
     }
 
     //closes FAB submenus

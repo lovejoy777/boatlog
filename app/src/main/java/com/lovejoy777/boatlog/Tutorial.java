@@ -43,12 +43,9 @@ public class Tutorial extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 onBackPressed();
-
             }
         });
-
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -80,10 +77,9 @@ public class Tutorial extends AppCompatActivity {
     }
 
     private void NightMode() {
-
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        RL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundResource(R.color.card_background);
+        scrollView1.setBackgroundResource(R.color.card_background);
+        RL1.setBackgroundResource(R.color.card_background);
     }
 
     @Override

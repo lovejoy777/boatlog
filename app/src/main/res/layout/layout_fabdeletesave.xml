@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_save_white"
-            app:backgroundTint="@color/primary"
+            app:backgroundTint="@color/fab"
             app:fabSize="mini" />
 
     </LinearLayout>
@@ -115,6 +115,4 @@
             app:fabSize="normal" />
 
     </LinearLayout>
-    <!--android:src="@drawable/ic_close_black_24dp"
-    android:src="@drawable/ic_menu_white"-->
 </FrameLayout>

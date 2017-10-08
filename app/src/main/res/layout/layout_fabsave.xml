@@ -27,6 +27,4 @@
             app:fabSize="normal" />
 
     </LinearLayout>
-    <!--android:src="@drawable/ic_close_black_24dp"
-    android:src="@drawable/ic_menu_white"-->
 </FrameLayout>

@@ -51,6 +51,7 @@ import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
@@ -70,14 +71,13 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     final String TAG = "GPS";
     long UPDATE_INTERVAL = 2 * 1000;  // 10 secs?
     long FASTEST_INTERVAL = 2000; // 2 sec
-    long FALLBACK_INTERVAL = 10000; // 10 seconds
-    long INDICATORFALLBACK_INTERVAL = 50; // 5 seconds
-    long INDICATOR0_INTERVAL = 20; // 1 seconds
-    long INDICATOR1_INTERVAL = 45; // 1.5 seconds
-    long INDICATOR2_INTERVAL = 20; // 2 seconds
-    long NOGPS_INTERVAL = 100; // 10 seconds
-    long DEVIDE_NUMBER = 1000000;
-
+    long FALLBACK_INTERVAL = 4000; // 7 seconds
+    // INDICATOR VALUES
+    long INDICATOR1_INTERVAL = 15; // 1 seconds
+    long INDICATOR2_INTERVAL = 30; // 3 seconds
+    long INDICATORFALLBACK_INTERVAL = 40; // 4 seconds
+    long INDICATORNOGPS_INTERVAL = 70; // 7 seconds
+    long DEVIDE_NUMBER = 10000000; //nano to tenths
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;
@@ -85,6 +85,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     // DIRECTION OF POINTER
     private float currentDegreeNeedle = 0f;
 
+    // TOOLBAR & TITLE TEXT VIEW
     Toolbar toolBar;
     TextView titleTextView;
 
@@ -140,7 +141,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_goto);
 
-        // GET WAYPOINT DATA FROM MAINACTIVITYWAYPOINT.CLASS
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
         waypointName = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_NAME);
 
@@ -167,7 +167,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         LLG10 = (LinearLayout) findViewById(R.id.LLG10);
 
         // arrow = DIRECTION POINTER
-        arrow = (ImageView) findViewById(R.id.needle);
+        arrow = (ImageView) findViewById(R.id.arrow);
         arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
 
         textViewLat = (TextView) findViewById(R.id.textViewLat);
@@ -194,7 +194,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();
         final String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
-        //String waypointDescription = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
         String waypointLatDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATDEG));
         String waypointLatMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATMIN));
         String waypointLatSec = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATSEC));
@@ -249,15 +248,17 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         // COMPASS SENSOR MANAGER
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
+        // PERMISSIONS
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
+        // IS GOOGLE PLAY SERVICES AVAILIBLE
         isGooglePlayServicesAvailable();
-
-       // if (!isLocationEnabled())
+         // if (!isLocationEnabled())
          //   showAlert();
 
+        // EASYLOCATION SETUP
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
@@ -273,26 +274,28 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     public void onLocationReceived(Location location) {
 
         if (location != null) {
-
             long locationAge = SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos();
             long newLocationAge = locationAge / DEVIDE_NUMBER;
             String locAge = String.valueOf(newLocationAge);
             textViewGetTime.setText(locAge);
 
-            if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR1_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
-            }
-            if (newLocationAge < INDICATOR1_INTERVAL  && newLocationAge > INDICATOR0_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
-            }
-            if (newLocationAge < INDICATOR0_INTERVAL) {
+            //GREEN < 1 sec
+            if (newLocationAge < INDICATOR1_INTERVAL) {
                 updateUI(location);
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
-            }
-
-            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < NOGPS_INTERVAL) {
+            } else
+                // AMBER > 1 sec < 3
+                if (newLocationAge > INDICATOR1_INTERVAL  && newLocationAge < INDICATOR2_INTERVAL) {
+                    updateUI(location);
+                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
+                } else
+                    // ORANGE < 4 > 3
+                    if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR2_INTERVAL) {
+                        updateUI(location);
+                        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
+                    } else
+                        // RED > 4 < 7            LAST KNOWN LOCATION CALL
+            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < INDICATORNOGPS_INTERVAL) {
                 updateUI(location);
                 showToast("WARNING !!!!! \nLost Satellites, now using your\nLast Known Location");
                 SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -301,9 +304,8 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
                 if (NightModeOn) {
                     arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
                 }
-            } else if (newLocationAge > NOGPS_INTERVAL) {
+            } else if (newLocationAge > INDICATORNOGPS_INTERVAL) {
                 showToast("WARNING !!!!! \nNO LOCATION FOUND");
                 textViewLat.setText("searching");
                 textViewLon.setText("for gps");
@@ -368,7 +370,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 result=round(formattedSpeed,1);
                 System.out.println(result);
                 textViewSpeed.setText("" + result + " KN");
-
             }
 
         if (!location.hasSpeed()) {
@@ -464,7 +465,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                     + "\"" + latDegree;
         } catch (Exception e) {
 
-            return "" + String.format("%8.5f", latitude);
+            return "" + String.format(Locale.UK,"%8.5f", latitude);
         }
     }
 
@@ -482,7 +483,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                     + "'" + longSeconds + "\"" + lonDegrees;
         } catch (Exception e) {
 
-            return "" + String.format("%8.5f", longitude);
+            return "" + String.format(Locale.UK,"%8.5f", longitude);
         }
     }
 
@@ -564,7 +565,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 .show();
     }
 
-    // PERMISSIONS CHECK
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public boolean checkLocationPermission() {
@@ -845,8 +845,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                                 startActivity(settings, bndlanimation);
                                 break;
 
-
-
                         }
                         return false;
                     }
@@ -857,45 +855,69 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     // NIGHT MODE
     private void NightMode() {
 
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MainRL.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MLL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MLL2.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MLL3.setBackgroundColor(getResources().getColor(R.color.card_background));
+        toolBar.setBackgroundResource(R.color.card_background);
+        MainRL.setBackgroundResource(R.color.card_background);
+        MLL1.setBackgroundResource(R.color.card_background);
+        MLL2.setBackgroundResource(R.color.card_background);
+        MLL3.setBackgroundResource(R.color.card_background);
 
-        LLG.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG0.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG1.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG2.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG3.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG4.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG5.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG6.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG7.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG8.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG9.setBackgroundColor(getResources().getColor(R.color.grid_outline));
-        LLG10.setBackgroundColor(getResources().getColor(R.color.grid_outline));
+        LLG.setBackgroundResource(R.color.grid_outline);
+        LLG0.setBackgroundResource(R.color.grid_outline);
+        LLG1.setBackgroundResource(R.color.grid_outline);
+        LLG2.setBackgroundResource(R.color.grid_outline);
+        LLG3.setBackgroundResource(R.color.grid_outline);
+        LLG4.setBackgroundResource(R.color.grid_outline);
+        LLG5.setBackgroundResource(R.color.grid_outline);
+        LLG6.setBackgroundResource(R.color.grid_outline);
+        LLG7.setBackgroundResource(R.color.grid_outline);
+        LLG8.setBackgroundResource(R.color.grid_outline);
+        LLG9.setBackgroundResource(R.color.grid_outline);
+        LLG10.setBackgroundResource(R.color.grid_outline);
 
-        textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-        textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLat.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLon.setTextColor(getResources().getColor(R.color.night_text));
-        textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
-        textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
-        textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
-        textViewCourseTo.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDistance.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            arrow.setImageTintList(ColorStateList.valueOf(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme())));
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme())));
 
-        textViewDest.setTextColor(getResources().getColor(R.color.night_text));
-        textViewSped.setTextColor(getResources().getColor(R.color.night_text));
-        textViewHead.setTextColor(getResources().getColor(R.color.night_text));
-        textViewComp.setTextColor(getResources().getColor(R.color.night_text));
-        textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDist.setTextColor(getResources().getColor(R.color.night_text));
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewGetTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewGoTo.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLon.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewSpeed.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewHeading.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewCompass.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewCourseTo.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDistance.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            textViewDest.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewSped.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewHead.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewComp.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewCourse.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDist.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+
+        }else {
+            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
+            textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLat.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLon.setTextColor(getResources().getColor(R.color.night_text));
+            textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
+            textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
+            textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
+            textViewCourseTo.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDistance.setTextColor(getResources().getColor(R.color.night_text));
+
+            textViewDest.setTextColor(getResources().getColor(R.color.night_text));
+            textViewSped.setTextColor(getResources().getColor(R.color.night_text));
+            textViewHead.setTextColor(getResources().getColor(R.color.night_text));
+            textViewComp.setTextColor(getResources().getColor(R.color.night_text));
+            textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDist.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

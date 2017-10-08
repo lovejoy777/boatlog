@@ -68,7 +68,7 @@
             android:name=".activities.SettingsActivity"
             android:label="Settings"
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
-            android:parentActivityName=".MainActivity">
+            >
         </activity>
 
         <activity
@@ -87,7 +87,7 @@
             android:name=".MainActivityEntries"
             android:label=""
             android:theme="@style/Base.Theme.Toolbar.TransparentStatusBar"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivityTrips">
             <intent-filter>
                 <action android:name="android.intent.action.MAINENTRIES" />
 

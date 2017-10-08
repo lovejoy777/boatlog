@@ -72,5 +72,4 @@
             app:fabSize="normal" />
 
     </LinearLayout>
-    <!--android:src="@drawable/ic_close_black_24dp"-->
 </FrameLayout>

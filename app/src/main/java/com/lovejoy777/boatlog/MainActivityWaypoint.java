@@ -21,6 +21,7 @@ import android.widget.TextView;
 /**
  * Created by lovejoy777 on 13/10/15.
  */
+
 public class MainActivityWaypoint extends AppCompatActivity {
 
     public final static String KEY_EXTRA_WAYPOINT_ID = "KEY_EXTRA_WAYPOINT_ID";
@@ -51,7 +52,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
         fabWaypoints.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFab();
                 } else {
                     openSubMenusFab();
@@ -128,9 +129,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
                                 // cancelled by user
                             }
                         })
-
                         .setIcon(R.drawable.ic_location_on_white)
-
                         .show();
 
             }
@@ -178,11 +177,14 @@ public class MainActivityWaypoint extends AppCompatActivity {
     }
 
     private void NightMode() {
-
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-        listViewWaypoint.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
+        listViewWaypoint.setBackgroundResource(R.color.card_background);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

@@ -55,6 +55,7 @@ import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static java.lang.Math.abs;
 
@@ -74,13 +75,13 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     private GoogleMap mMap;
     long UPDATE_INTERVAL = 2 * 1000;  // 10 secs?
     long FASTEST_INTERVAL = 2000; // 2 sec
-    long FALLBACK_INTERVAL = 10000; // 10 seconds
-    long INDICATORFALLBACK_INTERVAL = 50; // 5 seconds
-    long INDICATOR0_INTERVAL = 20; // 1 seconds
-    long INDICATOR1_INTERVAL = 45; // 1.5 seconds
-    long INDICATOR2_INTERVAL = 20; // 2 seconds
-    long NOGPS_INTERVAL = 100; // 10 seconds
-    long DEVIDE_NUMBER = 1000000;
+    long FALLBACK_INTERVAL = 4000; // 7 seconds
+    // INDICATOR VALUES
+    long INDICATOR1_INTERVAL = 15; // 1 seconds
+    long INDICATOR2_INTERVAL = 30; // 3 seconds
+    long INDICATORFALLBACK_INTERVAL = 40; // 4 seconds
+    long INDICATORNOGPS_INTERVAL = 70; // 7 seconds
+    long DEVIDE_NUMBER = 10000000; //nano to tenths
 
 
     // ZOOM SEEKBAR
@@ -128,6 +129,8 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_logs);
+
+        loadToolbarNavDrawer();
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -177,8 +180,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
         textViewGetTime = (TextView) findViewById(R.id.textViewGetTime);
         imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
-
-        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
 
         // NIGHT MODE CALL
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -186,9 +188,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
         if (NightModeOn) {
             NightMode();
-            loadToolbarNavDrawerRed();
-        } else {
-            loadToolbarNavDrawer();
         }
 
         // SCREEN WAKELOCK
@@ -288,7 +287,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
     // EASYLOCATION METHODS
     protected synchronized void buildEasyLocationClient() {
-        Toast.makeText(this, "searching", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Loading Map", Toast.LENGTH_SHORT).show();
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
@@ -309,42 +308,41 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             String locAge = String.valueOf(newLocationAge);
             textViewGetTime.setText(locAge);
 
-            if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR1_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
-            }
-            if (newLocationAge < INDICATOR1_INTERVAL  && newLocationAge > INDICATOR0_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
-            }
-            if (newLocationAge < INDICATOR0_INTERVAL) {
+            //GREEN < 1 sec
+            if (newLocationAge < INDICATOR1_INTERVAL) {
                 updateUI(location);
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
-            }
-
-            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < NOGPS_INTERVAL) {
+            } else
+            // AMBER > 1 sec < 3
+            if (newLocationAge > INDICATOR1_INTERVAL  && newLocationAge < INDICATOR2_INTERVAL) {
+                updateUI(location);
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
+            } else
+            // ORANGE < 4 > 3
+            if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR2_INTERVAL) {
+                updateUI(location);
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
+            } else
+            // RED > 4 < 7            LAST KNOWN LOCATION CALL
+            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < INDICATORNOGPS_INTERVAL) {
                 updateUI(location);
                 showToast("WARNING !!!!! \nLost Satellites, now using your\nLast Known Location");
-                SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                if (NightModeOn) {
-                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                }
-            } else if (newLocationAge > NOGPS_INTERVAL) {
+            } else
+                // NONE > 7              NO LOCATION
+                if (newLocationAge > INDICATORNOGPS_INTERVAL) {
                 showToast("WARNING !!!!! \nNO LOCATION FOUND");
                 textViewLat.setText("searching");
                 textViewLon.setText("for gps");
                 textViewSpeed.setText("0.0 KN");
                 textViewHeading.setText("00 T");
-
+                // NO INDICATOR
                 SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                 final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
                 if (NightModeOn) {
                     imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
                 }
-
             }
         }
     }
@@ -353,14 +351,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         Log.d(TAG, "updateUI");
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
         int zoomValue = myPrefs.getInt("zoomValue", 18);
-
-        //imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
-
-       // if (NightModeOn) {
-       //     imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
-       // }
 
         // GET LAT LONG STRINGS
         String formattedLocationLat = FormattedLocationLat(location.getLatitude());
@@ -378,7 +369,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         }
         // FILL TEXTVIEW TRACK OVER GROUND
         String stringHeading = String.valueOf(intheading);
-        textViewHeading.setText(stringHeading + " T");
+        textViewHeading.setText("" + stringHeading + " T");
 
         // MOVE & POSITION THE CAMERA
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -396,7 +387,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         if (!location.hasSpeed()) {
             textViewSpeed.setText("" + 0.0f + " Kn");
         }
-
     }
 
     public static BigDecimal round(float d, int decimalPlace) {
@@ -447,7 +437,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             return Math.abs(latDegrees) + "°" + latMinutes + "'" + latSeconds
                     + "\"" + latDegree;
         } catch (Exception e) {
-            return "" + String.format("%8.5f", latitude);
+            return "" + String.format(Locale.UK,"%8.5f", latitude);
         }
     }
 
@@ -462,7 +452,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             return Math.abs(longDegrees) + "°" + longMinutes
                     + "'" + longSeconds + "\"" + lonDegrees;
         } catch (Exception e) {
-            return "" + String.format("%8.5f", longitude);
+            return "" + String.format(Locale.UK,"%8.5f", longitude);
         }
     }
 
@@ -514,15 +504,13 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     public void onSensorChanged(SensorEvent sensorEvent) {
         // get the angle around the z-axis rotated
         float degree = Math.round(sensorEvent.values[0]);
-        String result = "0";
+        String result;
         if (degree == Math.floor(degree)) {
             result = Integer.toString((int) degree);
         } else {
             result = Float.toString(degree);
         }
-
         textViewCompass.setText("" + result + " M");
-
     }
 
     @Override
@@ -610,99 +598,21 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 }
             });
 
+            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
 
-            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            //navigationView.setBackgroundColor(Color.BLACK);
+            if (NightModeOn) {
+                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+            } else {
+                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            }
         }
     }
 
-    private void loadToolbarNavDrawerRed() {
-        //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        //set NavigationDrawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        if (navigationView != null) {
-
-            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean switch1 = myPrefs.getBoolean("switch1", false);
-            Boolean switch2 = myPrefs.getBoolean("switch2", false);
-
-            setupDrawerContent(navigationView);
-            Menu menu = navigationView.getMenu();
-
-            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
-            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
-
-            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
-            switcher1.setChecked(switch1);
-            switcher1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher1.isChecked())) {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", false);
-                        myPrefse.apply();
-                    }
-
-                    // Restart app to load day/night modes
-                    Intent intent = new Intent(MainActivityLog.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    Bundle bndlanimation =
-                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                    startActivity(intent, bndlanimation);
-                    startActivity(intent);
-
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
-            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
-
-            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
-            switcher2.setChecked(switch2);
-            switcher2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher2.isChecked())) {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", false);
-                        myPrefse.apply();
-                    }
-
-
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-        }
-    }
 
     //navigationDrawerIcon Onclick
     @Override
@@ -758,8 +668,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                                 startActivity(settings, bndlanimation);
                                 break;
 
-
-
                         }
                         return false;
                     }
@@ -770,11 +678,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     private void NightMode() {
 
         toolBar.setBackgroundResource(R.color.card_background);
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
         MLL1.setBackgroundResource(R.color.card_background);
         MLL2.setBackgroundResource(R.color.card_background);
         MLL3.setBackgroundResource(R.color.card_background);
-
 
         LLG1.setBackgroundResource(R.color.grid_outline);
         LLG2.setBackgroundResource(R.color.grid_outline);
@@ -783,18 +689,34 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         LLG5.setBackgroundResource(R.color.grid_outline);
         LLG6.setBackgroundResource(R.color.grid_outline);
 
-        textViewLat.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLon.setTextColor(getResources().getColor(R.color.night_text));
-        textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
-        textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
-        textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewGetTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLon.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewSpeed.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewHeading.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewCompass.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        textViewPos.setTextColor(getResources().getColor(R.color.night_text));
-        textViewSped.setTextColor(getResources().getColor(R.color.night_text));
-        textViewHead.setTextColor(getResources().getColor(R.color.night_text));
-        textViewComp.setTextColor(getResources().getColor(R.color.night_text));
+            textViewPos.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewSped.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewHead.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewComp.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLat.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLon.setTextColor(getResources().getColor(R.color.night_text));
+            textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
+            textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
+            textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
+
+            textViewPos.setTextColor(getResources().getColor(R.color.night_text));
+            textViewSped.setTextColor(getResources().getColor(R.color.night_text));
+            textViewHead.setTextColor(getResources().getColor(R.color.night_text));
+            textViewComp.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

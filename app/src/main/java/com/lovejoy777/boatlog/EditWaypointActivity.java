@@ -116,7 +116,7 @@ public class EditWaypointActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + waypointName);
+        titleTextView.setText("Edit " + waypointName + "");
         nameEditText.setText(waypointName);
         descriptionEditText.setText(waypointDescription);
         latdegEditText.setText(waypointLatDeg);
@@ -133,7 +133,7 @@ public class EditWaypointActivity extends AppCompatActivity {
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFabDeleteSave();
                 } else {
                     openSubMenusFabDeleteSave();
@@ -219,13 +219,11 @@ public class EditWaypointActivity extends AppCompatActivity {
         }
     }
 
-    /* Request updates at startup */
     @Override
     protected void onResume() {
         super.onResume();
     }
 
-    /* Remove the locationlistener updates when Activity is paused */
     @Override
     protected void onPause() {
         super.onPause();
@@ -233,31 +231,50 @@ public class EditWaypointActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocationLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocationLong.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latminEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longminEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longewEditText.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latnsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longewEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latminEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longminEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longewEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
+
     }
 
-    //closes FAB submenus delete & edit
     private void closeSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.INVISIBLE);
         layoutFabSave.setVisibility(View.INVISIBLE);
@@ -265,7 +282,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         fabExpanded = false;
     }
 
-    //Opens FAB submenus
     private void openSubMenusFabDeleteSave() {
         layoutFabDelete.setVisibility(View.VISIBLE);
         layoutFabSave.setVisibility(View.VISIBLE);

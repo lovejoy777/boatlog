@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        loadToolbarNavDrawer();
+
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
@@ -125,13 +127,7 @@ public class MainActivity extends AppCompatActivity {
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
-            loadToolbarNavDrawerRed();
             NightMode();
-        }
-
-        if (!NightModeOn) {
-            loadToolbarNavDrawer();
-
         }
 
         RL1.setOnClickListener(new View.OnClickListener() {
@@ -257,99 +253,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
 
-            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            //navigationView.setBackgroundColor(Color.BLACK);
+            if (NightModeOn) {
+                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+            } else {
+                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            }
         }
     }
 
-    private void loadToolbarNavDrawerRed() {
-        //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        //set NavigationDrawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        if (navigationView != null) {
-
-            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean switch1 = myPrefs.getBoolean("switch1", false);
-            Boolean switch2 = myPrefs.getBoolean("switch2", false);
-
-            setupDrawerContent(navigationView);
-            Menu menu = navigationView.getMenu();
-
-            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
-            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
-
-            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
-            switcher1.setChecked(switch1);
-            switcher1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher1.isChecked())) {
-                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", false);
-                        myPrefse.apply();
-                    }
-
-                    // Restart app to load day/night modes
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    Bundle bndlanimation =
-                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                    startActivity(intent, bndlanimation);
-                    startActivity(intent);
-
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
-            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
-
-            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
-            switcher2.setChecked(switch2);
-            switcher2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher2.isChecked())) {
-                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", false);
-                        myPrefse.apply();
-                    }
-
-
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-        }
-    }
 
     //navigationDrawerIcon Onclick
     @Override
@@ -607,25 +525,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void NightMode() {
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        // titleTextView.setTextColor(Color.RED);
 
-        textView1.setText("Ships LogBook");
-        textView2.setText("Log");
-        textView3.setText("Navigation");
-        textView4.setText("Maintenance Log");
+        toolBar.setBackgroundResource(R.color.card_background);
+        scrollView1.setBackgroundResource(R.color.card_background);
 
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        MRL1.setBackgroundResource(R.color.card_background);
         RL1.setBackgroundResource(R.color.card_background);
         RL2.setBackgroundResource(R.color.card_background);
         RL3.setBackgroundResource(R.color.card_background);
         RL4.setBackgroundResource(R.color.card_background);
 
-        textView1.setTextColor(getResources().getColor(R.color.night_text));
-        textView2.setTextColor(getResources().getColor(R.color.night_text));
-        textView3.setTextColor(getResources().getColor(R.color.night_text));
-        textView4.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            textView1.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textView2.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textView3.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textView4.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+
+        }else {
+            textView1.setTextColor(getResources().getColor(R.color.night_text));
+            textView2.setTextColor(getResources().getColor(R.color.night_text));
+            textView3.setTextColor(getResources().getColor(R.color.night_text));
+            textView4.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

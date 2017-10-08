@@ -3,6 +3,7 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +33,7 @@ public class CreateManLogActivity extends AppCompatActivity {
     RelativeLayout MRL1;
     Toolbar toolBar;
 
-    private FloatingActionButton fabSave; //fabMainSave
+    FloatingActionButton fabSave; //fabMainSave
     FrameLayout fabFrame;
 
     TextView textViewName;
@@ -66,7 +67,7 @@ public class CreateManLogActivity extends AppCompatActivity {
         textViewParts = (TextView) findViewById(R.id.textViewParts);
         textViewProgress = (TextView) findViewById(R.id.textViewProgress);
 
-        titleTextView.setText("Create New Entry");
+        titleTextView.setText(R.string.create_entry);
 
         nameEditText = (EditText) findViewById(R.id.editTextName);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
@@ -140,22 +141,32 @@ public class CreateManLogActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
-        textViewParts.setTextColor(getResources().getColor(R.color.night_text));
-        textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewParts.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewProgress.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-        partsEditText.setTextColor(getResources().getColor(R.color.night_text));
-        //progressEditText.setTextColor(Color.RED);
-        //spinnerProgress.colo(getResources().getColor(R.color.night_text));
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            partsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+            textViewParts.setTextColor(getResources().getColor(R.color.night_text));
+            textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+            partsEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
     }
 
     /* Request updates at startup */

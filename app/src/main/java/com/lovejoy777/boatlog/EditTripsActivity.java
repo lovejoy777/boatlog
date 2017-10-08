@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 public class EditTripsActivity extends AppCompatActivity {
 
-
     private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
@@ -33,7 +32,7 @@ public class EditTripsActivity extends AppCompatActivity {
     Toolbar toolBar;
 
     private boolean fabExpanded = false;
-    private FloatingActionButton fabDeleteSave; //fabMainDeleteEdit
+    private FloatingActionButton fabDeleteSave;
     FrameLayout fabFrame;
     private LinearLayout layoutFabDelete;
     private LinearLayout layoutFabSave;
@@ -90,10 +89,8 @@ public class EditTripsActivity extends AppCompatActivity {
 
         nameEditText.setFocusableInTouchMode(true);
         nameEditText.setClickable(true);
-
         departureEditText.setFocusableInTouchMode(true);
         departureEditText.setClickable(true);
-
         destinationEditText.setFocusableInTouchMode(true);
         destinationEditText.setClickable(true);
 
@@ -106,17 +103,17 @@ public class EditTripsActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + tripName);
+        titleTextView.setText("Edit " + tripName + "");
         nameEditText.setText(tripName);
         departureEditText.setText(tripDeparture);
-        destinationEditText.setText(tripDestination + "");
+        destinationEditText.setText("" + tripDestination + "");
 
         fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
 
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFabDeleteSave();
                 } else {
                     openSubMenusFabDeleteSave();
@@ -210,19 +207,30 @@ public class EditTripsActivity extends AppCompatActivity {
 
     private void NightMode() {
 
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDeparture.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDestination.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDeparture.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDestination.setTextColor(getResources().getColor(R.color.night_text));
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            departureEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            destinationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        departureEditText.setTextColor(getResources().getColor(R.color.night_text));
-        destinationEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDeparture.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDestination.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            departureEditText.setTextColor(getResources().getColor(R.color.night_text));
+            destinationEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

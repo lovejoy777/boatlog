@@ -20,7 +20,6 @@
 
     <!-- Backgrounds -->
     <color name="background">#ffffffff</color>
-    <color name="black">#ff000000</color>
     <color name="light_green_500">#8BC34A</color>
     <color name="amber_500">#FFC107</color>
     <color name="orange_500">#FF9800</color>

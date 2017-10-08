@@ -20,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,6 +28,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 
 /**
@@ -43,13 +43,12 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
     private String provider;
     private BoatLogDBHelper dbHelper;
 
-    private FloatingActionButton fabSave; //fabMainDeleteEditSave
-    private FloatingActionButton fabSavefav; //fabMainDeleteEditSave
+    FloatingActionButton fabSave; //fabMainDeleteEditSave
+    FloatingActionButton fabSavefav; //fabMainDeleteEditSave
     FrameLayout fabFrame;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    LinearLayout MLL1;
     Toolbar toolBar;
 
 
@@ -96,7 +95,7 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
         fabSavefav = (FloatingActionButton) this.findViewById(R.id.fabSavefav);
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
-        titleTextView.setText("Create New Entry");
+        titleTextView.setText(R.string.create_entry);
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -108,9 +107,9 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
         // Get Time and Date
         Calendar c = Calendar.getInstance();
         System.out.println("Current time => " + c.getTime());
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.UK);
         String formattedDate = df.format(c.getTime());
-        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dt = new SimpleDateFormat("HH:mm", Locale.UK);
         String formattedTime = dt.format(c.getTime());
 
         // Get the location manager
@@ -135,14 +134,14 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
         dbHelper = new BoatLogDBHelper(this);
 
         // pre fill text fields
-        trip_idText.setText("" + tripID);
+        trip_idText.setText("" + tripID + "");
         if (entryName != null && !entryName.isEmpty()) {
-            nameEditText.setText("" + entryName);
+            nameEditText.setText("" + entryName + "");
         }
 
-        timeEditText.setText("" + formattedTime);
-        dateEditText.setText("" + formattedDate);
-        locationEditText.setText("No GPS");
+        timeEditText.setText("" + formattedTime + "");
+        dateEditText.setText("" + formattedDate + "");
+        locationEditText.setText(R.string.no_gps);
 
         // SAVE ENTRY FAB BUTTON
         fabSave.setImageResource(R.drawable.ic_save_white);
@@ -159,7 +158,7 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
             @Override
             public void onClick(View view) {
                 Cursor rs = dbHelper.getAllFavEntry();
-                ArrayList<String> favArray = new ArrayList<String>();
+                ArrayList<String> favArray = new ArrayList<>();
                 while (rs.moveToNext()) {
                     String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
                     favArray.add(fav);
@@ -243,13 +242,11 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
 
     @Override
     public void onLocationChanged(Location location) {
-        String formattedLocation = null;
+        String formattedLocation;
         if (location != null) {
             formattedLocation = FormattedLocation(location.getLatitude(), location.getLongitude());
-            locationEditText.setText("" + formattedLocation);
+            locationEditText.setText("" + formattedLocation + "");
         }
-
-
     }
 
     @Override
@@ -273,20 +270,33 @@ public class CreateEntriesActivity extends AppCompatActivity implements Location
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewTime.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDate.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDate.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocation.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            timeEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            dateEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            locationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        timeEditText.setTextColor(getResources().getColor(R.color.night_text));
-        dateEditText.setTextColor(getResources().getColor(R.color.night_text));
-        locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewTime.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDate.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            timeEditText.setTextColor(getResources().getColor(R.color.night_text));
+            dateEditText.setTextColor(getResources().getColor(R.color.night_text));
+            locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
     }
 
     /* Request updates at startup */

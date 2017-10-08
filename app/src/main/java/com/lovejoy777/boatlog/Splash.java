@@ -24,7 +24,7 @@ public class Splash extends Activity {
         try {
             String versionName = Splash.this.getPackageManager()
                     .getPackageInfo(Splash.this.getPackageName(), 0).versionName;
-            tv_version.setText("Version " + versionName);
+            tv_version.setText("Version " + versionName + "");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

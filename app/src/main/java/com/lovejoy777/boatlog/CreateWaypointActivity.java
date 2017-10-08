@@ -9,6 +9,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -22,6 +23,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 /**
  * Created by steve on 08/09/17.
  */
@@ -32,8 +35,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
     private String provider;
     private BoatLogDBHelper dbHelper;
 
-    private boolean fabExpanded = false;
-    private FloatingActionButton fabSave; //fabMainDeleteEditSave
+    FloatingActionButton fabSave;
     FrameLayout fabFrame;
 
     ScrollView scrollView1;
@@ -90,7 +92,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         longsecEditText = (EditText) findViewById(R.id.editTextLongSec);
         longewEditText = (EditText) findViewById(R.id.editTextLongEW);
 
-        titleTextView.setText("Create New Waypoint");
+        titleTextView.setText(R.string.create_waypoint);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
@@ -175,18 +177,17 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
                     + "." + longSeconds + " " + lonDegree;
         } catch (Exception e) {
 
-            return "" + String.format("%8.5f", latitude) + "  "
-                    + String.format("%8.5f", longitude);
+            return "" + String.format(Locale.UK,"%8.5f", latitude) + "  "
+                    + String.format(Locale.UK,"%8.5f", longitude);
         }
     }
 
     @Override
     public void onLocationChanged(Location location) {
 
-        // prefill lat long text fields
-        String dms = null;
-        float nDegrees = 1;
-        float eDegrees = 1;
+        String dms;
+        float nDegrees;
+        float eDegrees;
         if (location != null) {
 
             dms = DDtoDMS(location.getLatitude(), location.getLongitude());
@@ -224,7 +225,7 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
                 System.out.println(nResult);
                 System.out.println(eResult);
             } catch (Exception e) {
-
+                System.out.println("Exeption e");
             }
 
         }
@@ -250,33 +251,51 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
                 Toast.LENGTH_SHORT).show();
     }
 
-
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocationLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocationLong.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            latnsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            longewEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latminEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-        latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longminEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-        longewEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latminEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+            latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longminEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
+            longewEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
+
     }
 
-    /* Request updates at startup */
     @Override
     protected void onResume() {
         super.onResume();
@@ -293,7 +312,6 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
 
-    /* Remove the locationlistener updates when Activity is paused */
     @Override
     protected void onPause() {
         super.onPause();

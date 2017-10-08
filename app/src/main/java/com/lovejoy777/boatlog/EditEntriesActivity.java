@@ -26,11 +26,10 @@ import android.widget.Toast;
 
 public class EditEntriesActivity extends AppCompatActivity {
 
-
     private BoatLogDBHelper dbHelper;
 
     private boolean fabExpanded = false;
-    private FloatingActionButton fabDeleteSave; //fabMainDeleteEditSave
+    FloatingActionButton fabDeleteSave;
     FrameLayout fabFrame;
     private LinearLayout layoutFabDelete;
     private LinearLayout layoutFabSave;
@@ -43,7 +42,6 @@ public class EditEntriesActivity extends AppCompatActivity {
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
     TextView trip_idText;
 
-    public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
     public final static String KEY_EXTRA_TRIPS_ID = "KEY_EXTRA_TRIPS_ID";
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
@@ -109,7 +107,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         Cursor rs = dbHelper.getEntry(entryID);
         rs.moveToFirst();
         final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
-        String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_FAV));
         String entryTime = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
         String entryDate = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
         String entryLocation = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
@@ -118,17 +115,17 @@ public class EditEntriesActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + entryName);
+        titleTextView.setText("Edit " + entryName + "");
         nameEditText.setText(entryName);
         timeEditText.setText(entryTime);
         dateEditText.setText(entryDate);
-        locationEditText.setText(entryLocation + "");
+        locationEditText.setText("" + entryLocation + "");
         trip_idText.setText(entryTrip_ID);
 
         fabDeleteSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabExpanded == true) {
+                if (fabExpanded) {
                     closeSubMenusFabDeleteSave();
                 } else {
                     openSubMenusFabDeleteSave();
@@ -197,7 +194,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         Cursor rs = dbHelper.getEntry(entryID);
         rs.moveToFirst();
         String fab = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_FAV));
-        final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
         if (!rs.isClosed()) {
             rs.close();
         }
@@ -223,20 +219,34 @@ public class EditEntriesActivity extends AppCompatActivity {
 
     private void NightMode() {
 
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        toolBar.setBackgroundColor(getResources().getColor(R.color.card_background));
-        titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+        scrollView1.setBackgroundResource(R.color.card_background);
+        MRL1.setBackgroundResource(R.color.card_background);
+        toolBar.setBackgroundResource(R.color.card_background);
 
-        textViewName.setTextColor(getResources().getColor(R.color.night_text));
-        textViewTime.setTextColor(getResources().getColor(R.color.night_text));
-        textViewDate.setTextColor(getResources().getColor(R.color.night_text));
-        textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewDate.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            textViewLocation.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
 
-        nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-        timeEditText.setTextColor(getResources().getColor(R.color.night_text));
-        dateEditText.setTextColor(getResources().getColor(R.color.night_text));
-        locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            timeEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            dateEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            locationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+
+        }else {
+            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+            textViewName.setTextColor(getResources().getColor(R.color.night_text));
+            textViewTime.setTextColor(getResources().getColor(R.color.night_text));
+            textViewDate.setTextColor(getResources().getColor(R.color.night_text));
+            textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
+
+            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
+            timeEditText.setTextColor(getResources().getColor(R.color.night_text));
+            dateEditText.setTextColor(getResources().getColor(R.color.night_text));
+            locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 
