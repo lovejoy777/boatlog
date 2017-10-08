@@ -17,6 +17,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -67,10 +68,16 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
-    long UPDATE_INTERVAL = 2 * 1000;  // 10 secs
+    long UPDATE_INTERVAL = 2 * 1000;  // 10 secs?
     long FASTEST_INTERVAL = 2000; // 2 sec
     long FALLBACK_INTERVAL = 10000; // 10 seconds
-    long INDICATOR_INTERVAL = 1500; // .8 seconds
+    long INDICATORFALLBACK_INTERVAL = 50; // 5 seconds
+    long INDICATOR0_INTERVAL = 20; // 1 seconds
+    long INDICATOR1_INTERVAL = 45; // 1.5 seconds
+    long INDICATOR2_INTERVAL = 20; // 2 seconds
+    long NOGPS_INTERVAL = 100; // 10 seconds
+    long DEVIDE_NUMBER = 1000000;
+
 
     // COMPASS MANAGER
     private SensorManager mSensorManager;
@@ -266,16 +273,38 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     public void onLocationReceived(Location location) {
 
         if (location != null) {
-            long locationAge = System.currentTimeMillis() - location.getTime();
 
-            long newLocationAge = locationAge;
+            long locationAge = SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos();
+            long newLocationAge = locationAge / DEVIDE_NUMBER;
             String locAge = String.valueOf(newLocationAge);
             textViewGetTime.setText(locAge);
-            // showToast(locAge);
-            if (newLocationAge < INDICATOR_INTERVAL) {
-                updateUI(location);
 
-            } else {
+            if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR1_INTERVAL) {
+                updateUI(location);
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
+            }
+            if (newLocationAge < INDICATOR1_INTERVAL  && newLocationAge > INDICATOR0_INTERVAL) {
+                updateUI(location);
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
+            }
+            if (newLocationAge < INDICATOR0_INTERVAL) {
+                updateUI(location);
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
+            }
+
+            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < NOGPS_INTERVAL) {
+                updateUI(location);
+                showToast("WARNING !!!!! \nLost Satellites, now using your\nLast Known Location");
+                SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+                arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                if (NightModeOn) {
+                    arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+                }
+            } else if (newLocationAge > NOGPS_INTERVAL) {
+                showToast("WARNING !!!!! \nNO LOCATION FOUND");
                 textViewLat.setText("searching");
                 textViewLon.setText("for gps");
                 textViewDistance.setText("0.0 NM");
@@ -286,10 +315,10 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                 final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
                 arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
                 if (NightModeOn) {
-                    arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
-                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.black)));
+                    arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
                 }
 
             }
@@ -304,11 +333,9 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
-        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
 
         if (NightModeOn) {
             arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
 
         }
 
