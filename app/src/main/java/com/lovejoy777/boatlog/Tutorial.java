@@ -25,6 +25,8 @@ public class Tutorial extends AppCompatActivity {
     ImageView screen_shot;
     TextView tv_version;
 
+    final String youtube_path = "https://www.youtube.com/watch?v=p0vaeSra1Ns&index=1&list=PLqay3RH2Sx9oe8QXWPVK47GJrazXGqxs-";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +70,7 @@ public class Tutorial extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent bootanimactivity = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=V_XdWs84LMs&t=242s"));
+                Intent bootanimactivity = new Intent(Intent.ACTION_VIEW, Uri.parse(youtube_path));
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(bootanimactivity, bndlanimation);
