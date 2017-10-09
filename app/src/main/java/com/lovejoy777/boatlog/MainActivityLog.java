@@ -80,9 +80,8 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     long INDICATOR1_INTERVAL = 15; // 1 seconds
     long INDICATOR2_INTERVAL = 30; // 3 seconds
     long INDICATORFALLBACK_INTERVAL = 40; // 4 seconds
-    long INDICATORNOGPS_INTERVAL = 70; // 7 seconds
+    long INDICATORNOGPS_INTERVAL = 100; // 7 seconds
     long DEVIDE_NUMBER = 10000000; //nano to tenths
-
 
     // ZOOM SEEKBAR
     private SeekBar zoomSeekbar;
@@ -287,7 +286,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
     // EASYLOCATION METHODS
     protected synchronized void buildEasyLocationClient() {
-        Toast.makeText(this, "Loading Map", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Loading Map", Toast.LENGTH_SHORT).show();
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
@@ -612,9 +611,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         }
     }
 
-
-
-    //navigationDrawerIcon Onclick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

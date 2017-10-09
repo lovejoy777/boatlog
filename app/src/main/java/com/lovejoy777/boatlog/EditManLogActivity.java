@@ -29,7 +29,6 @@ import static java.lang.String.valueOf;
 
 public class EditManLogActivity extends AppCompatActivity {
 
-
     private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
@@ -37,7 +36,7 @@ public class EditManLogActivity extends AppCompatActivity {
     Toolbar toolBar;
 
     private boolean fabExpanded = false;
-    private FloatingActionButton fabDeleteSave; //fabMainDeleteEdit
+    private FloatingActionButton fabDeleteSave;
     FrameLayout fabFrame;
     private LinearLayout layoutFabDelete;
     private LinearLayout layoutFabSave;
@@ -285,8 +284,6 @@ public class EditManLogActivity extends AppCompatActivity {
             descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
             partsEditText.setTextColor(getResources().getColor(R.color.night_text));
         }
-
-
 
     }
 

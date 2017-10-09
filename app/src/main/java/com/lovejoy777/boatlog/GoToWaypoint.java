@@ -76,7 +76,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     long INDICATOR1_INTERVAL = 15; // 1 seconds
     long INDICATOR2_INTERVAL = 30; // 3 seconds
     long INDICATORFALLBACK_INTERVAL = 40; // 4 seconds
-    long INDICATORNOGPS_INTERVAL = 70; // 7 seconds
+    long INDICATORNOGPS_INTERVAL = 100; // 7 seconds
     long DEVIDE_NUMBER = 10000000; //nano to tenths
 
     // COMPASS MANAGER
@@ -140,6 +140,8 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_goto);
+
+        loadToolbarNavDrawer();
 
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
         waypointName = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_NAME);
@@ -234,9 +236,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
         if (NightModeOn) {
             NightMode();
-            loadToolbarNavDrawerRed();
-        } else {
-            loadToolbarNavDrawer();
         }
 
         Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
@@ -697,97 +696,17 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 }
             });
 
+            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
 
-            navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            //navigationView.setBackgroundColor(Color.BLACK);
-        }
-    }
-
-    private void loadToolbarNavDrawerRed() {
-        //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-        //set NavigationDrawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        if (navigationView != null) {
-
-            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean switch1 = myPrefs.getBoolean("switch1", false);
-            Boolean switch2 = myPrefs.getBoolean("switch2", false);
-
-            setupDrawerContent(navigationView);
-            Menu menu = navigationView.getMenu();
-
-            MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
-            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
-
-            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
-            switcher1.setChecked(switch1);
-            switcher1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher1.isChecked())) {
-                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", false);
-                        myPrefse.apply();
-                    }
-
-                    // Restart app to load day/night modes
-                    Intent intent = new Intent(GoToWaypoint.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    Bundle bndlanimation =
-                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                    startActivity(intent, bndlanimation);
-                    startActivity(intent);
-
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
-            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
-
-            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
-            switcher2.setChecked(switch2);
-            switcher2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher2.isChecked())) {
-                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", false);
-                        myPrefse.apply();
-                    }
-
-
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            });
-
-            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+            if (NightModeOn) {
+                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
+            } else {
+                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
+                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
+            }
         }
     }
 

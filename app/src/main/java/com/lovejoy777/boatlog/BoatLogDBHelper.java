@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by obaro on 02/04/2015.
+ * Created by Lovejoy777 on 07/09/17.
  */
 public class BoatLogDBHelper extends SQLiteOpenHelper {
 

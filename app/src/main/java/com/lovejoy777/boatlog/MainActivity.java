@@ -53,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private SwitchCompat switcher1, switcher2;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
-    private int ACCESS_FINE_LOCATION_CODE = 23;
-
+    int ACCESS_FINE_LOCATION_CODE = 23;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -267,8 +266,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     //navigationDrawerIcon Onclick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -368,7 +365,6 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
-
 
     public void Backup() {
 

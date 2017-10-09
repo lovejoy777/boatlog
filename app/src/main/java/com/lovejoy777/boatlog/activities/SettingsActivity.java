@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 
 import com.lovejoy777.boatlog.R;
 
-
 /**
  * Created by lovejoy777 on 14/11/13.
  */
@@ -36,12 +35,9 @@ public class SettingsActivity extends PreferenceActivity implements
 
         getListView().setBackgroundColor(getResources().getColor(R.color.card_background));
         setTheme(R.style.DarkTheme);
-        // Toast.makeText(SettingsActivity.this, "Night Mode Active", Toast.LENGTH_LONG).show();
     }
 
     private void screenOn() {
-
-        //Toast.makeText(SettingsActivity.this, "Screen On", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -73,13 +69,11 @@ public class SettingsActivity extends PreferenceActivity implements
 
         if (NightModeOn) {
             NightMode();
-            // finish();
         }
 
         if (ScreenOn) {
             screenOn();
         }
-
     }
 
     @Override

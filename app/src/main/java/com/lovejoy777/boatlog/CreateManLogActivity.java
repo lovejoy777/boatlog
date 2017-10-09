@@ -26,7 +26,6 @@ import static java.lang.String.valueOf;
 
 public class CreateManLogActivity extends AppCompatActivity {
 
-
     private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
@@ -72,8 +71,6 @@ public class CreateManLogActivity extends AppCompatActivity {
         nameEditText = (EditText) findViewById(R.id.editTextName);
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
         partsEditText = (EditText) findViewById(R.id.editTextParts);
-        // progressEditText = (EditText) findViewById(R.id.editTextProgress);
-        // spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
@@ -90,7 +87,6 @@ public class CreateManLogActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.progress_array, R.layout.progress_spinner_item);
         adapter.setDropDownViewResource(R.layout.progress_spinner_dropdown_item);
-        //spinnerProgress.setBackgroundColor(getResources().getColor(R.color.grey800));
         spinnerProgress.setAdapter(adapter);
 
         dbHelper = new BoatLogDBHelper(this);
@@ -100,7 +96,6 @@ public class CreateManLogActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 persistTrip();
-                // closeSubMenusFabSave();
             }
         });
     }

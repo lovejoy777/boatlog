@@ -176,14 +176,18 @@ public class MainActivityEntries extends AppCompatActivity {
 
         //Only main FAB is visible in the beginning
         closeSubMenusFab();
-        populateListView();
+        //populateListView();
 
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
-
-
+        if (NightModeOn) {
+            NightMode();
+            populateListViewRed();
+        } else {
+            populateListView();
+        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -276,12 +280,10 @@ public class MainActivityEntries extends AppCompatActivity {
         listView.setAdapter(cursorAdapter);
     }
 
-
     public void loadImagefromGallery() {
         // Create intent to Open Image applications like Gallery, Google Photos
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         // Start the Intent
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
@@ -608,29 +610,6 @@ public class MainActivityEntries extends AppCompatActivity {
         }
     }
 
-    private void loadToolbarNavDrawerRed() {
-        //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-        //set NavigationDrawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-
-        if (navigationView != null) {
-
-            setupDrawerContent(navigationView);
-            navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-        }
-    }
-
-
     //navigationDrawerIcon Onclick
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -680,7 +659,7 @@ public class MainActivityEntries extends AppCompatActivity {
                                         LinearLayout.LayoutParams.MATCH_PARENT);
                                 input.setLayoutParams(lp);
                                 builder.setView(input);
-                                builder.setIcon(android.R.drawable.btn_star_big_on);
+                                builder.setIcon(R.drawable.ic_favorite_border);
 
                                 builder.setPositiveButton("SAVE",
                                         new DialogInterface.OnClickListener() {
@@ -729,10 +708,11 @@ public class MainActivityEntries extends AppCompatActivity {
                                 }
 
                                 builder1.setTitle("      Select a Favourite");
-                                builder1.setIcon(android.R.drawable.btn_star_big_on);
+                                builder1.setIcon(R.drawable.ic_favorite_border);
                                 if (favnames == null) {
                                     builder1.create();
                                 }
+
                                 builder1.setItems(favnames, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         final String mChosenFavourite = favnames[which];
@@ -774,7 +754,6 @@ public class MainActivityEntries extends AppCompatActivity {
                 });
 
     }
-
 
     private void NightMode() {
         MRL1.setBackgroundResource(R.color.card_background);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -66,6 +67,12 @@ public class AboutActivity extends AppCompatActivity {
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar4);
         toolbar.setNavigationIcon(R.drawable.ic_action_bak);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -82,10 +89,7 @@ public class AboutActivity extends AppCompatActivity {
                 }
             });
             NightMode();
-        }
-
-        if (!NightModeOn) {
-
+        } else {
             CustomListAdapter adapter1 = new
                     CustomListAdapter(AboutActivity.this, Developer1, AppDeveloper, developerImage1);
             list1 = (ListView) findViewById(R.id.listView_Developer1);
@@ -98,31 +102,33 @@ public class AboutActivity extends AppCompatActivity {
             });
         }
 
-        //1
-
 
         //app version textView
         TextView tv_version = (TextView) findViewById(R.id.tv_Version);
         try {
             String versionName = AboutActivity.this.getPackageManager()
                     .getPackageInfo(AboutActivity.this.getPackageName(), 0).versionName;
-            tv_version.setText("Version " + versionName);
+            tv_version.setText("Version " + versionName + "");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private void NightMode() {
+        MRL1.setBackgroundResource(R.color.card_background);
+        scrollView1.setBackgroundResource(R.color.card_background);
+        RL1.setBackgroundResource(R.color.card_background);
 
-        MRL1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        scrollView1.setBackgroundColor(getResources().getColor(R.color.card_background));
-        RL1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        listView_Developer1.setBackgroundResource(R.color.card_background);
+        listView_link1.setBackgroundResource(R.color.card_background);
 
-        tv_caption1.setTextColor(getResources().getColor(R.color.night_text));
-        listView_Developer1.setBackgroundColor(getResources().getColor(R.color.card_background));
-
-        tv_caption2.setTextColor(getResources().getColor(R.color.night_text));
-        listView_link1.setBackgroundColor(getResources().getColor(R.color.card_background));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tv_caption1.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            tv_caption2.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+        }else {
+            tv_caption1.setTextColor(getResources().getColor(R.color.night_text));
+            tv_caption2.setTextColor(getResources().getColor(R.color.night_text));
+        }
 
     }
 

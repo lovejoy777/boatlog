@@ -37,7 +37,6 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
         TextView txtSub = (TextView) rowView.findViewById(R.id.description);
         txtTitle.setText(web[position]);
-        //txtTitle.setTextColor(Color.RED);
         txtSub.setText((subtext[position]));
         imageView.setImageResource(imageId[position]);
         return rowView;
