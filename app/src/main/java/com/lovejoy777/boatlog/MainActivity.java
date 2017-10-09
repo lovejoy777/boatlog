@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+//import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+//import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +32,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.GooglePlayServicesUtil;
+//import com.google.android.gms.common.api.GoogleApiClient;
+//import com.google.android.gms.drive.Drive;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
@@ -47,13 +53,18 @@ import java.util.Calendar;
 /**
  * Created by lovejoy777 on 11/10/15.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
+
+            // implements GoogleApiClient.ConnectionCallbacks
+
+   // public static final int RESOLVE_CONNECTION_REQUEST_CODE = 99;
 
     private DrawerLayout mDrawerLayout;
     private SwitchCompat switcher1, switcher2;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     int ACCESS_FINE_LOCATION_CODE = 23;
+    //private GoogleApiClient mGoogleApiClient;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -169,8 +180,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
 
     }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    } */
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
@@ -297,6 +318,21 @@ public class MainActivity extends AppCompatActivity {
                                 mDrawerLayout.closeDrawers();
                                 break;
 
+                    /**        case R.id.nav_drive:
+                                mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                                        .addApi(Drive.API)
+                                        .addScope(Drive.SCOPE_FILE)
+                                        .addScope(Drive.SCOPE_APPFOLDER)
+                                        .addConnectionCallbacks(MainActivity.this)
+                                        .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) MainActivity.this)
+                                        .build();
+                                 Toast.makeText(MainActivity.this, "Google Drive client built" , Toast.LENGTH_LONG).show();
+
+                                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(this, DriveScopes.DRIVE);
+                                credential.setSelectedAccountName(accountName);
+                                Drive service = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
+                                break; */
+
                             case R.id.nav_night_switch:
                                 // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
@@ -365,6 +401,39 @@ public class MainActivity extends AppCompatActivity {
                 });
 
     }
+
+    /**
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                // Unable to resolve, message user appropriately
+            }
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+
+            case RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    mGoogleApiClient.connect();
+                }
+                break;
+        }
+    }
+    */
 
     public void Backup() {
 

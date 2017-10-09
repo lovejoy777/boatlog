@@ -27,6 +27,10 @@
     <item android:title="Functions">
         <menu>
             <item
+                android:id="@+id/nav_drive"
+                android:icon="@drawable/ic_favorite_border"
+                android:title="Google drive" />
+            <item
                 android:id="@+id/nav_night_switch"
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_brightness_3"
