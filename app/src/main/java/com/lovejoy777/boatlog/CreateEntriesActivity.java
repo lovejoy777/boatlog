@@ -123,11 +123,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
             checkLocationPermission();
         }
 
-        // PERMISSIONS
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkLocationPermission();
-        }
-
         // IS GOOGLE PLAY SERVICES AVAILIBLE
         isGooglePlayServicesAvailable();
         // if (!isLocationEnabled())

@@ -2,19 +2,20 @@ package com.lovejoy777.boatlog;
 
 import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -23,17 +24,28 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akhgupta.easylocation.EasyLocationAppCompatActivity;
+import com.akhgupta.easylocation.EasyLocationRequest;
+import com.akhgupta.easylocation.EasyLocationRequestBuilder;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.LocationRequest;
+
 import java.util.Locale;
 
 /**
  * Created by steve on 08/09/17.
  */
 
-public class CreateWaypointActivity extends AppCompatActivity implements LocationListener {
+public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
 
-    private LocationManager locationManager;
-    private String provider;
     private BoatLogDBHelper dbHelper;
+
+    // GOOGLE MAPS/LOCATION SERVICES
+    final String TAG = "GPS";
+    long UPDATE_INTERVAL = 2 * 1000;  // 10 secs?
+    long FASTEST_INTERVAL = 2000; // 2 sec
+    long FALLBACK_INTERVAL = 4000; // 7 seconds
 
     FloatingActionButton fabSave;
     FrameLayout fabFrame;
@@ -103,23 +115,15 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             NightMode();
         }
 
-        // Get the location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // Define the criteria how to select the location provider -> use default
-        Criteria criteria = new Criteria();
-        provider = locationManager.getBestProvider(criteria, false);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            return;
+        // PERMISSIONS
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
         }
-        Location location = locationManager.getLastKnownLocation(provider);
-        // Initialize the location fields
-        if (location != null) {
-            System.out.println("Provider " + provider + " has been selected.");
-            onLocationChanged(location);
-        } else {
-            Toast.makeText(getApplicationContext(), "Lat Long unavailable ", Toast.LENGTH_SHORT).show();
-        }
+
+        // IS GOOGLE PLAY SERVICES AVAILIBLE
+        isGooglePlayServicesAvailable();
+        // if (!isLocationEnabled())
+        //   showAlert();
 
         dbHelper = new BoatLogDBHelper(this);
         fabSave.setImageResource(R.drawable.ic_save_white);
@@ -130,6 +134,65 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             }
         });
 
+        // EASYLOCATION SETUP
+        LocationRequest locationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+        EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
+                .setLocationRequest(locationRequest)
+                .setFallBackToLastLocationTime(FALLBACK_INTERVAL)
+                .build();
+        requestLocationUpdates(easyLocationRequest);
+
+    }
+
+    @Override
+    public void onLocationReceived(Location location) {
+        String dms;
+        float nDegrees;
+        float eDegrees;
+        if (location != null) {
+
+            dms = DDtoDMS(location.getLatitude(), location.getLongitude());
+
+            try {
+                String inputst = dms.replaceAll("[^A-Za-z0-9]", " ");
+                String[] array = inputst.split(" ");
+
+                int nDegree = Integer.parseInt(array[0]);
+                int nMinute = Integer.parseInt(array[1]);
+                int nSecond = Integer.parseInt(array[2]);
+                String latDegrees = nDegree >= 0 ? "N" : "S";
+
+                int eDegree = Integer.parseInt(array[4]);
+                int eMinute = Integer.parseInt(array[5]);
+                int eSecond = Integer.parseInt(array[6]);
+                String longDegrees = eDegree >= 0 ? "W" : "E";
+
+                latdegEditText.setText(String.valueOf(nDegree));
+                latminEditText.setText(String.valueOf(nMinute));
+                latsecEditText.setText(String.valueOf(nSecond));
+                latnsEditText.setText(latDegrees);
+
+                longdegEditText.setText(String.valueOf(eDegree));
+                longminEditText.setText(String.valueOf(eMinute));
+                longsecEditText.setText(String.valueOf(eSecond));
+                longewEditText.setText(longDegrees);
+
+                nDegrees = nDegree + (float) nMinute / 60 + (float) nSecond / 3600;
+                String nResult = Float.toString(nDegrees).substring(0, 10);
+
+                eDegrees = eDegree + (float) eMinute / 60 + (float) eSecond / 3600;
+                String eResult = Float.toString(eDegrees).substring(0, 10);
+
+                System.out.println(nResult);
+                System.out.println(eResult);
+            } catch (Exception e) {
+                System.out.println("Exeption e");
+            }
+
+        }
     }
 
     public void persistWaypoint() {
@@ -182,73 +245,109 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
         }
     }
 
+    // EASYLOCATION LIB METHODS
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
-    public void onLocationChanged(Location location) {
+    public void onLocationPermissionGranted() {
+        showToast("Location permission granted");
+    }
 
-        String dms;
-        float nDegrees;
-        float eDegrees;
-        if (location != null) {
+    @Override
+    public void onLocationPermissionDenied() {
+        showToast("Location permission denied");
+    }
 
-            dms = DDtoDMS(location.getLatitude(), location.getLongitude());
+    @Override
+    public void onLocationProviderEnabled() {
+        showToast("Location services are now ON");
+    }
 
-            try {
-                String inputst = dms.replaceAll("[^A-Za-z0-9]", " ");
-                String[] array = inputst.split(" ");
+    @Override
+    public void onLocationProviderDisabled() {
+        showToast("Location services are still Off");
+    }
 
-                int nDegree = Integer.parseInt(array[0]);
-                int nMinute = Integer.parseInt(array[1]);
-                int nSecond = Integer.parseInt(array[2]);
-                String latDegrees = nDegree >= 0 ? "N" : "S";
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
 
-                int eDegree = Integer.parseInt(array[4]);
-                int eMinute = Integer.parseInt(array[5]);
-                int eSecond = Integer.parseInt(array[6]);
-                String longDegrees = eDegree >= 0 ? "W" : "E";
-
-                latdegEditText.setText(String.valueOf(nDegree));
-                latminEditText.setText(String.valueOf(nMinute));
-                latsecEditText.setText(String.valueOf(nSecond));
-                latnsEditText.setText(latDegrees);
-
-                longdegEditText.setText(String.valueOf(eDegree));
-                longminEditText.setText(String.valueOf(eMinute));
-                longsecEditText.setText(String.valueOf(eSecond));
-                longewEditText.setText(longDegrees);
-
-                nDegrees = nDegree + (float) nMinute / 60 + (float) nSecond / 3600;
-                String nResult = Float.toString(nDegrees).substring(0, 10);
-
-                eDegrees = eDegree + (float) eMinute / 60 + (float) eSecond / 3600;
-                String eResult = Float.toString(eDegrees).substring(0, 10);
-
-                System.out.println(nResult);
-                System.out.println(eResult);
-            } catch (Exception e) {
-                System.out.println("Exeption e");
+    private boolean isGooglePlayServicesAvailable() {
+        final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.d(TAG, "This device is not supported.");
+                finish();
             }
-
+            return false;
         }
-
+        Log.d(TAG, "This device is supported.");
+        return true;
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        // TODO Auto-generated method stub
-
+    private void showAlert() {
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateWaypointActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateWaypointActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Enable Location Services")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(myIntent, bndlanimation);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+                .setIcon(R.drawable.ic_location_on_white)
+                .show();
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-        Toast.makeText(this, "Enabled new provider " + provider,
-                Toast.LENGTH_SHORT).show();
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Toast.makeText(this, "Disabled provider " + provider,
-                Toast.LENGTH_SHORT).show();
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void NightMode() {
@@ -309,19 +408,18 @@ public class CreateWaypointActivity extends AppCompatActivity implements Locatio
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(provider, 400, 1, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(this);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
+        stopLocationUpdates();
     }
 
 }
