@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "183114782898",
+    "project_id": "boatlog-182623"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:183114782898:android:60d6d6125e11e887",
+        "android_client_info": {
+          "package_name": "com.lovejoy777.boatlog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "183114782898-qiou37s7nntmd42ucjm9b7dhjloelhl1.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "183114782898-rm0irpkkj87dn59egl84gjnb6vfhpfvn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lovejoy777.boatlog",
+            "certificate_hash": "363dc20cfe215a76a05b80fcbe990e3ca8a7916b"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAiD-Suc8BmzsIYhFhWtXqyylRcrK4WCw"
+        }
+      ],
+      "services": {
+
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

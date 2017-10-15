@@ -43,7 +43,9 @@ public class Splash extends Activity {
                     Bundle bndlanimation =
                             ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                     startActivity(intent, bndlanimation);
-                    startActivity(intent);
+                   // startActivity(intent);
+
+
                 }
             }
         };

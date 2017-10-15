@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
-//import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -12,7 +11,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-//import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -32,10 +30,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.android.gms.common.ConnectionResult;
-//import com.google.android.gms.common.GooglePlayServicesUtil;
-//import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.drive.Drive;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
@@ -55,16 +49,12 @@ import java.util.Calendar;
  */
 public class MainActivity extends AppCompatActivity  {
 
-            // implements GoogleApiClient.ConnectionCallbacks
-
-   // public static final int RESOLVE_CONNECTION_REQUEST_CODE = 99;
 
     private DrawerLayout mDrawerLayout;
     private SwitchCompat switcher1, switcher2;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     int ACCESS_FINE_LOCATION_CODE = 23;
-    //private GoogleApiClient mGoogleApiClient;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -181,17 +171,6 @@ public class MainActivity extends AppCompatActivity  {
         });
 
     }
-
-    /**
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    } */
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
@@ -318,20 +297,10 @@ public class MainActivity extends AppCompatActivity  {
                                 mDrawerLayout.closeDrawers();
                                 break;
 
-                    /**        case R.id.nav_drive:
-                                mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                                        .addApi(Drive.API)
-                                        .addScope(Drive.SCOPE_FILE)
-                                        .addScope(Drive.SCOPE_APPFOLDER)
-                                        .addConnectionCallbacks(MainActivity.this)
-                                        .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) MainActivity.this)
-                                        .build();
-                                 Toast.makeText(MainActivity.this, "Google Drive client built" , Toast.LENGTH_LONG).show();
-
-                                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(this, DriveScopes.DRIVE);
-                                credential.setSelectedAccountName(accountName);
-                                Drive service = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
-                                break; */
+                          case R.id.nav_drive:
+                              Intent drive = new Intent(MainActivity.this, BackupActivity.class);
+                              startActivity(drive, bndlanimation);
+                                break;
 
                             case R.id.nav_night_switch:
                                 // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
@@ -402,39 +371,6 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    /**
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
-            } catch (IntentSender.SendIntentException e) {
-                // Unable to resolve, message user appropriately
-            }
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        switch (requestCode) {
-
-            case RESOLVE_CONNECTION_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    mGoogleApiClient.connect();
-                }
-                break;
-        }
-    }
-    */
-
     public void Backup() {
 
         android.support.v7.app.AlertDialog.Builder builder;
@@ -462,6 +398,9 @@ public class MainActivity extends AppCompatActivity  {
 
                         final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
                         File dbFile = new File(inFileName);
+
+                        if (dbFile.exists()) {
+
 
                         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
                         File dir = new File(path);
@@ -500,6 +439,10 @@ public class MainActivity extends AppCompatActivity  {
                         }
 
                         Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_LONG).show();
+
+                    } else {
+                            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_LONG).show();
+                        }
                     }
                 })
 
@@ -533,46 +476,52 @@ public class MainActivity extends AppCompatActivity  {
                             dir.mkdirs();
 
 
+                        File dbOutFile = new File("/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db");
                         File dbFile = new File(path + "/" + dbFileName);
 
                         String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
 
-                        if (dbFile.exists()) {
-                            // Local database
-                            InputStream input = null;
-                            try {
-                                input = new FileInputStream(path + "/" + dbFileName);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-
-                            // Path to the external backup
-                            OutputStream output = null;
-                            try {
-                                output = new FileOutputStream(outFilePath);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-
-                            // transfer bytes from the Input File to the Output File
-                            byte[] buffer = new byte[1024];
-                            int length;
-                            try {
-                                while ((length = input.read(buffer)) > 0) {
-                                    output.write(buffer, 0, length);
+                        if (dbOutFile.exists()) {
+                            if (dbFile.exists()) {
+                                // Local database
+                                InputStream input = null;
+                                try {
+                                    input = new FileInputStream(path + "/" + dbFileName);
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
                                 }
 
-                                output.flush();
-                                output.close();
-                                input.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                // Path to the external backup
+                                OutputStream output = null;
+                                try {
+                                    output = new FileOutputStream(outFilePath);
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+
+                                // transfer bytes from the Input File to the Output File
+                                byte[] buffer = new byte[1024];
+                                int length;
+                                try {
+                                    while ((length = input.read(buffer)) > 0) {
+                                        output.write(buffer, 0, length);
+                                    }
+
+                                    output.flush();
+                                    output.close();
+                                    input.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_LONG).show();
+
+                            } else {
+                                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_LONG).show();
                             }
-
-                            Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_LONG).show();
-
                         } else {
-                            Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_LONG).show();
+
                         }
 
                     }

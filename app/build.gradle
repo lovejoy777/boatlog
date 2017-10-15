@@ -8,17 +8,22 @@ android {
         applicationId "com.lovejoy777.boatlog"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 16
-        versionName "2.0.6"
+        versionCode 18
+        versionName "2.0.8"
         multiDexEnabled true
     }
 
     buildTypes {
+        debug {
+            manifestPlaceholders = [ mapApiKeyValue:"AIzaSyBHRAlL9xDEPjEFpICj_E5TmobVjO3rfxc", driveApiKeyValue:"183114782898"]
+
+        }
         release {
             minifyEnabled true
           //  shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "google_maps_key", "AIzaSyCwxCtpRWfrqYzeEo3iVnktnPm-Ai9R4Tk"
+            manifestPlaceholders = [ mapApiKeyValue:"AIzaSyBkTpzqoWDyz6HrmJVFEOUru3idR2nyqqI", driveApiKeyValue:"1082763572964"]
+
         }
     }
 }

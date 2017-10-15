@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <permission
         android:name="com.lovejoy777.boatlog.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
@@ -18,8 +20,20 @@
         android:theme="@style/Base.Theme.Toolbar" >
 
         <meta-data
+            android:name="com.google.android.apps.drive.APP_ID"
+            android:value="${driveApiKeyValue}" />
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="${mapApiKeyValue}" />
+        <!-- android:value="@string/google_maps_key" /> -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <intent-filter>
+        <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
+        </intent-filter>
+
 
         <activity
             android:name=".Splash"
@@ -131,9 +145,7 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+
 
         <activity
             android:name=".CreateEntriesActivity"
@@ -189,6 +201,18 @@
             android:name=".GoToWaypoint"
             android:label=""
             android:parentActivityName=".MainActivityWaypoint" >
+        </activity>
+
+        <activity
+            android:name=".Drive_Test"
+            android:label=""
+            android:parentActivityName=".MainActivity" >
+        </activity>
+
+        <activity
+            android:name=".BackupActivity"
+            android:label=""
+            android:parentActivityName=".MainActivity" >
         </activity>
 
     </application>

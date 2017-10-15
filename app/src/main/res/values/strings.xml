@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">BoatLog</string>
+
     <string name="Settings">Settings</string>
 
     <string name="developed">Developed by S Lovejoy</string>
     <string name="splashTitle">BoatLog</string>
+
+    <string name="name_backup">SQLiteBoatLog.db</string>
 
     <string name="BoatLog">BoatLog</string>
     <string name="FabNewEntry">Create New Entry</string>
