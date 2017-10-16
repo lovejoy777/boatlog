@@ -10,23 +10,23 @@ import com.lovejoy777.boatlog.backup.BackupOperator;
  * Created by steve on 14/10/17.
  */
 
-public class BackupImportingTask extends AsyncTask<Void, Void, Void>
+public class BackupRestoringTask extends AsyncTask<Void, Void, Void>
 {
     private final BackupOperator backupOperator;
     private final DriveId backupFileId;
 
     public static void execute(@NonNull BackupOperator backupOperator, @NonNull DriveId backupFileId) {
-        new BackupImportingTask(backupOperator, backupFileId).execute();
+        new BackupRestoringTask(backupOperator, backupFileId).execute();
     }
 
-    private BackupImportingTask(BackupOperator backupOperator, DriveId backupFileId) {
+    private BackupRestoringTask(BackupOperator backupOperator, DriveId backupFileId) {
         this.backupOperator = backupOperator;
         this.backupFileId = backupFileId;
     }
 
     @Override
     protected Void doInBackground(Void... parameters) {
-        backupOperator.importBackup(backupFileId);
+        backupOperator.restoreBackup(backupFileId);
         return null;
     }
 }

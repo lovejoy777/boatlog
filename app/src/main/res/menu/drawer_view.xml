@@ -27,10 +27,6 @@
     <item android:title="Functions">
         <menu>
             <item
-                android:id="@+id/nav_drive"
-                android:icon="@drawable/ic_favorite_border"
-                android:title="Google drive" />
-            <item
                 android:id="@+id/nav_night_switch"
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_brightness_3"
@@ -46,14 +42,18 @@
     <item android:title="Advanced">
         <menu>
             <item
+                android:id="@+id/nav_drive"
+                android:icon="@drawable/ic_cloud_queue_white_48dp"
+                android:title="Google drive" />
+            <item
                 android:id="@+id/nav_backup"
                 android:icon="@drawable/ic_save_white"
-                android:title="Backup Data" />
+                android:title="Local Backup" />
 
             <item
                 android:id="@+id/nav_restore"
                 android:icon="@drawable/ic_restore"
-                android:title="Restore Data" />
+                android:title="Local Restore" />
         </menu>
     </item>
 

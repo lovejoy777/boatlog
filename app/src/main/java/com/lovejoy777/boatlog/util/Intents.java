@@ -20,7 +20,6 @@ public class Intents {
         private Requests() {
         }
         public static final int GOOGLE_CONNECTION = 1;
-        public static final int DRIVE_FILE_CREATE = 2;
         public static final int DRIVE_FILE_OPEN = 3;
     }
 
