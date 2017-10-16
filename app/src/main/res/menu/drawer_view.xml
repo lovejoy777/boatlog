@@ -39,7 +39,7 @@
         </menu>
     </item>
 
-    <item android:title="Advanced">
+    <item android:title="Backup/Sync">
         <menu>
             <item
                 android:id="@+id/nav_drive"

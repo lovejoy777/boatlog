@@ -32,6 +32,13 @@
     <string name="create_waypoint">Create New Waypoint</string>
     <string name="no_gps">No Gps</string>
 
+    <string name="drive_info">
+        This can be useful if you have multiple devices.\n
+        1: Backup after entering data on one device (Phone) \n
+        2: Restore on your other device (tablet).\n
+        Also never lose that valuable data again.
+    </string>
+
     <string name="yes">Confirm</string>
     <string name="no">Cancel</string>
 

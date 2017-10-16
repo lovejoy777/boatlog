@@ -1,9 +1,12 @@
 package com.lovejoy777.boatlog;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +38,6 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.lovejoy777.boatlog.backup.BackupFilePicker;
-import com.lovejoy777.boatlog.backup.BackupOperator;
 import com.lovejoy777.boatlog.util.GoogleServices;
 import com.lovejoy777.boatlog.util.Intents;
 
@@ -61,7 +63,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         GoogleApiClient.OnConnectionFailedListener
 {
 
-     BackupOperator backupOperator;
+   //  BackupOperator backupOperator;
 
     private static enum BackupAction
     {
@@ -82,8 +84,8 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
     ImageView image_drive;
     TextView tv_googleDrive;
     TextView tv_Version;
-
-
+    TextView tv_drive_info;
+    TextView tv_no_connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,8 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         image_drive = (ImageView) findViewById(R.id.image_drive);
         tv_googleDrive = (TextView) findViewById(R.id.tv_googleDrive);
         tv_Version = (TextView) findViewById(R.id.tv_Version);
+        tv_drive_info = (TextView) findViewById(R.id.tv_drive_info);
+        tv_no_connection = (TextView) findViewById(R.id.tv_no_connection);
 
         button_backup = (Button) findViewById(R.id.backup);
         button_restore = (Button) findViewById(R.id.restore);
@@ -118,27 +122,58 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         }
 
         //app version textView
-        TextView tv_version = (TextView) findViewById(R.id.tv_Version);
         try {
             String versionName = BackupActivity.this.getPackageManager()
                     .getPackageInfo(BackupActivity.this.getPackageName(), 0).versionName;
-            tv_version.setText("Version " + versionName + "");
+            tv_Version.setText("Version " + versionName + "");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
-
+        // BACKUP
         button_backup.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 startBackupAction(BackupAction.EXPORT);
             }
         });
 
+        // RESTORE
         button_restore.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 startBackupAction(BackupAction.IMPORT);
             }
         });
+
+        if (haveNetworkConnection()) {
+            tv_no_connection.setVisibility(View.INVISIBLE);
+            image_drive.setVisibility(View.VISIBLE);
+            button_backup.setVisibility(View.VISIBLE);
+            button_restore.setVisibility(View.VISIBLE);
+        } else {
+           // Toast.makeText(getApplicationContext(), "           ERROR !!!\nno internet connection", Toast.LENGTH_SHORT).show();
+            tv_no_connection.setVisibility(View.VISIBLE);
+            image_drive.setVisibility(View.INVISIBLE);
+            button_backup.setVisibility(View.INVISIBLE);
+            button_restore.setVisibility(View.INVISIBLE);
+           // onBackPressed();
+        }
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     public void startBackupAction(BackupAction backupAction) {
@@ -174,15 +209,13 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
 
         switch (backupAction) {
             case EXPORT:
-                // CREATE PDF WITH IMAGE BACKGROUND TASK WITH PROGRESS SPINNER
-
-
-               // BackgroundTaskPDFimage();
+                // BACKUP
                 BackgroundTaskBackup taskBackup = new BackgroundTaskBackup(BackupActivity.this);
                 taskBackup.execute();
-
-              //  startBackupFileCreation();
+                //  startBackupFileCreation();
                 break;
+
+            // RESTORE
             case IMPORT:
                 startBackupFileOpening();
                 break;
@@ -191,13 +224,16 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         }
     }
 
+    // BACKUP
     private class BackgroundTaskBackup extends AsyncTask<Void, Void, Void> {
         private ProgressDialog dialog;
 
+        // BACKUP
         public BackgroundTaskBackup(BackupActivity activity) {
             dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
         }
 
+        // BACKUP
         @Override
         protected void onPreExecute() {
             dialog.setTitle("    Backing up");
@@ -206,6 +242,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
             dialog.show();
         }
 
+        // BACKUP
         @Override
         protected void onPostExecute(Void result) {
             if (dialog.isShowing()) {
@@ -214,11 +251,12 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
             }
         }
 
+        // BACKUP
         @Override
         protected Void doInBackground(Void... params) {
             startBackupFileCreation();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -230,6 +268,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         Drive.DriveApi.requestSync(googleApiClient).setResultCallback(null);
     }
 
+    // BACKUP
     private void startBackupFileCreation() {
         Drive.DriveApi.newDriveContents(googleApiClient).setResultCallback(this);
     }
@@ -239,10 +278,12 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         continueBackupFileCreation(contentsResult.getDriveContents());
     }
 
+    // BACKUP
     private void continueBackupFileCreation(DriveContents backupFileContents) {
         exportBackup();
     }
 
+    // RESTORE
     private void startBackupFileOpening() {
         BackupFilePicker.with(this, googleApiClient).startBackupFileOpening();
     }
@@ -265,6 +306,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         //    startBackupExporting(backupFileId);
         //}
 
+
         if (requestCode == Intents.Requests.DRIVE_FILE_OPEN) {
             DriveId backupFileId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
             startBackupRestoring(backupFileId);
@@ -273,7 +315,6 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
 
     private void finishBackupAction() {
         this.backupAction = BackupAction.NONE;
-        //hideProgress();
         //showUpdatedContents();
         //tearDownGoogleApiConnection();
         onBackPressed();
@@ -305,6 +346,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
             }
 
             // Toast.makeText(this.context, "Restore Complete", Toast.LENGTH_SHORT).show();
+            fileOutput.flush();
             fileOutput.close();
             inputstream.close();
         } catch (IOException e) {
@@ -325,6 +367,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
     }
 
 
+    // RESTORE
     private void startBackupRestoring(DriveId backupFileId) {
 
         BackgroundTaskRestore taskRestore = new BackgroundTaskRestore(BackupActivity.this, backupFileId);
@@ -333,6 +376,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         //BackupRestoringTask.execute(BackupOperator.with(this, googleApiClient), backupFileId);
     }
 
+    // RESTORE
     private class BackgroundTaskRestore extends AsyncTask<DriveId, Void, DriveId> {
         private ProgressDialog dialog;
 
@@ -342,39 +386,37 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
             this.backupFileId = backupFileId;
         }
 
+        // RESTORE
         @Override
         protected void onPreExecute() {
             dialog.setTitle("    Restoring");
-            dialog.setMessage("     Database");
+            dialog.setMessage("    From Google Drive");
             dialog.setIcon(R.drawable.ic_cloud_download_white_48dp);
             dialog.show();
         }
 
+        // RESTORE
         protected void onPostExecute(DriveId backupFileId) {
             if (dialog.isShowing()) {
                 dialog.dismiss();
-                //finishBackupAction();
+                finishBackupAction();
 
             }
         }
 
+        // RESTORE
         @Override
         protected DriveId doInBackground(DriveId... params) {
             DriveId newbackupFileId = backupFileId;
             restoreBackup(backupFileId);
-            //backupOperator.restoreBackup(backupFileId);
-           // BackupRestoringTask.execute(BackupOperator.with(BackupActivity.this, googleApiClient), newbackupFileId);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             return newbackupFileId;
         }
-
-
     }
-
 
     @Override
     public void onConnectionSuspended(int cause) {
@@ -439,8 +481,6 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         });
     }
 
-
-
     // BACKUP
     private void create_file_in_folder(final DriveId driveId) {
 
@@ -474,6 +514,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
                     while ((bytesRead = fileInputStream.read(buffer)) != -1) {
                         outputStream.write(buffer, 0, bytesRead);
                     }
+                    outputStream.flush();
                     outputStream.close();
                     fileInputStream.close();
                 } catch (IOException e1) {
@@ -536,14 +577,24 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
     private void NightMode() {
         MRL1.setBackgroundResource(R.color.card_background);
         RL1.setBackgroundResource(R.color.card_background);
+        button_backup.setBackgroundResource(R.color.card_background);
+        button_restore.setBackgroundResource(R.color.card_background);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             tv_googleDrive.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-           // tv_Version.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            tv_drive_info.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            tv_no_connection.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            button_backup.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+            button_restore.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
+
 
         }else {
             tv_googleDrive.setTextColor(getResources().getColor(R.color.night_text));
-           // tv_Version.setTextColor(getResources().getColor(R.color.night_text));
+            tv_drive_info.setTextColor(getResources().getColor(R.color.night_text));
+            tv_no_connection.setTextColor(getResources().getColor(R.color.night_text));
+            button_backup.setTextColor(getResources().getColor(R.color.night_text));
+            button_restore.setTextColor(getResources().getColor(R.color.night_text));
+
         }
 
     }

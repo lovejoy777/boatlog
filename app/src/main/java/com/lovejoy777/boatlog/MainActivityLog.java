@@ -78,9 +78,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     long FALLBACK_INTERVAL = 4000; // 7 seconds
     // INDICATOR VALUES
     long INDICATOR1_INTERVAL = 15; // 1 seconds
-    long INDICATOR2_INTERVAL = 30; // 3 seconds
-    long INDICATORFALLBACK_INTERVAL = 40; // 4 seconds
-    long INDICATORNOGPS_INTERVAL = 100; // 7 seconds
+    long INDICATOR2_INTERVAL = 40; // 3 seconds
+    long INDICATORFALLBACK_INTERVAL = 400; // 4 seconds
+    long INDICATORNOGPS_INTERVAL = 1000; // 7 seconds
     long DEVIDE_NUMBER = 10000000; //nano to tenths
 
     // ZOOM SEEKBAR
