@@ -37,15 +37,12 @@ public class Splash extends Activity {
                     e.printStackTrace();
                 } finally {
 
-
                     Intent intent = new Intent(Splash.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     Bundle bndlanimation =
                             ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                     startActivity(intent, bndlanimation);
                    // startActivity(intent);
-
-
                 }
             }
         };

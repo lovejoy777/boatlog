@@ -146,8 +146,6 @@
             </intent-filter>
         </activity>
 
-
-
         <activity
             android:name=".CreateEntriesActivity"
             android:label="Create"
@@ -202,12 +200,6 @@
             android:name=".GoToWaypoint"
             android:label=""
             android:parentActivityName=".MainActivityWaypoint" >
-        </activity>
-
-        <activity
-            android:name=".Drive_Test"
-            android:label=""
-            android:parentActivityName=".MainActivity" >
         </activity>
 
         <activity
