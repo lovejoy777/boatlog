@@ -18,12 +18,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -84,6 +87,13 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         loadToolbarNavDrawer();
+
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new WeatherFragment())
+                    .commit();
+        }
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
@@ -291,6 +301,18 @@ public class MainActivity extends AppCompatActivity  {
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();
                         switch (id) {
+
+                            case R.id.nav_weather_name:
+                                showNameInputDialog();
+                                //Intent weather = new Intent(MainActivity.this, WeatherActivity.class);
+                                //startActivity(weather, bndlanimation);
+                                break;
+
+                            case R.id.nav_weather_latlong:
+                                showLatLongInputDialog();
+                                //Intent weather = new Intent(MainActivity.this, WeatherActivity.class);
+                                //startActivity(weather, bndlanimation);
+                                break;
                             case R.id.nav_home:
                                 // mDrawerLayout.closeDrawers();
                                 getSupportActionBar().setElevation(0);
@@ -538,6 +560,80 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    // WEATHER
+    private void showNameInputDialog(){
+        // WEATHER
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Enter a Place Name");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+                        builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String tempString = "q=" + (input.getText().toString());
+                changeCity(tempString);
+
+            }
+        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancel
+                    }
+                })
+                .setIcon(R.drawable.ic_location_on_white)
+                .show();
+    }
+
+
+    private void showLatLongInputDialog(){
+        // WEATHER
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Enter Lat/Long");
+        builder.setMessage("example:\nlat=52.95&lon=-0.84");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+        builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                changeLatLong(input.getText().toString());
+
+            }
+        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancel
+                    }
+                })
+                .setIcon(R.drawable.ic_location_on_white)
+                .show();
+    }
+
+    // WEATHER
+    public void changeLatLong(String latlong){
+        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.container);
+        wf.changeLatLong(latlong);
+        new CurrentLocationPreference(this).setcurrent_location(latlong);
+    }
+
+    // WEATHER
+    public void changeCity(String city){
+        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.container);
+        wf.changeCity(city);
+        new CurrentLocationPreference(this).setcurrent_location(city);
+    }
+
     private void NightMode() {
 
         toolBar.setBackgroundResource(R.color.card_background);
@@ -562,7 +658,6 @@ public class MainActivity extends AppCompatActivity  {
             textView3.setTextColor(getResources().getColor(R.color.night_text));
             textView4.setTextColor(getResources().getColor(R.color.night_text));
         }
-
     }
 
     @Override

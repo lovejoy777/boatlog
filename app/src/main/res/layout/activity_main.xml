@@ -213,7 +213,25 @@
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/container"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:context="com.lovejoy777.boatlog.MainActivity"
+                        tools:ignore="MergeRootFrame"
+                        />
+
+
+                    </RelativeLayout>
                 </LinearLayout>
+
             </ScrollView>
         </RelativeLayout>
 

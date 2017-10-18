@@ -451,7 +451,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
                     boolean isFound = false;
                     for (Metadata m : result.getMetadataBuffer()) {
                         if (m.getTitle().equals(FOLDER_NAME)) {
-                            Log.e(TAG, "Folder exists");
+                            Log.d(TAG, "Folder exists");
                             isFound = true;
                             DriveId driveId = m.getDriveId();
                             create_file_in_folder(driveId);

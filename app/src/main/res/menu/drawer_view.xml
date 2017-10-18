@@ -24,6 +24,19 @@
             android:title="@string/Home" />
     </group>
 
+    <item android:title="Weather Forecast">
+        <menu>
+            <item
+                android:id="@+id/nav_weather_name"
+                android:icon="@drawable/ic_cloud_queue_white_48dp"
+                android:title="Enter a name" />
+            <item
+                android:id="@+id/nav_weather_latlong"
+                android:icon="@drawable/ic_cloud_queue_white_48dp"
+                android:title="Enter lat long" />
+        </menu>
+    </item>
+
     <item android:title="Functions">
         <menu>
             <item
