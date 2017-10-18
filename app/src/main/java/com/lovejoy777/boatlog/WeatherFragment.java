@@ -70,15 +70,12 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
 
-
-
-        //updateWeatherData(new CityPreference(getActivity()).getCity());
         updateWeatherData(new CurrentLocationPreference(getActivity()).getcurrent_location());
     }
 
     private void NightMode() {
 
-      //  MRL1.setBackgroundResource(R.color.card_background);
+           //  MRL1.setBackgroundResource(R.color.card_background);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cityField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
             updatedField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));

@@ -51,7 +51,6 @@
             android:textSize="25sp"
             android:textColor="@color/textMain"/>
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -68,8 +67,7 @@
             android:layout_gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/textMain"
-            android:textSize="70sp"
-            />
+            android:textSize="70sp" />
 
     </LinearLayout>
 
@@ -93,7 +91,6 @@
     </LinearLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>
 

@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_align_left_white"
-            app:backgroundTint="@color/fab"
+            android:backgroundTint="@color/fab"
             app:fabSize="mini" />
 
     </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            app:backgroundTint="@color/fab"
+            android:backgroundTint="@color/fab"
             app:fabSize="normal" />
 
     </LinearLayout>

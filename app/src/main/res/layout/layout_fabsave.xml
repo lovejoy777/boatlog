@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:src="@drawable/ic_save_white"
-            app:backgroundTint="@color/fab"
+            android:backgroundTint="@color/fab"
             app:fabSize="normal" />
 
     </LinearLayout>

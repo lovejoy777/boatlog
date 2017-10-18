@@ -27,13 +27,19 @@
     <item android:title="Weather Forecast">
         <menu>
             <item
+                android:id="@+id/nav_weather_lkl"
+                app:actionLayout="@layout/action_view_switch"
+                android:icon="@drawable/ic_gps_fixed"
+                android:title="Current Location" />
+            <item
                 android:id="@+id/nav_weather_name"
-                android:icon="@drawable/ic_cloud_queue_white_48dp"
+                android:icon="@drawable/ic_label_outline_white_48dp"
                 android:title="Enter a name" />
             <item
                 android:id="@+id/nav_weather_latlong"
-                android:icon="@drawable/ic_cloud_queue_white_48dp"
+                android:icon="@drawable/ic_public_white_48dp"
                 android:title="Enter lat long" />
+
         </menu>
     </item>
 
@@ -42,7 +48,7 @@
             <item
                 android:id="@+id/nav_night_switch"
                 app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_brightness_3"
+                android:icon="@drawable/ic_remove_red_eye_white_48dp"
                 android:title="NightMode" />
             <item
                 android:id="@+id/nav_screen_on_switch"

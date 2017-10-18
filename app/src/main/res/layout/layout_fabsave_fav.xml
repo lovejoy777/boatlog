@@ -23,7 +23,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="20dp"
             android:src="@drawable/ic_favorite_border"
-            app:backgroundTint="@color/fab"
+            android:backgroundTint="@color/fab"
             app:fabSize="normal" />
 
         <android.support.design.widget.FloatingActionButton
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:src="@drawable/ic_save_white"
-            app:backgroundTint="@color/fab"
+            android:backgroundTint="@color/fab"
             app:fabSize="normal" />
 
     </LinearLayout>

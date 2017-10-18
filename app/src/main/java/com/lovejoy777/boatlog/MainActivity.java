@@ -2,15 +2,19 @@ package com.lovejoy777.boatlog;
 
 import android.Manifest;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -19,10 +23,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +37,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akhgupta.easylocation.EasyLocationAppCompatActivity;
+import com.akhgupta.easylocation.EasyLocationRequest;
+import com.akhgupta.easylocation.EasyLocationRequestBuilder;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.LocationRequest;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
@@ -45,16 +55,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
+import java.util.Locale;
 
 /**
  * Created by lovejoy777 on 11/10/15.
  */
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends EasyLocationAppCompatActivity {
 
+    // GOOGLE MAPS/LOCATION SERVICES
+    final String TAG = "GPS";
+    long UPDATE_INTERVAL = 2 * 2000;  // 10 secs?
+    long FASTEST_INTERVAL = 4000; // 2 sec
+    long FALLBACK_INTERVAL = 8000; // 7 seconds
 
     private DrawerLayout mDrawerLayout;
-    private SwitchCompat switcher1, switcher2;
+    private SwitchCompat switcher1, switcher2, switcher3;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     int ACCESS_FINE_LOCATION_CODE = 23;
@@ -81,13 +96,13 @@ public class MainActivity extends AppCompatActivity  {
     String Directory = "/boatLog/backups";
     String[] mFileList;
 
+    // ON CREATE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         loadToolbarNavDrawer();
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -180,8 +195,70 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+        // PERMISSIONS
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermission();
+        }
+
+        // IS GOOGLE PLAY SERVICES AVAILIBLE
+        isGooglePlayServicesAvailable();
+        // if (!isLocationEnabled())
+        //   showAlert();
+
+        // EASYLOCATION SETUP
+        LocationRequest locationRequest = new LocationRequest()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+        EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
+                .setLocationRequest(locationRequest)
+                .setFallBackToLastLocationTime(FALLBACK_INTERVAL)
+                .build();
+        //requestLocationUpdates(easyLocationRequest);
+
+        requestSingleLocationFix(easyLocationRequest);
+
+
+
     }
 
+    @Override
+    public void onLocationReceived(Location location) {
+        String weatherformattedLocation;
+        if (location != null) {
+            weatherformattedLocation = WeatherFormattedLocation(location.getLatitude(), location.getLongitude());
+            SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+            Boolean LNL = myPrefs.getBoolean("switch3", false);
+            if (LNL) {
+                WeatherLastKnownLocation(weatherformattedLocation);
+            }
+        }
+    }
+
+    public static String WeatherFormattedLocation(double latitude, double longitude) {
+        try {
+            String finalLat = String.format(Locale.UK,"%.2f", latitude);
+            String finalLong = String.format(Locale.UK,"%.2f", longitude);
+
+            //lat=35&lon=139
+            String finalString = "lat=" + finalLat + "&lon=" + finalLong;
+
+            return finalString;
+        } catch (Exception e) {
+
+            return "" + String.format(Locale.UK,"%8.5f", latitude) + "  "
+                    + String.format(Locale.UK,"%8.5f", longitude);
+        }
+    }
+
+    // RESTORE
+    private void WeatherLastKnownLocation(String weatherlocation) {
+
+        changeLKL(weatherlocation);
+        //Toast.makeText(MainActivity.this, "LKL is: " + weatherlocation, Toast.LENGTH_LONG).show();
+    }
+
+    // TOOLBAR
     private void loadToolbarNavDrawer() {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
@@ -200,6 +277,7 @@ public class MainActivity extends AppCompatActivity  {
             SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
             Boolean switch1 = myPrefs.getBoolean("switch1", false);
             Boolean switch2 = myPrefs.getBoolean("switch2", false);
+            Boolean switch3 = myPrefs.getBoolean("switch3", false);
 
             setupDrawerContent(navigationView);
             Menu menu = navigationView.getMenu();
@@ -262,6 +340,31 @@ public class MainActivity extends AppCompatActivity  {
                 }
             });
 
+            MenuItem weatherSw = menu.findItem(R.id.nav_weather_lkl);
+            View actionViewWeatherSw = MenuItemCompat.getActionView(weatherSw);
+
+            switcher3 = (SwitchCompat) actionViewWeatherSw.findViewById(R.id.switcher1);
+            switcher3.setChecked(switch3);
+            switcher3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if ((switcher3.isChecked())) {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch3", true);
+                        myPrefse.apply();
+                    } else {
+                        SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor myPrefse = myPrefs.edit();
+                        myPrefse.putBoolean("switch3", false);
+                        myPrefse.apply();
+                    }
+
+                    Snackbar.make(v, (switcher3.isChecked()) ? "Last Known Location is now On" : "Last Known Location is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            });
+
             SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
             Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
 
@@ -276,7 +379,7 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    //navigationDrawerIcon Onclick
+    // NAV DRAWER ONCLICK
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -289,7 +392,7 @@ public class MainActivity extends AppCompatActivity  {
         return super.onOptionsItemSelected(item);
     }
 
-    //set NavigationDrawerContent
+    // SET NAV DRAWER
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -301,6 +404,11 @@ public class MainActivity extends AppCompatActivity  {
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();
                         switch (id) {
+                            case R.id.nav_home:
+                                // mDrawerLayout.closeDrawers();
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
 
                             case R.id.nav_weather_name:
                                 showNameInputDialog();
@@ -313,10 +421,9 @@ public class MainActivity extends AppCompatActivity  {
                                 //Intent weather = new Intent(MainActivity.this, WeatherActivity.class);
                                 //startActivity(weather, bndlanimation);
                                 break;
-                            case R.id.nav_home:
-                                // mDrawerLayout.closeDrawers();
-                                getSupportActionBar().setElevation(0);
-                                mDrawerLayout.closeDrawers();
+
+                            case R.id.nav_weather_lkl:
+                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                           case R.id.nav_drive:
@@ -393,6 +500,7 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    // BACKUP
     public void Backup() {
 
         android.support.v7.app.AlertDialog.Builder builder;
@@ -479,6 +587,7 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
+    // RESTORE
     private void Restore(final String dbFileName) {
 
         android.support.v7.app.AlertDialog.Builder builder;
@@ -562,6 +671,7 @@ public class MainActivity extends AppCompatActivity  {
 
     // WEATHER
     private void showNameInputDialog(){
+
         // WEATHER
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -589,8 +699,9 @@ public class MainActivity extends AppCompatActivity  {
                 .show();
     }
 
-
+    // WEATHER
     private void showLatLongInputDialog(){
+
         // WEATHER
         AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -634,6 +745,120 @@ public class MainActivity extends AppCompatActivity  {
         new CurrentLocationPreference(this).setcurrent_location(city);
     }
 
+    // WEATHER
+    public void changeLKL(String lnl){
+        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.container);
+        wf.changeLatLong(lnl);
+        new CurrentLocationPreference(this).setcurrent_location(lnl);
+    }
+
+    // EASYLOCATION LIB METHODS
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLocationPermissionGranted() {
+        showToast("Location permission granted");
+    }
+
+    @Override
+    public void onLocationPermissionDenied() {
+        showToast("Location permission denied");
+    }
+
+    @Override
+    public void onLocationProviderEnabled() {
+        showToast("Location services are now ON");
+    }
+
+    @Override
+    public void onLocationProviderDisabled() {
+        showToast("Location services are still Off");
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.d(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        Log.d(TAG, "This device is supported.");
+        return true;
+    }
+
+    private void showAlert() {
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Enable Location Services")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Enable", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(myIntent, bndlanimation);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+                .setIcon(R.drawable.ic_location_on_white)
+                .show();
+    }
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // NIGHT MODE
     private void NightMode() {
 
         toolBar.setBackgroundResource(R.color.card_background);
@@ -660,10 +885,12 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
+    // ON BACK PRESSED
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
+        stopLocationUpdates();
     }
 
 }

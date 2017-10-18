@@ -20,7 +20,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_action_menu"
+            android:icon="@drawable/ic_gps_fixed"
             android:title="GoTo Waypoint" />
     </group>
 
@@ -29,19 +29,13 @@
             <item
                 android:id="@+id/nav_night_switch"
                 app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_brightness_3"
+                android:icon="@drawable/ic_remove_red_eye_white_48dp"
                 android:title="NightMode" />
             <item
                 android:id="@+id/nav_screen_on_switch"
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_tablet_android"
                 android:title="ScreenOn" />
-        </menu>
-    </item>
-
-    <item android:title="Advanced">
-        <menu>
-
         </menu>
     </item>
 

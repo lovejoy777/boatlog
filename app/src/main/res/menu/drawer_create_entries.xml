@@ -18,11 +18,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home_create_entries"
-            android:icon="@drawable/ic_action_menu"
+            android:icon="@drawable/ic_favorite_border"
             android:title="Log Book Entries" />
     </group>
 
-    <item android:title="Favourites">
+    <item android:title="Favourites"
+        >
         <menu>
             <item
                 android:id="@+id/nav_create_favourites"
