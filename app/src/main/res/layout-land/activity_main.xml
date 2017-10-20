@@ -6,10 +6,11 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/MRL1"
@@ -49,11 +50,19 @@
             <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/scrollView1"
                 android:layout_below="@+id/toolbar"
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:orientation="horizontal"
+                    xmlns:android="http://schemas.android.com/apk/res/android">
+
+                <LinearLayout android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -65,15 +74,16 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:orientation="horizontal"
                         android:baselineAligned="false"
                         android:clickable="true">
 
                         <ImageView
+                            android:id="@+id/img_thumbnail1"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:id="@+id/img_thumbnail1"
-                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
@@ -84,13 +94,13 @@
                             android:id="@+id/textView1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ships LogBook"
-                            android:gravity="center_vertical"
+                            android:layout_below="@+id/img_thumbnail1"
+                            android:layout_marginStart="40dp"
+                            android:text="LogBook"
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
                             android:textColor="@color/textMenuTitle"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -104,6 +114,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:clickable="true"
                         android:baselineAligned="false">
 
@@ -111,7 +122,7 @@
                             android:id="@+id/img_thumbnail2"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
@@ -122,16 +133,24 @@
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginStart="40dp"
+                            android:layout_below="@+id/img_thumbnail2"
                             android:text="Log"
-                            android:gravity="center_vertical"
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
                             android:textColor="@color/textMenuTitle"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
+
+                </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        xmlns:android="http://schemas.android.com/apk/res/android">
 
                     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:id="@+id/RL3"
@@ -142,6 +161,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:clickable="true"
                         android:baselineAligned="false">
 
@@ -149,7 +169,7 @@
                             android:id="@+id/img_thumbnail3"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
@@ -160,13 +180,13 @@
                             android:id="@+id/textView3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Navigation"
-                            android:gravity="center_vertical"
+                            android:layout_marginStart="40dp"
+                            android:layout_below="@+id/img_thumbnail3"
+                            android:text="Nav"
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
                             android:textColor="@color/textMenuTitle"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -188,7 +208,7 @@
                             android:id="@+id/img_thumbnail4"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
-                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
                             android:layout_marginTop="8dp"
                             android:layout_marginBottom="8dp"
@@ -199,33 +219,36 @@
                             android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Maintenance Log"
-                            android:gravity="center_vertical"
+                            android:layout_marginStart="40dp"
+                            android:layout_below="@+id/img_thumbnail4"
+                            android:text="Man Log"
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
                             android:textColor="@color/textMenuTitle"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
-                    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        xmlns:tools="http://schemas.android.com/tools"
-                        android:id="@+id/container"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:context="com.lovejoy777.boatlog.MainActivity"
-                        tools:ignore="MergeRootFrame"
-                        />
+                        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:tools="http://schemas.android.com/tools"
+                            android:id="@+id/container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            tools:context="com.lovejoy777.boatlog.MainActivity"
+                            tools:ignore="MergeRootFrame"
+                            />
 
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
             </ScrollView>

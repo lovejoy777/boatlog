@@ -51,7 +51,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-
 import static android.content.ContentValues.TAG;
 
 /**
@@ -63,9 +62,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         GoogleApiClient.OnConnectionFailedListener
 {
 
-   //  BackupOperator backupOperator;
-
-    private static enum BackupAction
+    private enum BackupAction
     {
         EXPORT, IMPORT, NONE
     }
@@ -74,8 +71,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
     Button button_restore;
 
     private String FOLDER_NAME = "BoatLog_Backups";
-    String app_database_path = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-
+    //String app_database_path = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
     private GoogleApiClient googleApiClient;
     private BackupAction backupAction;
 
@@ -159,22 +155,10 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         }
     }
 
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
-    }
+    /****************************************************************************************************
+     *  GOOGLE DRIVE GENERAL
+     *
+     ****************************************************************************************************/
 
     public void startBackupAction(BackupAction backupAction) {
         this.backupAction = backupAction;
@@ -200,12 +184,12 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        startBackupAction();
+        BackupAction();
     }
-    private void startBackupAction() {
 
-        //showProgress();
-        startFilesSync();
+    private void BackupAction() {
+
+       // startFilesSync();
 
         switch (backupAction) {
             case EXPORT:
@@ -224,70 +208,13 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         }
     }
 
-    // BACKUP
-    private class BackgroundTaskBackup extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog dialog;
-
-        // BACKUP
-        public BackgroundTaskBackup(BackupActivity activity) {
-            dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
-        }
-
-        // BACKUP
-        @Override
-        protected void onPreExecute() {
-            dialog.setTitle("    Backing up");
-            dialog.setMessage("     To Google Drive");
-            dialog.setIcon(R.drawable.ic_cloud_upload_white_48dp);
-            dialog.show();
-        }
-
-        // BACKUP
-        @Override
-        protected void onPostExecute(Void result) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-                finishBackupAction();
-            }
-        }
-
-        // BACKUP
-        @Override
-        protected Void doInBackground(Void... params) {
-            startBackupFileCreation();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-    private void startFilesSync() {
-        Drive.DriveApi.requestSync(googleApiClient).setResultCallback(null);
-    }
-
-    // BACKUP
-    private void startBackupFileCreation() {
-        Drive.DriveApi.newDriveContents(googleApiClient).setResultCallback(this);
-    }
-
+    // GOOGLE DRIVE RESULT
     @Override
     public void onResult(DriveApi.DriveContentsResult contentsResult) {
         continueBackupFileCreation(contentsResult.getDriveContents());
     }
 
-    // BACKUP
-    private void continueBackupFileCreation(DriveContents backupFileContents) {
-        exportBackup();
-    }
-
-    // RESTORE
-    private void startBackupFileOpening() {
-        BackupFilePicker.with(this, googleApiClient).startBackupFileOpening();
-    }
-
+    // ON ACTIVITY RESULT GOOGLE DRIVE
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -301,64 +228,9 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
             setUpGoogleApiConnection();
         }
 
-        //if (requestCode == Intents.Requests.DRIVE_FILE_CREATE) {
-        //    DriveId backupFileId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-        //    startBackupExporting(backupFileId);
-        //}
-
-
         if (requestCode == Intents.Requests.DRIVE_FILE_OPEN) {
             DriveId backupFileId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-            startBackupRestoring(backupFileId);
-        }
-    }
-
-    private void finishBackupAction() {
-        this.backupAction = BackupAction.NONE;
-        //showUpdatedContents();
-        //tearDownGoogleApiConnection();
-        onBackPressed();
-    }
-
-
-    private void showUpdatedContents() {
-
-
-        //Toast.makeText(getApplicationContext(), "Finished Restore", Toast.LENGTH_SHORT).show();
-        //getContentResolver().notifyChange(GambitContract.Decks.getDecksUri(), null);
-    }
-
-    // RESTORE
-    public void restoreBackup(@NonNull DriveId backupFileId) {
-        DriveFile backupFile = backupFileId.asDriveFile();
-        DriveContents backupFileContents = backupFile.open(googleApiClient, DriveFile.MODE_READ_ONLY, null).await().getDriveContents();
-
-        // FROM PATH
-        InputStream inputstream = backupFileContents.getInputStream();
-        // TO PATH
-        File driveOutFile = new File(app_database_path);
-        try {
-            FileOutputStream fileOutput = new FileOutputStream(driveOutFile);
-            byte[] buffer = new byte[1024];
-            int bufferLength;
-            while ((bufferLength = inputstream.read(buffer)) != -1) {
-                fileOutput.write(buffer, 0, bufferLength);
-            }
-
-            // Toast.makeText(this.context, "Restore Complete", Toast.LENGTH_SHORT).show();
-            fileOutput.flush();
-            fileOutput.close();
-            inputstream.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //  backupFileContents.commit(driveApiClient, null).await();
-    }
-
-    private void tearDownGoogleApiConnection() {
-        if (isGoogleApiClientConnected()) {
-            googleApiClient.disconnect();
+            startBackupRestoringDrive(backupFileId);
         }
     }
 
@@ -366,68 +238,66 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         return (googleApiClient != null) && (googleApiClient.isConnecting() || googleApiClient.isConnected());
     }
 
+    /********************************************************************************************************
+     *  BACKUP GOOGLE DRIVE
+     *
+     ********************************************************************************************************/
 
-    // RESTORE
-    private void startBackupRestoring(DriveId backupFileId) {
-
-        BackgroundTaskRestore taskRestore = new BackgroundTaskRestore(BackupActivity.this, backupFileId);
-        taskRestore.execute();
-        //Toast.makeText(getApplicationContext(), "Finished Restore", Toast.LENGTH_SHORT).show();
-        //BackupRestoringTask.execute(BackupOperator.with(this, googleApiClient), backupFileId);
-    }
-
-    // RESTORE
-    private class BackgroundTaskRestore extends AsyncTask<DriveId, Void, DriveId> {
+    // BACKUP GOOGLE DRIVE
+    private class BackgroundTaskBackup extends AsyncTask<Void, Void, Void> {
         private ProgressDialog dialog;
 
-        DriveId backupFileId;
-        public BackgroundTaskRestore(BackupActivity activity, DriveId backupFileId) {
+        // BACKUP GOOGLE DRIVE
+        public BackgroundTaskBackup(BackupActivity activity) {
             dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
-            this.backupFileId = backupFileId;
         }
 
-        // RESTORE
+        // BACKUP GOOGLE DRIVE
         @Override
         protected void onPreExecute() {
-            dialog.setTitle("    Restoring");
-            dialog.setMessage("    From Google Drive");
-            dialog.setIcon(R.drawable.ic_cloud_download_white_48dp);
+            dialog.setTitle("    Backing up");
+            dialog.setMessage("     To Google Drive");
+            dialog.setIcon(R.drawable.ic_cloud_upload_white_48dp);
             dialog.show();
         }
 
-        // RESTORE
-        protected void onPostExecute(DriveId backupFileId) {
+        // BACKUP GOOGLE DRIVE
+        @Override
+        protected void onPostExecute(Void result) {
             if (dialog.isShowing()) {
                 dialog.dismiss();
                 finishBackupAction();
-
             }
         }
 
-        // RESTORE
+        // BACKUP GOOGLE DRIVE
         @Override
-        protected DriveId doInBackground(DriveId... params) {
-            DriveId newbackupFileId = backupFileId;
-            restoreBackup(backupFileId);
+        protected Void doInBackground(Void... params) {
+            startBackupFileCreation();
             try {
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return newbackupFileId;
+            return null;
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int cause) {
+   // private void startFilesSync() {
+    //    Drive.DriveApi.requestSync(googleApiClient).setResultCallback(null);
+    //}
+
+    // BACKUP GOOGLE DRIVE
+    private void startBackupFileCreation() {
+        Drive.DriveApi.newDriveContents(googleApiClient).setResultCallback(this);
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        GoogleServices.with(this).resolve(connectionResult);
+    // BACKUP GOOGLE DRIVE
+    private void continueBackupFileCreation(DriveContents backupFileContents) {
+        exportBackup();
     }
 
-    // BACKUP
+    // BACKUP GOOGLE DRIVE
     public void exportBackup() {
         if (googleApiClient != null) {
             check_folder_exists();
@@ -437,7 +307,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         }
     }
 
-    // BACKUP
+    // BACKUP GOOGLE DRIVE
     private void check_folder_exists() {
         Query query =
                 new Query.Builder().addFilter(Filters.and(Filters.eq(SearchableField.TITLE, FOLDER_NAME), Filters.eq(SearchableField.TRASHED, false)))
@@ -481,7 +351,7 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         });
     }
 
-    // BACKUP
+    // BACKUP GOOGLE DRIVE
     private void create_file_in_folder(final DriveId driveId) {
 
         Drive.DriveApi.newDriveContents(googleApiClient).setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
@@ -503,8 +373,10 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
                 String fileTime = "_" + formattedTime;
 
                 String backupFileName = "SQLiteBoatLog" + fileDate + fileTime + ".db";
-
                 OutputStream outputStream = driveContentsResult.getDriveContents().getOutputStream();
+                Context myContext = getApplicationContext();
+                File myOutFile =myContext.getDatabasePath("SQLiteBoatLog.db");
+                String app_database_path =myOutFile.getPath() ;
 
                 final File theFile = new File(app_database_path); //>>>>>> WHAT FILE ?
                 try {
@@ -522,22 +394,155 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
                     Log.i(TAG, "Unable to write file contents.");
                 }
 
-                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(backupFileName).setMimeType("application/x-sqlite3").setStarred(false).build();
-                 DriveFolder folder = driveId.asDriveFolder();
-                 folder.createFile(googleApiClient, changeSet, driveContentsResult.getDriveContents())
-                 .setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
-                @Override public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
-                if (!driveFileResult.getStatus().isSuccess()) {
-                    Toast.makeText(getApplicationContext(), "Error Creating Backup", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Error while trying to create the file");
-                return;
-                }
-                    //Toast.makeText(getApplicationContext(), "Backup Exported to Drive", Toast.LENGTH_SHORT).show();
-                    Log.v(TAG, "Created a file: " + driveFileResult.getDriveFile().getDriveId());
-                }
-                });
+                MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(backupFileName).setMimeType("application/x-sqlite3").setStarred(false).build();
+                DriveFolder folder = driveId.asDriveFolder();
+                folder.createFile(googleApiClient, changeSet, driveContentsResult.getDriveContents())
+                        .setResultCallback(new ResultCallback<DriveFolder.DriveFileResult>() {
+                            @Override public void onResult(@NonNull DriveFolder.DriveFileResult driveFileResult) {
+                                if (!driveFileResult.getStatus().isSuccess()) {
+                                    Toast.makeText(getApplicationContext(), "Error Creating Backup", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "Error while trying to create the file");
+                                    return;
+                                }
+                                //Toast.makeText(getApplicationContext(), "Backup Exported to Drive", Toast.LENGTH_SHORT).show();
+                                Log.v(TAG, "Created a file: " + driveFileResult.getDriveFile().getDriveId());
+                            }
+                        });
             }
         });
+    }
+
+
+    /************************************************************************************************************
+     * RESTORE GOOGLE DRIVE
+     *
+     ***********************************************************************************************************/
+
+    // RESTORE GOOGLE DRIVE GET FILE PICKER
+    private void startBackupFileOpening() {
+        BackupFilePicker.with(this, googleApiClient).startBackupFileOpening();
+    }
+
+    // RESTORE GOOGLE DRIVE
+    private void startBackupRestoringDrive(DriveId backupFileId) {
+
+        BackgroundTaskRestore taskRestore = new BackgroundTaskRestore(BackupActivity.this, backupFileId);
+        taskRestore.execute();
+        //Toast.makeText(getApplicationContext(), "Finished Restore", Toast.LENGTH_SHORT).show();
+        //BackupRestoringTask.execute(BackupOperator.with(this, googleApiClient), backupFileId);
+    }
+
+    // RESTORE GOOGLE DRIVE
+    private class BackgroundTaskRestore extends AsyncTask<DriveId, Void, DriveId> {
+        private ProgressDialog dialog;
+
+        DriveId backupFileId;
+        public BackgroundTaskRestore(BackupActivity activity, DriveId backupFileId) {
+            dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
+            this.backupFileId = backupFileId;
+        }
+
+        // RESTORE GOOGLE DRIVE
+        @Override
+        protected void onPreExecute() {
+            dialog.setTitle("    Restoring");
+            dialog.setMessage("    From Google Drive");
+            dialog.setIcon(R.drawable.ic_cloud_download_white_48dp);
+            dialog.show();
+        }
+
+        // RESTORE GOOGLE DRIVE
+        protected void onPostExecute(DriveId backupFileId) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+                finishBackupAction();
+
+            }
+        }
+
+        // RESTORE GOOGLE DRIVE
+        @Override
+        protected DriveId doInBackground(DriveId... params) {
+            DriveId newbackupFileId = backupFileId;
+            restoreBackup(backupFileId);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return newbackupFileId;
+        }
+    }
+
+    // RESTORE GOOGLE DRIVE
+    public void restoreBackup(@NonNull DriveId backupFileId) {
+        DriveFile backupFile = backupFileId.asDriveFile();
+        DriveContents backupFileContents = backupFile.open(googleApiClient, DriveFile.MODE_READ_ONLY, null).await().getDriveContents();
+
+        // FROM PATH
+        InputStream inputstream = backupFileContents.getInputStream();
+        // TO PATH
+//        File driveOutFile = new File(app_database_path);
+        Context myContext = getApplicationContext();
+        File myOutFile =myContext.getDatabasePath("SQLiteBoatLog.db");
+        String app_database_path =myOutFile.getPath() ;
+        try {
+            FileOutputStream fileOutput = new FileOutputStream(app_database_path);
+            byte[] buffer = new byte[1024];
+            int bufferLength;
+            while ((bufferLength = inputstream.read(buffer)) != -1) {
+                fileOutput.write(buffer, 0, bufferLength);
+            }
+
+            // Toast.makeText(this.context, "Restore Complete", Toast.LENGTH_SHORT).show();
+            fileOutput.flush();
+            fileOutput.close();
+            inputstream.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //  backupFileContents.commit(driveApiClient, null).await();
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        GoogleServices.with(this).resolve(connectionResult);
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    private void tearDownGoogleApiConnection() {
+        if (isGoogleApiClientConnected()) {
+            googleApiClient.disconnect();
+        }
+    }
+
+    // GOOGLE DRIVE
+    private void finishBackupAction() {
+        this.backupAction = BackupAction.NONE;
+        //showUpdatedContents();
+        //tearDownGoogleApiConnection();
+        onBackPressed();
     }
 
     @Override
@@ -554,24 +559,6 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
 
     private void navigateUp() {
         NavUtils.navigateUpFromSameTask(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        tearDownGoogleApiConnection();
     }
 
     private void NightMode() {
@@ -597,6 +584,24 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
 
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tearDownGoogleApiConnection();
     }
 
     @Override

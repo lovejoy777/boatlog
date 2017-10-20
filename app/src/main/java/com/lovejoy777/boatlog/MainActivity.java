@@ -129,10 +129,10 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         textView4 = (TextView) findViewById(R.id.textView4);
         img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
 
-        textView1.setText("Ships LogBook");
-        textView2.setText("Log");
-        textView3.setText("Navigation");
-        textView4.setText("Maintenance Log");
+        //textView1.setText("Ships LogBook");
+        //textView2.setText("Log");
+        //textView3.setText("Navigation");
+        //textView4.setText("Maintenance Log");
 
         img_thumbnail1.setImageResource(R.drawable.book);
         img_thumbnail2.setImageResource(R.drawable.log);
@@ -217,8 +217,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         //requestLocationUpdates(easyLocationRequest);
 
         requestSingleLocationFix(easyLocationRequest);
-
-
 
     }
 
