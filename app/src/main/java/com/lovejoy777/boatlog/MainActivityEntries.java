@@ -54,7 +54,6 @@ import java.util.ArrayList;
  */
 public class MainActivityEntries extends AppCompatActivity {
 
-    private DrawerLayout mDrawerLayout;
 
     public final static String KEY_EXTRA_ENTRIES_ID = "KEY_EXTRA_ENTRIES_ID";
     public final static String KEY_EXTRA_ENTRY_NAME = "KEY_EXTRA_ENTRY_NAME";
@@ -75,6 +74,8 @@ public class MainActivityEntries extends AppCompatActivity {
     RelativeLayout MRL1;
 
     Toolbar toolBar;
+    private DrawerLayout mDrawerLayout;
+
     ListView listViewEntries;
 
     TextView titleTextView;

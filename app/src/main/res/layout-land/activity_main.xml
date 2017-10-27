@@ -85,8 +85,8 @@
                             android:layout_height="64dp"
                             android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginStart="8dp" />
 
@@ -96,6 +96,7 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/img_thumbnail1"
                             android:layout_marginStart="40dp"
+                            android:layout_marginBottom="5dp"
                             android:text="LogBook"
                             android:textSize="25sp"
                             android:textStyle="italic"
@@ -124,8 +125,8 @@
                             android:layout_height="64dp"
                             android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginStart="8dp" />
 
@@ -134,6 +135,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
+                            android:layout_marginBottom="5dp"
                             android:layout_below="@+id/img_thumbnail2"
                             android:text="Log"
                             android:textSize="25sp"
@@ -171,8 +173,8 @@
                             android:layout_height="64dp"
                             android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="5dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginStart="8dp" />
 
@@ -181,6 +183,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
+                            android:layout_marginBottom="10dp"
                             android:layout_below="@+id/img_thumbnail3"
                             android:text="Nav"
                             android:textSize="25sp"
@@ -210,8 +213,8 @@
                             android:layout_height="64dp"
                             android:layout_centerHorizontal="true"
                             android:src="@mipmap/ic_launcher"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="5dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginStart="8dp" />
 
@@ -220,6 +223,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="40dp"
+                            android:layout_marginBottom="10dp"
                             android:layout_below="@+id/img_thumbnail4"
                             android:text="Man Log"
                             android:textSize="25sp"

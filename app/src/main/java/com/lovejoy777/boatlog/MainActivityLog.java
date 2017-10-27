@@ -642,11 +642,11 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                                 break;
 
                             case R.id.nav_night_switch:
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_screen_on_switch:
-                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_tutorial:

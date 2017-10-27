@@ -122,6 +122,7 @@
     <orderEntry type="library" exported="" name="palette-v7-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-messaging-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-gass-11.0.4" level="project" />
+    <orderEntry type="library" exported="" name="dashclock-api-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-vision-common-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="firebase-database-11.0.4" level="project" />
@@ -138,6 +139,7 @@
     <orderEntry type="library" exported="" name="play-services-places-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="firebase-storage-common-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-11.0.4" level="project" />
+    <orderEntry type="library" exported="" name="williamchart-2.2" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-25.3.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-fitness-11.0.4" level="project" />
@@ -147,6 +149,7 @@
     <orderEntry type="library" exported="" name="play-services-vision-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-ads-lite-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-11.0.4" level="project" />
+    <orderEntry type="library" exported="" name="bottom-bar-1.4.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-api-phone-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="firebase-iid-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="design-25.3.1" level="project" />

@@ -17,6 +17,8 @@ public class RemoteFetch {
     private static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
     private static String SEC_URL = "&units=metric";
 
+   // http://api.openweathermap.org/data/2.5/weather?id=lat=52.96&lon=-0.86&APPID=641cc2423fd5c5ed715a35362fe1ff73
+
     public static JSONObject getJSON(Context context, String chosen_location){
         try {
             URL url = new URL(BASE_URL + chosen_location + SEC_URL);

@@ -62,6 +62,9 @@ import java.util.Locale;
  */
 public class MainActivity extends EasyLocationAppCompatActivity {
 
+    public final static double KEY_EXTRA_LAT = 0.00;
+    public final static double KEY_EXTRA_LON = 0.00;
+
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
     long UPDATE_INTERVAL = 2 * 2000;  // 10 secs?
@@ -102,7 +105,10 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadToolbarNavDrawer();
+        SharedPreferences prefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final String newloc = prefs.getString("current_locations", "Dover");
+
+        loadToolbarNavDrawer(getLastKnownLocation().getLatitude(), getLastKnownLocation().getLongitude());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -196,7 +202,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         });
 
         // PERMISSIONS
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
@@ -217,6 +223,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         //requestLocationUpdates(easyLocationRequest);
 
         requestSingleLocationFix(easyLocationRequest);
+
 
     }
 
@@ -253,13 +260,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     private void WeatherLastKnownLocation(String weatherlocation) {
 
         changeLKL(weatherlocation);
-        //Toast.makeText(MainActivity.this, "LKL is: " + weatherlocation, Toast.LENGTH_LONG).show();
+        //Toast.makeText(WeatherMainActivity.this, "LKL is: " + weatherlocation, Toast.LENGTH_LONG).show();
     }
 
     // TOOLBAR
-    private void loadToolbarNavDrawer() {
+    private void loadToolbarNavDrawer(final double lat, final double lon) {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
@@ -277,7 +284,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             Boolean switch2 = myPrefs.getBoolean("switch2", false);
             Boolean switch3 = myPrefs.getBoolean("switch3", false);
 
-            setupDrawerContent(navigationView);
+            setupDrawerContent(navigationView, lat, lon);
             Menu menu = navigationView.getMenu();
 
             MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
@@ -375,7 +382,10 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                 navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
             }
         }
+
     }
+
+
 
     // NAV DRAWER ONCLICK
     @Override
@@ -391,7 +401,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     }
 
     // SET NAV DRAWER
-    private void setupDrawerContent(NavigationView navigationView) {
+    private void setupDrawerContent(NavigationView navigationView, final double lat, final double lon) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -400,6 +410,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                         menuItem.setChecked(true);
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home:
@@ -410,18 +421,18 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
                             case R.id.nav_weather_name:
                                 showNameInputDialog();
-                                //Intent weather = new Intent(MainActivity.this, WeatherActivity.class);
+                                //Intent weather = new Intent(WeatherMainActivity.this, WeatherActivity.class);
                                 //startActivity(weather, bndlanimation);
                                 break;
 
                             case R.id.nav_weather_latlong:
                                 showLatLongInputDialog();
-                                //Intent weather = new Intent(MainActivity.this, WeatherActivity.class);
+                                //Intent weather = new Intent(WeatherMainActivity.this, WeatherActivity.class);
                                 //startActivity(weather, bndlanimation);
                                 break;
 
                             case R.id.nav_weather_lkl:
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                           case R.id.nav_drive:
@@ -430,11 +441,11 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                 break;
 
                             case R.id.nav_night_switch:
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_screen_on_switch:
-                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_tutorial:
@@ -453,26 +464,26 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                 break;
 
                             case R.id.nav_backup:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
                                 }
                                 Backup();
                                 break;
 
                             case R.id.nav_restore:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
                                 }
 
                                 File dir = new File(Environment.getExternalStorageDirectory() + Directory);
 
                                 mFileList = dir.list();
 
-                                android.support.v7.app.AlertDialog.Builder builder;
+                                AlertDialog.Builder builder;
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                                    builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
                                 } else {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                                    builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
                                 }
 
                                 builder.setTitle("      Select a File to Restore");
@@ -484,7 +495,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         String mChosenFile = mFileList[which];
                                         Restore(mChosenFile);
-                                        // Toast.makeText(MainActivity.this, mChosenFile , Toast.LENGTH_LONG).show();
+                                        // Toast.makeText(WeatherMainActivity.this, mChosenFile , Toast.LENGTH_LONG).show();
                                     }
                                 });
 
@@ -501,11 +512,11 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     // BACKUP
     public void Backup() {
 
-        android.support.v7.app.AlertDialog.Builder builder;
+        AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         }
         builder.setTitle("Backup")
                 .setMessage("boatlog database")
@@ -588,11 +599,11 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     // RESTORE
     private void Restore(final String dbFileName) {
 
-        android.support.v7.app.AlertDialog.Builder builder;
+        AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         }
         builder.setTitle("Restore")
                 .setMessage(dbFileName)
@@ -801,11 +812,11 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     }
 
     private void showAlert() {
-        android.support.v7.app.AlertDialog.Builder builder;
+        AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
         }
         builder.setTitle("Enable Location Services")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
@@ -832,22 +843,22 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Asking user if explanation is needed
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
                 //Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;

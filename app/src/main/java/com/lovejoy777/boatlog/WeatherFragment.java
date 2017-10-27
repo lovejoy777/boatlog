@@ -1,5 +1,7 @@
 package com.lovejoy777.boatlog;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -13,20 +15,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lovejoy777.boatlog.activities.WeatherMainActivity;
+
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static java.lang.Math.abs;
 
 
 /**
  * Created by steve on 17/10/17.
  */
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements View.OnClickListener{
 
     Typeface weatherFont;
 
@@ -51,6 +57,17 @@ public class WeatherFragment extends Fragment {
         detailsField = (TextView)rootView.findViewById(R.id.details_field);
         currentTemperatureField = (TextView)rootView.findViewById(R.id.current_temperature_field);
         weatherIcon = (TextView)rootView.findViewById(R.id.weather_icon);
+        weatherIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("Onclick","Onclick");
+
+                Bundle bndlanimation =
+                        ActivityOptions.makeCustomAnimation(getActivity(), R.anim.anni1, R.anim.anni2).toBundle();
+                Intent intent = new Intent(getActivity(), WeatherMainActivity.class);
+                startActivity(intent, bndlanimation);
+            }
+        });
 
         SharedPreferences myPrefs = this.getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -65,12 +82,24 @@ public class WeatherFragment extends Fragment {
         return rootView;
     }
 
+    public void onClick(View v) {
+        switch (v.getId()){
+
+            case R.id.weather_icon:
+
+
+                break;
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
 
         updateWeatherData(new CurrentLocationPreference(getActivity()).getcurrent_location());
+
+
     }
 
     private void NightMode() {
@@ -120,10 +149,25 @@ public class WeatherFragment extends Fragment {
 
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
             JSONObject main = json.getJSONObject("main");
+
+            // WIND
+            JSONObject wind = json.getJSONObject("wind");
+
+            // COVERT WIND SPEED FROM MPS TO KNOTS
+            double doubleSpeed = Double.parseDouble(wind.getString("speed"));
+            float fspeed = (float)doubleSpeed;
+            float newspeed = FormattedSpeed(fspeed);
+            BigDecimal result;
+            result=round(newspeed,1);
+
             detailsField.setText(
                     details.getString("description").toUpperCase(Locale.UK) +
-                            "\n" + "Humidity: " + main.getString("humidity") + "%" +
-                            "\n" + "Pressure: " + main.getString("pressure") + " hPa");
+                            "\n" + "Humidity: " + main.getString("humidity") + " %" +
+                            "\n" + "Pressure: " + main.getString("pressure") + " hPa" +
+                            "\n" + "Wind Dir: " + wind.getString("deg") + " °" +
+                            "\n" + "Wind Speed: " + result + " kts");
+                           // "\n" + "Wind Gust: " + resultGust + " kts");
+
 
             currentTemperatureField.setText(
                     String.format(Locale.UK,"%.2f",main.getDouble("temp")) + " ℃");
@@ -139,6 +183,18 @@ public class WeatherFragment extends Fragment {
         }catch(Exception e){
             Log.e("SimpleWeather", "One or more fields not found in the JSON data");
         }
+    }
+
+    // CONVERT FROM METERS PER SECOND TO KNOTS PER HOUR
+    public static float FormattedSpeed(float mps) {
+        float mpsSped = abs(mps * 1.943844f);
+        return abs(mpsSped);
+    }
+
+    public static BigDecimal round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd;
     }
 
     private void setWeatherIcon(int actualId, long sunrise, long sunset){

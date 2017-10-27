@@ -597,8 +597,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     public void onSensorChanged(SensorEvent sensorEvent) {
         // get the angle around the z-axis rotated
         float degree = Math.round(sensorEvent.values[0]);
-
-        //  int deg = degree.intValue();
         String result = "0";
         if (degree == Math.floor(degree)) {
             result = Integer.toString((int) degree);
@@ -742,11 +740,11 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                                 break;
 
                             case R.id.nav_night_switch:
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_screen_on_switch:
-                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                                // Toast.makeText(WeatherMainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_tutorial:
