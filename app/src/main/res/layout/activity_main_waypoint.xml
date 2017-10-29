@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorBackground"
+        android:background="?attr/colorPrimary"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView

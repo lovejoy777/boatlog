@@ -18,8 +18,7 @@
         android:layout_height="56dp"
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:theme="@style/Base.Theme.Test" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView
         android:id="@+id/imageView1"
@@ -384,7 +383,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_log"
-        app:theme="@style/NavigationViewTheme" />
+        app:menu="@menu/drawer_log" />
 
 </android.support.v4.widget.DrawerLayout>
