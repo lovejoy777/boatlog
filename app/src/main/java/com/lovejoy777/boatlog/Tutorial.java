@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,10 +26,17 @@ public class Tutorial extends AppCompatActivity {
     ImageView screen_shot;
     TextView tv_version;
 
+    int theme;
+
     final String youtube_path = "https://www.youtube.com/watch?v=p0vaeSra1Ns&index=1&list=PLqay3RH2Sx9oe8QXWPVK47GJrazXGqxs-";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tutorial);
 
@@ -48,13 +56,6 @@ public class Tutorial extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         //app version textView
         TextView tv_version = (TextView) findViewById(R.id.tv_Version);
@@ -78,10 +79,13 @@ public class Tutorial extends AppCompatActivity {
         });
     }
 
-    private void NightMode() {
-        MRL1.setBackgroundResource(R.color.card_background);
-        scrollView1.setBackgroundResource(R.color.card_background);
-        RL1.setBackgroundResource(R.color.card_background);
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
+        }
     }
 
     @Override

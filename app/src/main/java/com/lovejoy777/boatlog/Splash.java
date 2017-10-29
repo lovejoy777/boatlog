@@ -1,21 +1,29 @@
 package com.lovejoy777.boatlog;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 /**
  * Created by steve on 17/09/17.
  */
 
-public class Splash extends Activity {
+public class Splash extends AppCompatActivity {
+
+    int theme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);
 
@@ -47,6 +55,15 @@ public class Splash extends Activity {
             }
         };
         timerThread.start();
+    }
+
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
+        }
     }
 
     @Override

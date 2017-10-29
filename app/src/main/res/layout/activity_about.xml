@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/MRL1"
+    android:background="?attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -13,8 +14,7 @@
         android:minHeight="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:gravity="bottom"
-        tools:context="com.lovejoy777.boatlog.activities.AboutActivity"
-        android:elevation="5dp">
+        tools:context="com.lovejoy777.boatlog.activities.AboutActivity" >
     </android.support.v7.widget.Toolbar>
 
 
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/BoatLog"
-        android:textColor="@color/actionbar_text_color"
+        android:textColor="?attr/colorLightTextPrimary"
         android:layout_below="@+id/imVie_AppLogo"
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
@@ -48,20 +48,19 @@
         android:layout_below="@+id/tv_AppName"
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:elevation="5dp"
-        android:textColor="@color/actionbar_text_secondary_color" />
+        android:textColor="?attr/colorLightTextPrimary" />
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_height="match_parent"
         android:layout_width="fill_parent"
         android:layout_below="@+id/toolbar4"
-        android:background="@color/background">
+        android:background="?attr/colorBackground" >
 
         <RelativeLayout
             android:id="@+id/RL1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:paddingTop="0dp"
@@ -74,7 +73,7 @@
                 android:id="@+id/tv_caption1"
                 android:layout_alignParentStart="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="@color/accent"
+                android:textColor="?attr/colorTextPrimary"
                 android:layout_marginTop="16dp" />
 
             <ListView
@@ -93,7 +92,7 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_centerHorizontal="true"
-                android:background="@color/divider"
+                android:background="?attr/colorDivider"
                 android:layout_marginTop="16dp"
                 android:layout_below="@+id/listView_Developer1" />
 
@@ -104,7 +103,7 @@
                 android:id="@+id/tv_caption2"
                 android:layout_alignParentStart="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textColor="@color/accent"
+                android:textColor="?attr/colorTextPrimary"
                 android:layout_marginTop="16dp"
                 android:layout_below="@+id/divider1" />
 
@@ -124,7 +123,7 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_centerHorizontal="true"
-                android:background="@color/divider"
+                android:background="?attr/colorDivider"
                 android:layout_marginTop="16dp"
                 android:layout_below="@+id/listView_link1" />
 

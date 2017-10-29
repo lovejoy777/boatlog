@@ -49,8 +49,7 @@ public class GraphActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
-        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
-                theme == R.style.AppTheme_NoActionBar_Classic_Dark;
+        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
@@ -264,10 +263,6 @@ public class GraphActivity extends AppCompatActivity {
         switch (themePref) {
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
-            case "classic":
-                return R.style.AppTheme_NoActionBar_Classic;
-            case "classicdark":
-                return R.style.AppTheme_NoActionBar_Classic_Dark;
             default:
                 return R.style.AppTheme_NoActionBar;
         }

@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="16dp"
+    android:background="?attr/colorBackground"
     android:orientation="vertical">
 
     <View
         android:id="@+id/lineView"
         android:layout_width="match_parent"
         android:layout_height="2px"
-        android:background="@color/primary" />
+        android:background="?android:attr/listDivider" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="16:00"
-                android:textColor="@color/textMain"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -37,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="No data"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -44,6 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Wind: 0 m/s"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -51,6 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pressure: 0 hpa"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
 
             <TextView
@@ -58,6 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Humidity: 0 %"
+                android:textColor="?android:textColorPrimary"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -69,9 +74,9 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="32dp"
             android:layout_marginTop="16dp"
-            android:textColor="@color/primary"
             android:text="o"
-            android:textSize="48sp" />
+            android:textSize="48sp"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:id="@+id/itemTemperature"
@@ -79,7 +84,7 @@
             android:layout_height="wrap_content"
             android:text="0 °C"
             android:textSize="22sp"
-            android:textColor="@color/textMain"
+            android:textColor="?android:textColorPrimary"
             android:layout_marginTop="8dp"
             android:layout_below="@+id/itemIcon"
             android:layout_alignEnd="@+id/itemIcon" />

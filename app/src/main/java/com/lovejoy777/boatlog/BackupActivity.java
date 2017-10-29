@@ -8,8 +8,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -83,8 +83,15 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
     TextView tv_drive_info;
     TextView tv_no_connection;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_backup);
 
@@ -109,13 +116,6 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
                 onBackPressed();
             }
         });
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         //app version textView
         try {
@@ -561,29 +561,13 @@ public class BackupActivity extends AppCompatActivity implements ResultCallback<
         NavUtils.navigateUpFromSameTask(this);
     }
 
-    private void NightMode() {
-        MRL1.setBackgroundResource(R.color.card_background);
-        RL1.setBackgroundResource(R.color.card_background);
-        button_backup.setBackgroundResource(R.color.card_background);
-        button_restore.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tv_googleDrive.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            tv_drive_info.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            tv_no_connection.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            button_backup.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            button_restore.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-
-        }else {
-            tv_googleDrive.setTextColor(getResources().getColor(R.color.night_text));
-            tv_drive_info.setTextColor(getResources().getColor(R.color.night_text));
-            tv_no_connection.setTextColor(getResources().getColor(R.color.night_text));
-            button_backup.setTextColor(getResources().getColor(R.color.night_text));
-            button_restore.setTextColor(getResources().getColor(R.color.night_text));
-
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
 
     @Override

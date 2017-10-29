@@ -4,8 +4,8 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -41,8 +41,15 @@ public class MainActivityManLog extends AppCompatActivity {
     ListView listViewManLog;
     TextView titleTextView;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_manlog);
 
@@ -86,14 +93,6 @@ public class MainActivityManLog extends AppCompatActivity {
 
         populateListView();
 
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-            populateListViewRed();
-        }
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
@@ -132,40 +131,21 @@ public class MainActivityManLog extends AppCompatActivity {
     }
 
     private void populateListView() {
-
         final Cursor cursor = dbHelper.getAllManLog();
         String[] columns = new String[]{BoatLogDBHelper.MANLOG_COLUMN_ID, BoatLogDBHelper.MANLOG_COLUMN_NAME, BoatLogDBHelper.MANLOG_COLUMN_PROGRESS};
         int[] widgets = new int[]{R.id.manlogID, manlogName, manlogProgress};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.manlog_info, cursor, columns, widgets, 0);
         listView = (ListView) findViewById(R.id.listViewManLog);
-
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
     }
 
-    private void populateListViewRed() {
-        final Cursor cursor = dbHelper.getAllManLog();
-        String[] columns = new String[]{BoatLogDBHelper.MANLOG_COLUMN_ID, BoatLogDBHelper.MANLOG_COLUMN_NAME, BoatLogDBHelper.MANLOG_COLUMN_PROGRESS};
-        int[] widgets = new int[]{R.id.manlogID, manlogName, manlogProgress};
-        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.manlog_info1, cursor, columns, widgets, 0);
-        listView = (ListView) findViewById(R.id.listViewManLog);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
-        listView.setDividerHeight(2);
-        listView.setAdapter(cursorAdapter);
-    }
-
-    private void NightMode() {
-
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-        listViewManLog.setBackgroundResource(R.color.card_background);
-        fabManLog.setBackgroundResource(R.color.night_text);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
     }
 

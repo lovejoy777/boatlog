@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -74,8 +75,15 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
 
     int waypointID;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
 
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
@@ -107,13 +115,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         titleTextView.setText(R.string.create_waypoint);
 
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         // PERMISSIONS
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -350,50 +351,15 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         }
     }
 
-    private void NightMode() {
-
-        scrollView1.setBackgroundResource(R.color.card_background);
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLocationLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLocationLong.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            latdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            latminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            latsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            latnsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            longdegEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            longminEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            longsecEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            longewEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewName.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLocationLat.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLocationLong.setTextColor(getResources().getColor(R.color.night_text));
-
-            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-            latdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-            latminEditText.setTextColor(getResources().getColor(R.color.night_text));
-            latsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-            latnsEditText.setTextColor(getResources().getColor(R.color.night_text));
-            longdegEditText.setTextColor(getResources().getColor(R.color.night_text));
-            longminEditText.setTextColor(getResources().getColor(R.color.night_text));
-            longsecEditText.setTextColor(getResources().getColor(R.color.night_text));
-            longewEditText.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
+
 
     @Override
     protected void onResume() {

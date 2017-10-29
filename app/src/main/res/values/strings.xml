@@ -61,6 +61,7 @@
     <string name="ms">m/s</string>
     <string name="c">°C</string>
     <string name="hPa">hPa</string>
+
     <string name="fresh">fresh</string>
     <string name="arrow">arrow</string>
 
@@ -142,9 +143,7 @@
     <string name="pressure_unit_mmhg">mm Hg</string>
 
     <string name="setting_theme_fresh">Fresh</string>
-    <string name="setting_theme_classic">Classic</string>
     <string name="setting_theme_dark">Fresh Dark</string>
-    <string name="setting_theme_classic_dark">Classic Dark</string>
 
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
@@ -188,6 +187,7 @@
     <!-- 1: city; 2: country; 3: wind; 4: speed units; 5: pressure; 6: pressure units; 7: humidity -->
     <string name="dash_clock_expanded_body">%1$s, %2$s\nWind: %3$s %4$s\nPressure: %5$s %6$s\nHumidity: %7$s %%\n</string>
     <string name="settings_title_units">Units</string>
+    <string name="settings_title_general">General</string>
     <string name="settings_title_display">Display</string>
     <string name="settings_title_data">Data</string>
     <string name="setting_displayDecimalZeroes">Display decimal zeroes</string>

@@ -19,9 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:id="@+id/layout11"
-    android:background="@color/primary"
+    android:background="?attr/colorSplashBackground"
     android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:orientation="vertical"
     android:gravity="bottom">
 
@@ -38,6 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/BoatLog"
+        android:textColor="?attr/colorLightTextPrimary"
         android:layout_gravity="center_horizontal"
         style="@style/TextAppearance.AppCompat.Subhead" />
 

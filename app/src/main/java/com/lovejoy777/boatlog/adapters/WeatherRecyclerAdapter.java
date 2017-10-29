@@ -103,7 +103,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
                     /* We must explicitly set things back, because RecyclerView seems to reuse views and
                      * without restoring back the "normal" color, just about everything gets tinted if we
                      * scroll a couple of times! */
-                    color = ta.getColor(1, context.getResources().getColor(R.color.colorBackground));
+                    color = ta.getColor(0, context.getResources().getColor(R.color.colorBackground));
                 }
                 ta.recycle();
                 customViewHolder.itemView.setBackgroundColor(color);

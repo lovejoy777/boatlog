@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -18,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -48,7 +48,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.LocationRequest;
 import com.lovejoy777.boatlog.activities.AboutActivity;
-import com.lovejoy777.boatlog.activities.SettingsActivity;
+import com.lovejoy777.boatlog.activities.SettingActivity;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -136,8 +136,15 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     double doublelat;
     double doublelong;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_goto);
 
@@ -170,7 +177,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
         // arrow = DIRECTION POINTER
         arrow = (ImageView) findViewById(R.id.arrow);
-        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
 
         textViewLat = (TextView) findViewById(R.id.textViewLat);
         textViewLon = (TextView) findViewById(R.id.textViewLon);
@@ -229,16 +235,20 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         textViewHeading.setText("00 T");
         textViewCourseTo.setText("00 T");
 
-        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+
+
+        arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
+
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
 
         if (NightModeOn) {
-            NightMode();
+            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
         }
-
-        Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
 
         if (ScreenOn) {
             screenOn();
@@ -313,14 +323,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 textViewHeading.setText("00 T");
                 textViewCourseTo.setText("00 T");
 
-                SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-                arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
-                if (NightModeOn) {
-                    arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
-                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
-                }
+
 
             }
         }
@@ -622,7 +625,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -646,15 +648,26 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 public void onClick(View v) {
 
                     if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(GoToWaypoint.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "dark");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", true);
                         myPrefse.apply();
                     } else {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(GoToWaypoint.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "fresh");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = GoToWaypoint.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", false);
                         myPrefse.apply();
+
                     }
                     // Restart app to load day/night modes
                     Intent intent = new Intent(GoToWaypoint.this, MainActivity.class);
@@ -694,17 +707,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                 }
             });
 
-            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
-
-            if (NightModeOn) {
-                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-            } else {
-                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            }
         }
     }
 
@@ -758,7 +760,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                                 break;
 
                             case R.id.nav_settings:
-                                Intent settings = new Intent(GoToWaypoint.this, SettingsActivity.class);
+                                Intent settings = new Intent(GoToWaypoint.this, SettingActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
 
@@ -769,74 +771,15 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
     }
 
-    // NIGHT MODE
-    private void NightMode() {
-
-        toolBar.setBackgroundResource(R.color.card_background);
-        MainRL.setBackgroundResource(R.color.card_background);
-        MLL1.setBackgroundResource(R.color.card_background);
-        MLL2.setBackgroundResource(R.color.card_background);
-        MLL3.setBackgroundResource(R.color.card_background);
-
-        LLG.setBackgroundResource(R.color.grid_outline);
-        LLG0.setBackgroundResource(R.color.grid_outline);
-        LLG1.setBackgroundResource(R.color.grid_outline);
-        LLG2.setBackgroundResource(R.color.grid_outline);
-        LLG3.setBackgroundResource(R.color.grid_outline);
-        LLG4.setBackgroundResource(R.color.grid_outline);
-        LLG5.setBackgroundResource(R.color.grid_outline);
-        LLG6.setBackgroundResource(R.color.grid_outline);
-        LLG7.setBackgroundResource(R.color.grid_outline);
-        LLG8.setBackgroundResource(R.color.grid_outline);
-        LLG9.setBackgroundResource(R.color.grid_outline);
-        LLG10.setBackgroundResource(R.color.grid_outline);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            arrow.setImageTintList(ColorStateList.valueOf(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme())));
-            imageViewAccu.setImageTintList(ColorStateList.valueOf(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme())));
-
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewGetTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewGoTo.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLon.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewSpeed.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewHeading.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewCompass.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewCourseTo.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDistance.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            textViewDest.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewSped.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewHead.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewComp.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewCourse.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDist.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
-            textViewGoTo.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLat.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLon.setTextColor(getResources().getColor(R.color.night_text));
-            textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
-            textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
-            textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
-            textViewCourseTo.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDistance.setTextColor(getResources().getColor(R.color.night_text));
-
-            textViewDest.setTextColor(getResources().getColor(R.color.night_text));
-            textViewSped.setTextColor(getResources().getColor(R.color.night_text));
-            textViewHead.setTextColor(getResources().getColor(R.color.night_text));
-            textViewComp.setTextColor(getResources().getColor(R.color.night_text));
-            textViewCourse.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDist.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
+
 
     // SCREEN WAKELOCK
     private void screenOn() {

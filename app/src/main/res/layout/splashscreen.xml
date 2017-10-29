@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/card_background"
+    android:background="?attr/colorSplashBackground"
     android:orientation="vertical"
-    tools:context="com.lovejoy777.boatlog.MainActivity">
+    tools:context="com.lovejoy777.boatlog.Splash">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/ll1"
@@ -23,7 +23,9 @@
             android:layout_marginTop="60dp"
             android:text="@string/splashTitle"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorLightTextPrimary"
+            android:textStyle="italic"
+            android:typeface="serif"
             android:layout_weight="0.6"
             android:textSize="40sp" />
 
@@ -53,8 +55,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="@string/developed"
+            android:textColor="?attr/colorLightTextPrimary"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView
@@ -63,8 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/version"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/white" />
+            android:textColor="?attr/colorLightTextPrimary"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 

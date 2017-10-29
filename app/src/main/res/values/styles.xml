@@ -1,5 +1,69 @@
 <resources>
 
+    <!-- Normal app Theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:listDivider">@color/colorDivider</item>
+        <item name="colorDivider">@color/colorDivider</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/night_text</item>
+        <item name="colorBackground">@color/white</item>
+        <item name="colorTintedBackground">@color/colorTintedBackground</item>
+        <item name="colorTextPrimary">@color/colorTextPrimary</item>
+        <item name="colorTextSecondary">@color/colorTextSecondary</item>
+        <item name="colorLightTextPrimary">@color/colorLightTextPrimary</item>
+        <item name="colorLightTextSecondary">@color/colorLightTextSecondary</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+        <item name="colorCardBackground">@color/colorCardBackground</item>
+        <item name="colorSplashBackground">@color/colorSplashBackground</item>
+    </style>
+
+    <!-- Dark theme -->
+    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/darkTheme_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/darkTheme_colorBackground</item>
+        <item name="colorAccent">@color/darkTheme_colorAccent</item>
+        <item name="android:listDivider">@color/darkTheme_colorDivider</item>
+        <item name="colorDivider">@color/darkTheme_colorAccent</item>
+        <item name="colorBackground">@color/darkTheme_colorBackground</item>
+        <item name="colorTintedBackground">@color/darkTheme_colorTintedBackground</item>
+        <item name="colorTextPrimary">@color/darkTheme_colorTextPrimary</item>
+        <item name="colorTextSecondary">@color/darkTheme_colorTextSecondary</item>
+        <item name="colorLightTextPrimary">@color/darkTheme_colorTextPrimary</item>
+        <item name="colorLightTextSecondary">@color/darkTheme_colorTextPrimary</item>
+        <item name="android:textColorPrimary">@color/darkTheme_colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/darkTheme_colorTextSecondary</item>
+        <item name="colorCardBackground">@color/darkTheme_colorCardBackground</item>
+        <item name="colorSplashBackground">@color/darkTheme_colorSplashBackground</item>
+    </style>
+
+    <!-- For themes -->
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Dark" parent="AppTheme.Dark">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat" />
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <!-- old (needs sorting -->
     <style name="DarkTheme">
         <item name="android:textColor">@color/night_text</item>
         <item name="android:textColorPrimary">@color/night_text</item>
@@ -35,31 +99,6 @@
     <!-- Navigation Drawer Text Sytle -->
     <style name="NavigationViewTheme" parent="AppTheme">
         <item name="textAppearanceListItem">@style/TextAppearance.AppCompat.Body2</item>
-    </style>
-
-
-    <!-- Normal app Theme -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/night_text</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorBackground">@color/colorBackground</item>
-        <item name="colorTintedBackground">@color/colorTintedBackground</item>
-    </style>
-
-    <!-- weather app Theme -->
-    <style name="AppWeatherTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/night_text</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorBackground">@color/colorBackground</item>
-        <item name="colorTintedBackground">@color/colorTintedBackground</item>
     </style>
 
     <!-- About -->
@@ -119,67 +158,8 @@
 
     </style>
 
-    <!-- FOR WEATHER APP. -->
-
-
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/darkTheme_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/darkTheme_colorPrimaryDark</item>
-        <item name="colorAccent">@color/darkTheme_colorAccent</item>
-        <item name="colorBackground">@color/darkTheme_colorBackground</item>
-        <item name="colorTintedBackground">@color/darkTheme_colorTintedBackground</item>
-    </style>
-
-    <style name="AppTheme.Classic" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/classic_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/classic_colorPrimaryDark</item>
-        <item name="colorAccent">@color/classic_colorAccent</item>
-        <item name="colorBackground">@color/classic_colorBackground</item>
-        <item name="colorTintedBackground">@color/classic_colorTintedBackground</item>
-    </style>
-
-
-    <style name="AppTheme.Classic.Dark" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/classic_darkTheme_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/classic_darkTheme_colorPrimaryDark</item>
-        <item name="colorAccent">@color/classic_darkTheme_colorAccent</item>
-        <item name="colorBackground">@color/classic_darkTheme_colorBackground</item>
-        <item name="colorTintedBackground">@color/classic_darkTheme_colorTintedBackground</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-    </style>
-
     <style name="AppTheme.NoStatusBar" parent="AppTheme.NoActionBar">
 
-    </style>
-
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Classic" parent="AppTheme.Classic">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Dark" parent="AppTheme.Dark">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar.Classic.Dark" parent="AppTheme.Classic.Dark">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="AppTheme.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat" />
-
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
 

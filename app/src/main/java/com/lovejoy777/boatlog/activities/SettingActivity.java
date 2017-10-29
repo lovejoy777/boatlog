@@ -40,7 +40,6 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
         @Override
         public void onCreate(Bundle savedInstanceState) {
             setTheme(getTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("theme", "fresh")));
-
             super.onCreate(savedInstanceState);
 
             LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
@@ -72,7 +71,7 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
             setListPreferenceSummary("pressureUnit");
             setListPreferenceSummary("refreshInterval");
             setListPreferenceSummary("windDirectionFormat");
-            setListPreferenceSummary("theme");
+           // setListPreferenceSummary("theme");
         }
 
         @Override
@@ -103,13 +102,21 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
                 case "dateFormatCustom":
                     updateDateFormatList();
                     break;
-                case "theme":
+
+              /**  case "theme":
                     // Restart activity to apply theme
                     overridePendingTransition(0, 0);
-                    finish();
+                  //  finish();
                     overridePendingTransition(0, 0);
-                    startActivity(getIntent());
-                    break;
+                   // startActivity(getIntent());
+
+                    // Restart app to load day/night modes
+                    Intent restart = getBaseContext().getPackageManager()
+                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                    restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(restart);
+                    break; **/
+
                 case "updateLocationAutomatically":
                     if (sharedPreferences.getBoolean(key, false) == true) {
                         requestReadLocationPermission();
@@ -220,10 +227,6 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
         switch (themePref) {
             case "dark":
                 return R.style.AppTheme_Dark;
-            case "classic":
-                return R.style.AppTheme_Classic;
-            case "classicdark":
-                return R.style.AppTheme_Classic_Dark;
             default:
                 return R.style.AppTheme;
         }

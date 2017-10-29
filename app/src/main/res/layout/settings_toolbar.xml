@@ -11,10 +11,11 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/settings_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="56dp"
+        android:layout_height="56dp"
         app:navigationContentDescription="@string/abc_action_bar_up_description"
-        app:titleTextColor="@color/white"
-        android:background="@color/primary"
+        app:titleTextColor="?attr/colorLightTextPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/action_settings" />
 </android.support.design.widget.AppBarLayout>

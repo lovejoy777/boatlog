@@ -2,7 +2,6 @@ package com.lovejoy777.boatlog;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 /**
  * Created by steve on 17/10/17.

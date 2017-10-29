@@ -16,6 +16,7 @@
             android:id="@+id/MRL1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?attr/colorBackground"
             xmlns:app="http://schemas.android.com/apk/res-auto">
 
             <android.support.v7.widget.Toolbar
@@ -24,8 +25,7 @@
                 android:layout_height="56dp"
                 android:minHeight="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:theme="@style/Base.Theme.Test" />
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textSize="25sp"
-                android:textColor="@color/white"
+                android:textColor="?attr/colorLightTextPrimary"
                 android:id="@+id/titleTextView"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
@@ -50,6 +50,7 @@
             <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/scrollView1"
                 android:layout_below="@+id/toolbar"
+                android:background="?attr/colorBackground"
                 android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -70,6 +71,7 @@
                         android:id="@+id/RL1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/colorCardBackground"
                         android:elevation="4dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
@@ -101,7 +103,7 @@
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
-                            android:textColor="@color/textMenuTitle"
+                            android:textColor="?attr/colorTextPrimary"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -110,6 +112,7 @@
                         android:id="@+id/RL2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/colorCardBackground"
                         android:elevation="4dp"
                         android:orientation="horizontal"
                         android:layout_marginStart="16dp"
@@ -141,7 +144,7 @@
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
-                            android:textColor="@color/textMenuTitle"
+                            android:textColor="?attr/colorTextPrimary"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -158,6 +161,7 @@
                         android:id="@+id/RL3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/colorCardBackground"
                         android:elevation="4dp"
                         android:orientation="horizontal"
                         android:layout_marginStart="16dp"
@@ -189,7 +193,7 @@
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
-                            android:textColor="@color/textMenuTitle"
+                            android:textColor="?attr/colorTextPrimary"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -198,6 +202,7 @@
                         android:id="@+id/RL4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/colorCardBackground"
                         android:elevation="4dp"
                         android:orientation="horizontal"
                         android:layout_marginStart="16dp"
@@ -229,7 +234,7 @@
                             android:textSize="25sp"
                             android:textStyle="italic"
                             android:typeface="serif"
-                            android:textColor="@color/textMenuTitle"
+                            android:textColor="?attr/colorTextPrimary"
                             android:layout_centerHorizontal="true" />
 
                     </RelativeLayout>
@@ -267,7 +272,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_view"
-        app:theme="@style/NavigationViewTheme" />
+        app:menu="@menu/drawer_view" />
 
 </android.support.v4.widget.DrawerLayout>

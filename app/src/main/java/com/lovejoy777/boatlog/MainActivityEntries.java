@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -83,8 +83,15 @@ public class MainActivityEntries extends AppCompatActivity {
     int tripID;
     String tripName;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
 
@@ -122,8 +129,6 @@ public class MainActivityEntries extends AppCompatActivity {
                 }
             }
         });
-
-
 
         // PRINT PDF subFab button
         layoutFabPrintPdf.setOnClickListener(new View.OnClickListener() {
@@ -176,18 +181,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
         //Only main FAB is visible in the beginning
         closeSubMenusFab();
-        //populateListView();
+        populateListView();
 
 
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-            populateListViewRed();
-        } else {
-            populateListView();
-        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -249,33 +245,6 @@ public class MainActivityEntries extends AppCompatActivity {
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info,
                 cursor, columns, widgets, 0);
         listView = (ListView) findViewById(R.id.listViewEntries);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
-        listView.setDividerHeight(2);
-        listView.setAdapter(cursorAdapter);
-    }
-
-    private void populateListViewRed() {
-        final Cursor cursor = dbHelper.getTripEntry(tripID);
-        String[] columns = new String[]{
-                BoatLogDBHelper.ENTRY_COLUMN_ID,
-                BoatLogDBHelper.ENTRY_COLUMN_NAME,
-                BoatLogDBHelper.ENTRY_COLUMN_TIME,
-                BoatLogDBHelper.ENTRY_COLUMN_DATE,
-                BoatLogDBHelper.ENTRY_COLUMN_TRIP_ID
-
-        };
-        int[] widgets = new int[]{
-                R.id.entryID,
-                R.id.entryName,
-                R.id.entryTime,
-                R.id.entryDate
-                // R.id.entryTrip_ID
-        };
-
-        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info1,
-                cursor, columns, widgets, 0);
-        listView = (ListView) findViewById(R.id.listViewEntries);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
     }
@@ -586,7 +555,6 @@ public class MainActivityEntries extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -595,17 +563,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
             setupDrawerContent(navigationView);
 
-            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
 
-            if (NightModeOn) {
-                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-            } else {
-                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            }
 
         }
     }
@@ -755,14 +713,12 @@ public class MainActivityEntries extends AppCompatActivity {
 
     }
 
-    private void NightMode() {
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-        listViewEntries.setBackgroundResource(R.color.card_background);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
     }
 

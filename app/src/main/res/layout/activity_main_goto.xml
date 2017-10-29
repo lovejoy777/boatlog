@@ -10,6 +10,7 @@
     android:id="@+id/MainRL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
@@ -18,8 +19,7 @@
         android:layout_height="56dp"
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:theme="@style/Base.Theme.Test" />
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView
         android:id="@+id/imageView1"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:text="GoTo"
         android:textSize="25sp"
-        android:textColor="@color/white"
+        android:textColor="?attr/colorLightTextPrimary"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:padding="12dp"
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:text="nil"
         android:textSize="12sp"
-        android:textColor="@color/white"
+        android:textColor="?attr/colorLightTextPrimary"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
@@ -72,6 +72,7 @@
         android:layout_height="wrap_content"
         android:text="GoTo Waypoint Name"
         android:textSize="16sp"
+        android:textColor="?attr/colorTextPrimary"
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:padding="12dp" />
@@ -105,7 +106,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -119,7 +120,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -131,7 +132,7 @@
                     android:text="No"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -143,7 +144,7 @@
                     android:text="GPS"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_below="@id/textViewLat"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -153,7 +154,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -167,7 +168,7 @@
             android:orientation="horizontal"
             android:layout_width="2dp"
             android:layout_height="120dp"
-            android:background="@color/primary">
+            android:background="?attr/colorDivider">
         </LinearLayout>
 
         <LinearLayout
@@ -186,7 +187,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -200,7 +201,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -212,7 +213,7 @@
                     android:text="No Speed"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -222,7 +223,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -261,7 +262,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -273,7 +274,7 @@
                     android:text="No Speed"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -283,7 +284,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -297,7 +298,7 @@
             android:orientation="horizontal"
             android:layout_width="2dp"
             android:layout_height="120dp"
-            android:background="@color/primary">
+            android:background="?attr/colorDivider">
         </LinearLayout>
 
         <LinearLayout
@@ -321,7 +322,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -333,7 +334,7 @@
                     android:text="No Compass"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -343,7 +344,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -382,7 +383,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -394,7 +395,7 @@
                     android:text="No GPS"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -404,7 +405,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -418,7 +419,7 @@
             android:orientation="horizontal"
             android:layout_width="2dp"
             android:layout_height="120dp"
-            android:background="@color/primary">
+            android:background="?attr/colorDivider">
         </LinearLayout>
 
         <LinearLayout
@@ -442,7 +443,7 @@
                     android:textSize="20sp"
                     android:textStyle="italic"
                     android:typeface="serif"
-                    android:textColor="@color/textMain"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="8dp"/>
@@ -454,7 +455,7 @@
                     android:text="No GPS"
                     android:gravity="center_vertical"
                     android:textSize="20sp"
-                    android:textColor="@color/text_color_secondary"
+                    android:textColor="?attr/colorTextPrimary"
                     android:layout_gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
@@ -464,7 +465,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="@color/primary"
+                    android:background="?attr/colorDivider"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true">
                 </LinearLayout>
@@ -498,7 +499,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/card_background">
+        android:background="?attr/colorDivider">
 
     </LinearLayout>
 
@@ -520,7 +521,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_goto"
-        app:theme="@style/NavigationViewTheme" />
+        app:menu="@menu/drawer_goto"/>
 
 </android.support.v4.widget.DrawerLayout>

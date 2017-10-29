@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/MRL1"
+    android:background="?attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,8 +13,7 @@
         android:minHeight="?android:attr/actionBarSize"
         android:background="?android:attr/colorPrimary"
         android:gravity="bottom"
-        tools:context="com.lovejoy777.boatlog.Tutorial"
-        android:elevation="5dp">
+        tools:context="com.lovejoy777.boatlog.Tutorial">
 
     </android.support.v7.widget.Toolbar>
 
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/BoatLog"
-        android:textColor="@color/actionbar_text_color"
+        android:textColor="?attr/colorLightTextPrimary"
         android:layout_below="@+id/imVie_AppLogo"
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
@@ -49,19 +49,20 @@
         android:layout_centerHorizontal="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:elevation="5dp"
-        android:textColor="@color/actionbar_text_secondary_color" />
+        android:textColor="?attr/colorLightTextPrimary" />
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_height="match_parent"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/toolbar4"
-        android:background="@color/background">
+        android:background="?attr/colorBackground"
+        android:layout_below="@+id/toolbar4">
 
         <RelativeLayout
             android:id="@+id/RL1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/colorBackground"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:paddingTop="0dp"

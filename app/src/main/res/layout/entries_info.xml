@@ -2,6 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
+    android:background="?attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
         android:textSize="16sp"
         android:textStyle="italic"
         android:typeface="serif"
-        android:textColor="@color/textMain" />
+        android:textColor="?attr/colorTextPrimary" />
 
     <TextView
         android:id="@+id/entryTime"
@@ -23,7 +24,8 @@
         android:layout_weight="1"
         android:layout_marginStart="10dp"
         android:gravity="center_horizontal"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textColor="?attr/colorTextPrimary" />
 
     <TextView
         android:id="@+id/entryDate"
@@ -32,7 +34,8 @@
         android:layout_weight="1"
         android:layout_marginStart="10dp"
         android:gravity="center_horizontal"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textColor="?attr/colorTextPrimary" />
 
     <TextView
         android:id="@+id/entryID"

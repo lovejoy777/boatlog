@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,8 +40,15 @@ public class MainActivityWaypoint extends AppCompatActivity {
     ListView listViewWaypoint;
     TextView titleTextView;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_waypoint);
 
@@ -86,14 +94,6 @@ public class MainActivityWaypoint extends AppCompatActivity {
         dbHelper = new BoatLogDBHelper(this);
 
         populateListView();
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-            populateListViewRed();
-        }
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -160,32 +160,17 @@ public class MainActivityWaypoint extends AppCompatActivity {
         int[] widgets = new int[]{R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info, cursor, columns, widgets, 0);
         listView = (ListView) findViewById(R.id.listViewWaypoint);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
     }
 
-    private void populateListViewRed() {
-        final Cursor cursor = dbHelper.getAllWaypoint();
-        String[] columns = new String[]{BoatLogDBHelper.WAYPOINT_COLUMN_ID, BoatLogDBHelper.WAYPOINT_COLUMN_NAME};
-        int[] widgets = new int[]{R.id.waypointID, R.id.waypointName};
-        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info1, cursor, columns, widgets, 0);
-        listView = (ListView) findViewById(R.id.listViewWaypoint);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
-        listView.setDividerHeight(2);
-        listView.setAdapter(cursorAdapter);
-    }
-
-    private void NightMode() {
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-        listViewWaypoint.setBackgroundResource(R.color.card_background);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
 
     //closes FAB submenus

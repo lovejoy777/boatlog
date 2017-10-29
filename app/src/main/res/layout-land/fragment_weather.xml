@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorBackground"
     android:orientation="vertical"
     android:layout_alignParentEnd="true"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -15,13 +16,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/textMain"
+        android:textColor="?attr/colorTextPrimary"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/updated_field"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="?attr/colorTextPrimary"
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="12sp" />
@@ -47,7 +49,7 @@
                 android:layout_marginTop="5dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="25sp"
-                android:textColor="@color/textMain"/>
+                android:textColor="?attr/colorTextPrimary"/>
 
         </LinearLayout>
 
@@ -63,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/textMain"
+                android:textColor="?attr/colorTextPrimary"
                 android:textSize="70sp" />
 
         </LinearLayout>
@@ -82,7 +84,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/textMain"
+                android:textColor="?attr/colorTextPrimary"
                 android:textSize="12sp" />
 
         </LinearLayout>

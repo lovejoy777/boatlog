@@ -2,9 +2,7 @@ package com.lovejoy777.boatlog;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -24,7 +22,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static android.content.Context.MODE_PRIVATE;
 import static java.lang.Math.abs;
 
 
@@ -44,6 +41,8 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
     Handler handler;
 
+    int theme;
+
     public WeatherFragment(){
         handler = new Handler();
     }
@@ -51,6 +50,8 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         cityField = (TextView)rootView.findViewById(R.id.city_field);
         updatedField = (TextView)rootView.findViewById(R.id.updated_field);
@@ -68,13 +69,6 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
                 startActivity(intent, bndlanimation);
             }
         });
-
-        SharedPreferences myPrefs = this.getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         weatherIcon.setTypeface(weatherFont);
 
@@ -94,30 +88,13 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
 
         updateWeatherData(new CurrentLocationPreference(getActivity()).getcurrent_location());
 
 
-    }
-
-    private void NightMode() {
-
-           //  MRL1.setBackgroundResource(R.color.card_background);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            cityField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
-            updatedField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
-            detailsField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
-            currentTemperatureField.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
-            weatherIcon.setTextColor(getContext().getResources().getColor(R.color.night_text, getContext().getTheme()));
-        }else {
-            cityField.setTextColor(getResources().getColor(R.color.night_text));
-            updatedField.setTextColor(getResources().getColor(R.color.night_text));
-            detailsField.setTextColor(getResources().getColor(R.color.night_text));
-            currentTemperatureField.setTextColor(getResources().getColor(R.color.night_text));
-            weatherIcon.setTextColor(getResources().getColor(R.color.night_text));
-        }
     }
 
     private void updateWeatherData(final String chosen_location){
@@ -232,6 +209,15 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
     public void changeLatLong(String chosen_latlong){
         updateWeatherData(chosen_latlong);
+    }
+
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
+        }
     }
 
 }

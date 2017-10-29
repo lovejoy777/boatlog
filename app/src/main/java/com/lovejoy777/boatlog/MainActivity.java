@@ -7,13 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -44,7 +43,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.LocationRequest;
 import com.lovejoy777.boatlog.activities.AboutActivity;
-import com.lovejoy777.boatlog.activities.SettingsActivity;
+import com.lovejoy777.boatlog.activities.SettingActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,9 +60,6 @@ import java.util.Locale;
  * Created by lovejoy777 on 11/10/15.
  */
 public class MainActivity extends EasyLocationAppCompatActivity {
-
-    public final static double KEY_EXTRA_LAT = 0.00;
-    public final static double KEY_EXTRA_LON = 0.00;
 
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
@@ -99,16 +95,25 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     String Directory = "/boatLog/backups";
     String[] mFileList;
 
+    int theme;
+
     // ON CREATE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final String newloc = prefs.getString("current_locations", "Dover");
 
-        loadToolbarNavDrawer(getLastKnownLocation().getLatitude(), getLastKnownLocation().getLongitude());
+        toolBar = (Toolbar) findViewById(R.id.toolbar);
+        loadToolbarNavDrawer();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -116,7 +121,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                     .commit();
         }
 
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
@@ -135,30 +139,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         textView4 = (TextView) findViewById(R.id.textView4);
         img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
 
-        //textView1.setText("Ships LogBook");
-        //textView2.setText("Log");
-        //textView3.setText("Navigation");
-        //textView4.setText("Maintenance Log");
-
         img_thumbnail1.setImageResource(R.drawable.book);
         img_thumbnail2.setImageResource(R.drawable.log);
         img_thumbnail3.setImageResource(R.drawable.waypoints);
         img_thumbnail4.setImageResource(R.drawable.test1);
 
-        RL1.setBackgroundResource(R.color.white);
-        RL2.setBackgroundResource(R.color.white);
-        RL3.setBackgroundResource(R.color.white);
-        RL4.setBackgroundResource(R.color.white);
-
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
-        }
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
         }
 
         RL1.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +211,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
         requestSingleLocationFix(easyLocationRequest);
 
-
     }
 
     @Override
@@ -264,14 +250,21 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     }
 
     // TOOLBAR
-    private void loadToolbarNavDrawer(final double lat, final double lon) {
+    private void loadToolbarNavDrawer() {
         //set Toolbar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
+        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark;
+
+        if (darkTheme) {
+            toolBar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+        }
 
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -284,7 +277,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             Boolean switch2 = myPrefs.getBoolean("switch2", false);
             Boolean switch3 = myPrefs.getBoolean("switch3", false);
 
-            setupDrawerContent(navigationView, lat, lon);
+            setupDrawerContent(navigationView);
             Menu menu = navigationView.getMenu();
 
             MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
@@ -297,15 +290,26 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                 public void onClick(View v) {
 
                     if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "dark");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", true);
                         myPrefse.apply();
                     } else {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "fresh");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = MainActivity.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", false);
                         myPrefse.apply();
+
                     }
                     // Restart app to load day/night modes
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
@@ -370,22 +374,9 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                 }
             });
 
-            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
-
-            if (NightModeOn) {
-                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-            } else {
-                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            }
         }
 
     }
-
-
 
     // NAV DRAWER ONCLICK
     @Override
@@ -401,7 +392,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     }
 
     // SET NAV DRAWER
-    private void setupDrawerContent(NavigationView navigationView, final double lat, final double lon) {
+    private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -459,7 +450,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                 break;
 
                             case R.id.nav_settings:
-                                Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
+                                Intent settings = new Intent(MainActivity.this, SettingActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
 
@@ -867,30 +858,12 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         }
     }
 
-    // NIGHT MODE
-    private void NightMode() {
-
-        toolBar.setBackgroundResource(R.color.card_background);
-        scrollView1.setBackgroundResource(R.color.card_background);
-
-        MRL1.setBackgroundResource(R.color.card_background);
-        RL1.setBackgroundResource(R.color.card_background);
-        RL2.setBackgroundResource(R.color.card_background);
-        RL3.setBackgroundResource(R.color.card_background);
-        RL4.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-            textView1.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textView2.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textView3.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textView4.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            textView1.setTextColor(getResources().getColor(R.color.night_text));
-            textView2.setTextColor(getResources().getColor(R.color.night_text));
-            textView3.setTextColor(getResources().getColor(R.color.night_text));
-            textView4.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
     }
 

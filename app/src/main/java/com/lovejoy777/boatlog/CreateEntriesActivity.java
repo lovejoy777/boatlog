@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -71,8 +72,15 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
     int tripID;
     String tripName;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_entries);
 
@@ -102,13 +110,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         fabSavefav = (FloatingActionButton) this.findViewById(R.id.fabSavefav);
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
         titleTextView.setText(R.string.create_entry);
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         // Get Time and Date
         Calendar c = Calendar.getInstance();
@@ -362,36 +363,15 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         }
     }
 
-    private void NightMode() {
-
-        scrollView1.setBackgroundResource(R.color.card_background);
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDate.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLocation.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            timeEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            dateEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            locationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewName.setTextColor(getResources().getColor(R.color.night_text));
-            textViewTime.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDate.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
-
-            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-            timeEditText.setTextColor(getResources().getColor(R.color.night_text));
-            dateEditText.setTextColor(getResources().getColor(R.color.night_text));
-            locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
     }
+
 
     /* Request updates at startup */
     @Override

@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.lovejoy777.boatlog.R;
 import com.lovejoy777.boatlog.adapters.CustomListAdapter;
-import com.lovejoy777.boatlog.adapters.CustomRedListAdapter;
 
 /**
  * Created by lovejoy777 on 14/11/13.
@@ -38,8 +37,15 @@ public class AboutActivity extends AppCompatActivity {
             R.drawable.about_steve,
     };
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
@@ -50,7 +56,6 @@ public class AboutActivity extends AppCompatActivity {
         listView_Developer1 = (ListView) findViewById(R.id.listView_Developer1);
         tv_caption2 = (TextView) findViewById(R.id.tv_caption2);
         listView_link1 = (ListView) findViewById(R.id.listView_link1);
-
 
         String[] ListContent1 = {
                 "itellu Development Team"
@@ -74,22 +79,6 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            CustomRedListAdapter adapter1 = new
-                    CustomRedListAdapter(AboutActivity.this, Developer1, AppDeveloper, developerImage1);
-            list1 = (ListView) findViewById(R.id.listView_Developer1);
-            list1.setAdapter(adapter1);
-            list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/u/0/+SteveLovejoy/posts")));
-                }
-            });
-            NightMode();
-        } else {
             CustomListAdapter adapter1 = new
                     CustomListAdapter(AboutActivity.this, Developer1, AppDeveloper, developerImage1);
             list1 = (ListView) findViewById(R.id.listView_Developer1);
@@ -100,8 +89,6 @@ public class AboutActivity extends AppCompatActivity {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/u/0/+SteveLovejoy/posts")));
                 }
             });
-        }
-
 
         //app version textView
         TextView tv_version = (TextView) findViewById(R.id.tv_Version);
@@ -114,22 +101,13 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    private void NightMode() {
-        MRL1.setBackgroundResource(R.color.card_background);
-        scrollView1.setBackgroundResource(R.color.card_background);
-        RL1.setBackgroundResource(R.color.card_background);
-
-        listView_Developer1.setBackgroundResource(R.color.card_background);
-        listView_link1.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            tv_caption1.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            tv_caption2.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-        }else {
-            tv_caption1.setTextColor(getResources().getColor(R.color.night_text));
-            tv_caption2.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -49,8 +50,15 @@ public class EditEntriesActivity extends AppCompatActivity {
     int tripID;
     String tripName;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_entries);
 
@@ -79,13 +87,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         layoutFabSave = (LinearLayout) this.findViewById(R.id.layoutFabSave);
 
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -217,38 +218,15 @@ public class EditEntriesActivity extends AppCompatActivity {
 
     }
 
-    private void NightMode() {
-
-        scrollView1.setBackgroundResource(R.color.card_background);
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDate.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLocation.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            timeEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            dateEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            locationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewName.setTextColor(getResources().getColor(R.color.night_text));
-            textViewTime.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDate.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLocation.setTextColor(getResources().getColor(R.color.night_text));
-
-            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-            timeEditText.setTextColor(getResources().getColor(R.color.night_text));
-            dateEditText.setTextColor(getResources().getColor(R.color.night_text));
-            locationEditText.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
+
 
     //closes FAB submenus delete & edit
     private void closeSubMenusFabDeleteSave() {

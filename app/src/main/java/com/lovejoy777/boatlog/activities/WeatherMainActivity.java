@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -112,6 +111,8 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
     protected void onCreate(Bundle savedInstanceState) {
         // Initialize the associated SharedPreferences file with default values
         PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
 
         // Initiate activity
         super.onCreate(savedInstanceState);
@@ -295,8 +296,6 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 });
 
         builder.show();
-
-
 
     }
 
@@ -924,9 +923,9 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(theme = getTheme(prefs.getString("theme", "classic")));
-        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
-                theme == R.style.AppTheme_NoActionBar_Classic_Dark;
+        setTheme(theme = getTheme(prefs.getString("theme", "")));
+        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark;
+
         if (darkTheme) {
             toolBar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
         }
@@ -938,18 +937,6 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         if (navigationView != null) {
 
             setupDrawerContent(navigationView);
-
-            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
-
-            if (NightModeOn) {
-                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-            } else {
-                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            }
 
         }
     }
@@ -1026,10 +1013,6 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         switch (themePref) {
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
-            case "classic":
-                return R.style.AppTheme_NoActionBar_Classic;
-            case "classicdark":
-                return R.style.AppTheme_NoActionBar_Classic_Dark;
             default:
                 return R.style.AppTheme_NoActionBar;
         }
@@ -1044,7 +1027,8 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
             finish();
             overridePendingTransition(0, 0);
             startActivity(getIntent());
-        } else if (shouldUpdate() && isNetworkAvailable()) {
+        }
+        if (shouldUpdate() && isNetworkAvailable()) {
             getTodayWeather();
             getLongTermWeather();
         }

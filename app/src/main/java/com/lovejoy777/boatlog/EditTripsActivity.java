@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -49,8 +50,15 @@ public class EditTripsActivity extends AppCompatActivity {
 
     int tripID;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
 
         tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
@@ -77,13 +85,6 @@ public class EditTripsActivity extends AppCompatActivity {
         layoutFabSave = (LinearLayout) this.findViewById(R.id.layoutFabSave);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -205,34 +206,15 @@ public class EditTripsActivity extends AppCompatActivity {
         }
     }
 
-    private void NightMode() {
-
-        scrollView1.setBackgroundResource(R.color.card_background);
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDeparture.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDestination.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            departureEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            destinationEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewName.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDeparture.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDestination.setTextColor(getResources().getColor(R.color.night_text));
-
-            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-            departureEditText.setTextColor(getResources().getColor(R.color.night_text));
-            destinationEditText.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
+
 
     //closes FAB submenus delete & edit
     private void closeSubMenusFabDeleteSave() {

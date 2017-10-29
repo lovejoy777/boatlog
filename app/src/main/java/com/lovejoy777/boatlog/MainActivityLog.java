@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -18,6 +17,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -52,7 +52,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.lovejoy777.boatlog.activities.AboutActivity;
-import com.lovejoy777.boatlog.activities.SettingsActivity;
+import com.lovejoy777.boatlog.activities.SettingActivity;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -124,8 +124,15 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     // GPS INDICATOR
     ImageView imageViewAccu;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_logs);
 
@@ -181,14 +188,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
         imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
 
-        // NIGHT MODE CALL
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
-
         // SCREEN WAKELOCK
         Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
         if (ScreenOn) {
@@ -525,7 +525,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -549,15 +548,26 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 public void onClick(View v) {
 
                     if ((switcher1.isChecked())) {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "dark");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", true);
                         myPrefse.apply();
                     } else {
+                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
+                        SharedPreferences.Editor myPref = myPrefss.edit();
+                        myPref.putString("theme", "fresh");
+                        myPref.apply();
+
                         SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor myPrefse = myPrefs.edit();
                         myPrefse.putBoolean("switch1", false);
                         myPrefse.apply();
+
                     }
                     // Restart app to load day/night modes
                     Intent intent = new Intent(MainActivityLog.this, MainActivity.class);
@@ -597,17 +607,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 }
             });
 
-            SharedPreferences myPrefse = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-            Boolean NightModeOn = myPrefse.getBoolean("switch1", false);
-
-            if (NightModeOn) {
-                navigationView.setItemTextColor(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-                navigationView.setBackgroundColor(getResources().getColor(R.color.card_background));
-            } else {
-                navigationView.setItemTextColor(ColorStateList.valueOf(Color.DKGRAY));
-                navigationView.setItemIconTintList(ColorStateList.valueOf(Color.DKGRAY));
-            }
         }
     }
 
@@ -660,7 +659,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                                 break;
 
                             case R.id.nav_settings:
-                                Intent settings = new Intent(MainActivityLog.this, SettingsActivity.class);
+                                Intent settings = new Intent(MainActivityLog.this, SettingActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
 
@@ -671,49 +670,13 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
     }
 
-    private void NightMode() {
-
-        toolBar.setBackgroundResource(R.color.card_background);
-        MLL1.setBackgroundResource(R.color.card_background);
-        MLL2.setBackgroundResource(R.color.card_background);
-        MLL3.setBackgroundResource(R.color.card_background);
-
-        LLG1.setBackgroundResource(R.color.grid_outline);
-        LLG2.setBackgroundResource(R.color.grid_outline);
-        LLG3.setBackgroundResource(R.color.grid_outline);
-        LLG4.setBackgroundResource(R.color.grid_outline);
-        LLG5.setBackgroundResource(R.color.grid_outline);
-        LLG6.setBackgroundResource(R.color.grid_outline);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewGetTime.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLat.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewLon.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewSpeed.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewHeading.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewCompass.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            textViewPos.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewSped.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewHead.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewComp.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewGetTime.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLat.setTextColor(getResources().getColor(R.color.night_text));
-            textViewLon.setTextColor(getResources().getColor(R.color.night_text));
-            textViewSpeed.setTextColor(getResources().getColor(R.color.night_text));
-            textViewHeading.setTextColor(getResources().getColor(R.color.night_text));
-            textViewCompass.setTextColor(getResources().getColor(R.color.night_text));
-
-            textViewPos.setTextColor(getResources().getColor(R.color.night_text));
-            textViewSped.setTextColor(getResources().getColor(R.color.night_text));
-            textViewHead.setTextColor(getResources().getColor(R.color.night_text));
-            textViewComp.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
-
     }
 
     private void screenOn() {
@@ -725,14 +688,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     @Override
     protected void onResume() {
         super.onResume();
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         // buildEasyLocationClient();
@@ -746,13 +704,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     protected void onPause() {
         super.onPause();
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         // to stop the listener and save battery

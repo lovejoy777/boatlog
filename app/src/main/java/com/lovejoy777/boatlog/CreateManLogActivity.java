@@ -3,8 +3,8 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -50,8 +50,15 @@ public class CreateManLogActivity extends AppCompatActivity {
 
     int manlogID;
 
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_manlog);
 
@@ -75,13 +82,6 @@ public class CreateManLogActivity extends AppCompatActivity {
         fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
 
         dbHelper = new BoatLogDBHelper(this);
-
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
-        if (NightModeOn) {
-            NightMode();
-        }
 
         spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -134,35 +134,15 @@ public class CreateManLogActivity extends AppCompatActivity {
         }
     }
 
-    private void NightMode() {
-
-        scrollView1.setBackgroundResource(R.color.card_background);
-        MRL1.setBackgroundResource(R.color.card_background);
-        toolBar.setBackgroundResource(R.color.card_background);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            titleTextView.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewName.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewDescription.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewParts.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            textViewProgress.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-            nameEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            descriptionEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-            partsEditText.setTextColor(getBaseContext().getResources().getColor(R.color.night_text, getBaseContext().getTheme()));
-
-        }else {
-            titleTextView.setTextColor(getResources().getColor(R.color.night_text));
-            textViewName.setTextColor(getResources().getColor(R.color.night_text));
-            textViewDescription.setTextColor(getResources().getColor(R.color.night_text));
-            textViewParts.setTextColor(getResources().getColor(R.color.night_text));
-            textViewProgress.setTextColor(getResources().getColor(R.color.night_text));
-
-            nameEditText.setTextColor(getResources().getColor(R.color.night_text));
-            descriptionEditText.setTextColor(getResources().getColor(R.color.night_text));
-            partsEditText.setTextColor(getResources().getColor(R.color.night_text));
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            default:
+                return R.style.AppTheme_NoActionBar;
         }
     }
+
 
     /* Request updates at startup */
     @Override

@@ -10,6 +10,38 @@
             android:title="@string/Home" />
     </group>
 
+            <item android:title="Functions">
+                <menu>
+                    <item
+                        android:id="@+id/nav_night_switch"
+                        app:actionLayout="@layout/action_view_switch"
+                        android:icon="@drawable/ic_remove_red_eye_white_48dp"
+                        android:title="NightMode" />
+                    <item
+                        android:id="@+id/nav_screen_on_switch"
+                        app:actionLayout="@layout/action_view_switch"
+                        android:icon="@drawable/ic_tablet_android"
+                        android:title="ScreenOn" />
+                </menu>
+            </item>
+
+            <item android:title="Backup/Sync">
+                <menu>
+                    <item
+                        android:id="@+id/nav_drive"
+                        android:icon="@drawable/ic_cloud_queue_white_48dp"
+                        android:title="Google drive" />
+                    <item
+                        android:id="@+id/nav_backup"
+                        android:icon="@drawable/ic_save_white"
+                        android:title="Local Backup" />
+                    <item
+                        android:id="@+id/nav_restore"
+                        android:icon="@drawable/ic_restore"
+                        android:title="Local Restore" />
+                </menu>
+            </item>
+
     <item android:title="Weather Forecast">
         <menu>
 
@@ -27,38 +59,6 @@
                 android:icon="@drawable/ic_public_white_48dp"
                 android:title="Enter lat long" />
 
-        </menu>
-    </item>
-
-    <item android:title="Functions">
-        <menu>
-            <item
-                android:id="@+id/nav_night_switch"
-                app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_remove_red_eye_white_48dp"
-                android:title="NightMode" />
-            <item
-                android:id="@+id/nav_screen_on_switch"
-                app:actionLayout="@layout/action_view_switch"
-                android:icon="@drawable/ic_tablet_android"
-                android:title="ScreenOn" />
-        </menu>
-    </item>
-
-    <item android:title="Backup/Sync">
-        <menu>
-            <item
-                android:id="@+id/nav_drive"
-                android:icon="@drawable/ic_cloud_queue_white_48dp"
-                android:title="Google drive" />
-            <item
-                android:id="@+id/nav_backup"
-                android:icon="@drawable/ic_save_white"
-                android:title="Local Backup" />
-            <item
-                android:id="@+id/nav_restore"
-                android:icon="@drawable/ic_restore"
-                android:title="Local Restore" />
         </menu>
     </item>
 
