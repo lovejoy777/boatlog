@@ -21,7 +21,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView
-        android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -95,7 +94,6 @@
 
 
             <LinearLayout
-                android:id="@+id/LL1"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -178,7 +176,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LL2"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -251,7 +248,6 @@
             android:layout_weight="1">
 
             <LinearLayout
-                android:id="@+id/LL3"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -312,7 +308,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LL4"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -374,7 +369,6 @@
             android:layout_weight="1">
 
             <LinearLayout
-                android:id="@+id/LL5"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -435,7 +429,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/LL6"
                 android:orientation="horizontal"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

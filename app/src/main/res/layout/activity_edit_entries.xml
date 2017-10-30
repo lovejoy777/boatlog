@@ -30,7 +30,6 @@
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <ImageView
-            android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp" />
@@ -49,7 +48,6 @@
             android:textSize="25sp" />
 
         <ImageView
-            android:id="@+id/imageViewFav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/scrollView1"
@@ -172,7 +170,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/fieldlayout4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fieldlayout3"

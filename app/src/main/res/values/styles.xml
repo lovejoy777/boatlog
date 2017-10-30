@@ -64,11 +64,6 @@
     </style>
 
     <!-- old (needs sorting -->
-    <style name="DarkTheme">
-        <item name="android:textColor">@color/night_text</item>
-        <item name="android:textColorPrimary">@color/night_text</item>
-        <item name="android:textColorSecondary">@color/night_text</item>
-    </style>
 
     <!-- Toolbars -->
     <style name="Base.Theme.Test" parent="Theme.AppCompat.Light.NoActionBar">

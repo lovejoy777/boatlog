@@ -9,7 +9,6 @@
     tools:context="com.lovejoy777.boatlog.activities.GraphActivity">
 
     <ScrollView
-        android:id="@+id/graph_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/colorBackground">

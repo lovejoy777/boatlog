@@ -5,25 +5,15 @@
     <string name="developed">Developed by S Lovejoy</string>
     <string name="splashTitle">Boat Log</string>
 
-    <string name="name_backup">SQLiteBoatLog.db</string>
-
     <string name="BoatLog">Boat Log</string>
-    <string name="FabNewEntry">Create New Entry</string>
-    <string name="FabNewTrip">Create New Trip</string>
-    <string name="FabNewManLog">Create New Entry</string>
-    <string name="FabNewWaypoints">Create New Waypoints</string>
-    <string name="FabDelete">Delete</string>
-    <string name="FabSave">Save</string>
     <string name="About">About</string>
     <string name="Tutorial">Tutorial</string>
     <string name="Home">Home</string>
-    <string name="surname">Surname</string>
     <string name="developedby">Developed by</string>
     <string name="usefullinks">Useful links</string>
     <string name="stevelovejoy">Steve Lovejoy</string>
     <string name="General">General</string>
     <string name="version">Version: Alpha</string>
-    <string name="name">Name</string>
     <string name="destination">Destination</string>
 
     <string name="create_entry">Create New Entry</string>
@@ -40,8 +30,6 @@
 
     <string name="yes">Confirm</string>
     <string name="no">Cancel</string>
-
-    <string name="change_city">Change city</string>
 
     <!-- Put your own APP ID here -->
     <string name="open_weather_maps_app_id">641cc2423fd5c5ed715a35362fe1ff73</string>
@@ -62,12 +50,7 @@
     <string name="c">°C</string>
     <string name="hPa">hPa</string>
 
-    <string name="fresh">fresh</string>
     <string name="arrow">arrow</string>
-
-    <string name="degree_celsius">°C</string>
-    <string name="degree_fahrenheit">°F</string>
-    <string name="degree">%s</string>
 
 
     <string name="action_search">Search</string>
@@ -103,7 +86,6 @@
     <string name="setting_tempUnits">Temperature units</string>
     <string name="setting_showTempAsInteger">Show temperature only as an integer</string>
     <string name="setting_pressureUnits">Pressure units</string>
-    <string name="setting_theme">Theme</string>
     <string name="setting_auto_detect_location">Detect Location</string>
     <string name="setting_differentiateDaysByTint">Differentiate Days with Color</string>
     <string name="setting_refreshInterval">Background refresh interval</string>
@@ -114,8 +96,6 @@
     <string name="setting_unit_kn">Knots (kn)</string>
     <string name="setting_wind_direction_format">Wind direction format</string>
     <string name="settings_none">None</string>
-    <string name="setting_apiKey">API key</string>
-    <string name="setting_apiKey_summary">Custom API key for OpenWeatherMap queries</string>
 
     <string name="setting_unit_Celsuis">Celsius</string>
     <string name="setting_unit_Fahrenheit">Fahrenheit</string>
@@ -141,9 +121,6 @@
     <string name="pressure_unit_hpa">hPa</string>
     <string name="pressure_unit_kpa">kPa</string>
     <string name="pressure_unit_mmhg">mm Hg</string>
-
-    <string name="setting_theme_fresh">Fresh</string>
-    <string name="setting_theme_dark">Fresh Dark</string>
 
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
@@ -187,7 +164,6 @@
     <!-- 1: city; 2: country; 3: wind; 4: speed units; 5: pressure; 6: pressure units; 7: humidity -->
     <string name="dash_clock_expanded_body">%1$s, %2$s\nWind: %3$s %4$s\nPressure: %5$s %6$s\nHumidity: %7$s %%\n</string>
     <string name="settings_title_units">Units</string>
-    <string name="settings_title_general">General</string>
     <string name="settings_title_display">Display</string>
     <string name="settings_title_data">Data</string>
     <string name="setting_displayDecimalZeroes">Display decimal zeroes</string>

@@ -8,7 +8,6 @@
     tools:context="com.lovejoy777.boatlog.Splash">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ll1"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:baselineAligned="true"
@@ -16,7 +15,6 @@
         android:layout_weight="4">
 
         <TextView
-            android:id="@+id/textViewTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -30,7 +28,6 @@
             android:textSize="40sp" />
 
         <ImageView
-            android:id="@+id/imageView"
             android:layout_width="152dp"
             android:layout_height="124dp"
             android:layout_weight="3"
@@ -40,7 +37,6 @@
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ll2"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -49,7 +45,6 @@
 
 
         <TextView
-            android:id="@+id/textViewBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

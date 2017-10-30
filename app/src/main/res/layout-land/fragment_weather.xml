@@ -29,13 +29,11 @@
         android:textSize="12sp" />
 
     <LinearLayout
-        android:id="@+id/MLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/LL1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -54,7 +52,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/LL2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -71,7 +68,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/LL3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="true"

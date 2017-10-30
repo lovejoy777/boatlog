@@ -38,8 +38,6 @@
     <string name="setting_unit_mph">英里每小时 (mph)</string>
     <string name="setting_wind_direction_format">风向格式</string>
     <string name="settings_none">无</string>
-    <string name="setting_apiKey">API key</string>
-    <string name="setting_apiKey_summary">Custom API key for OpenWeatherMap queries</string>
 
     <string name="setting_unit_Celsuis">摄氏度</string>
     <string name="setting_unit_Fahrenheit">华氏度</string>

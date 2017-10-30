@@ -7,15 +7,9 @@
     <color name="primary_dark">#ff303F9F</color>
     <color name="accent">#ffFF5252</color>
 
-    <color name="fab">@color/night_text</color>
-    <color name="textMain">#ff3F51B5</color>
-    <color name="textMenuTitle">#ff3F51B5</color>
-
     <!-- Text colors -->
     <color name="textColorPrimary">#ff212121</color>
     <color name="text_color_secondary">#ff727272</color>
-    <color name="actionbar_text_color">#ffffffff</color>
-    <color name="actionbar_text_secondary_color">#ffffffff</color>
 
 
     <!-- Backgrounds -->
@@ -24,16 +18,13 @@
     <color name="amber_500">#FFC107</color>
     <color name="orange_500">#FF9800</color>
 
-    <color name="fab_card_text">@color/white</color>
     <color name="card_background">@color/grey800</color>
-    <color name="grid_outline">@color/accent</color>
     <color name="night_text">@color/accent</color>
     <color name="grey800">#424242</color>
 
 
     <!-- other colors -->
     <color name="white">#ffffff</color>
-    <color name="divider">#B6B6B6</color>
 
     <!-- Weather App -->
     <color name="colorPrimary">@color/primary</color>
@@ -50,27 +41,18 @@
     <color name="colorSplashBackground">@color/primary_dark</color>
 
     <color name="darkTheme_colorPrimary">@color/card_background</color>
-    <color name="darkTheme_colorPrimaryDark">@color/card_background</color>
     <color name="darkTheme_colorAccent">@color/accent</color>
     <color name="darkTheme_colorDivider">@color/accent</color>
     <color name="darkTheme_colorBackground">@color/card_background</color>
     <color name="darkTheme_colorTintedBackground">#424242</color>
     <color name="darkTheme_colorTextPrimary">@color/accent</color>
     <color name="darkTheme_colorTextSecondary">@color/accent</color>
-    <color name="darkTheme_colorLightTextPrimary">@color/accent</color>
-    <color name="darkTheme_colorLightTextSecondary">@color/accent</color>
     <color name="darkTheme_colorCardBackground">@color/card_background</color>
     <color name="darkTheme_colorSplashBackground">@color/card_background</color>
-
-
 
     <color name="splashBackground">#607d8b</color>
 
     <color name="text_light">#ffffff</color>
-    <color name="text_dark">@color/primary</color>
-    <color name="tab_indicator">@color/accent</color>
-    <color name="tabSelectedTextColor">@color/accent</color>
-    <color name="tabBackground">@color/primary_dark</color>
 
 
 </resources>

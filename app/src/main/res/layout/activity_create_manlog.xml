@@ -30,7 +30,6 @@
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <ImageView
-            android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -158,7 +157,6 @@
 
 
                 <LinearLayout
-                    android:id="@+id/fieldlayout4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -192,7 +190,6 @@
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/TextViewMainLog_ID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="0sp" />

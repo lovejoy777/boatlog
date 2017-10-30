@@ -4,12 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="mcab_toolbar_elevation">0dp</dimen>
     <dimen name="text_size">20sp</dimen>
-    <dimen name="cardCornerRadius">2dp</dimen>
-    <dimen name="cardElevation">2dp</dimen>
-    <dimen name="cardview_horizontal_padding">6dp</dimen>
-    <dimen name="cardview_vertical_padding">2dp</dimen>
 
-    <dimen name="app_bar_height">240dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
 </resources>
