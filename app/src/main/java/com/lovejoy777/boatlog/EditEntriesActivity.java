@@ -8,13 +8,12 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -27,17 +26,12 @@ import android.widget.Toast;
 
 public class EditEntriesActivity extends AppCompatActivity {
 
-    private BoatLogDBHelper dbHelper;
+    private DrawerLayout mDrawerLayout;
 
-    private boolean fabExpanded = false;
-    FloatingActionButton fabDeleteSave;
-    FrameLayout fabFrame;
-    private LinearLayout layoutFabDelete;
-    private LinearLayout layoutFabSave;
+    private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    Toolbar toolBar;
 
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
@@ -62,14 +56,14 @@ public class EditEntriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_entries);
 
+        loadToolbarNavDrawer();
+
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_TRIPS_NAME);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         textViewName = (TextView) findViewById(R.id.textViewName);
@@ -81,10 +75,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         timeEditText = (EditText) findViewById(R.id.editTextTime);
         dateEditText = (EditText) findViewById(R.id.editTextDate);
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
-
-        fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
-        layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
-        layoutFabSave = (LinearLayout) this.findViewById(R.id.layoutFabSave);
 
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
 
@@ -122,72 +112,6 @@ public class EditEntriesActivity extends AppCompatActivity {
         dateEditText.setText(entryDate);
         locationEditText.setText("" + entryLocation + "");
         trip_idText.setText(entryTrip_ID);
-
-        fabDeleteSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (fabExpanded) {
-                    closeSubMenusFabDeleteSave();
-                } else {
-                    openSubMenusFabDeleteSave();
-                }
-            }
-        });
-
-
-        // DELETE subFab button
-        layoutFabDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                android.support.v7.app.AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
-                }
-                builder.setTitle("Delete Entry?")
-                        .setMessage(entryName)
-
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dbHelper.deleteEntry(entryID);
-                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
-                                intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
-                                Bundle bndlanimation =
-                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                                startActivity(intent, bndlanimation);
-                                startActivity(intent);
-                            }
-                        })
-
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // cancelled by user
-                            }
-                        })
-
-                        .setIcon(R.drawable.ic_delete_white)
-                        .show();
-
-            }
-        });
-
-        // ADD NEW subFab button
-        layoutFabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
-                persistEntry();
-            }
-        });
-
-        //Only main FAB is visible in the beginning
-        closeSubMenusFabDeleteSave();
     }
 
     public void persistEntry() {
@@ -215,7 +139,103 @@ public class EditEntriesActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Entry Edit Failed", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+    }
+
+    //navigationDrawerIcon Onclick
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home_edit_entries:
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_save_entry:
+                                saveEntry();
+                                break;
+                            case R.id.nav_delete_entry:
+                                deleteEntry();
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
+    }
+
+    public void saveEntry() {
+        persistEntry();
+    }
+
+    public void deleteEntry() {
+        Cursor rs = dbHelper.getEntry(entryID);
+        rs.moveToFirst();
+        final String entryName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Delete Entry?")
+                .setMessage(entryName)
+
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbHelper.deleteEntry(entryID);
+                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivityEntries.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
+                        intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(intent, bndlanimation);
+                        startActivity(intent);
+                    }
+                })
+
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+
+                .setIcon(R.drawable.ic_delete_white)
+                .show();
     }
 
     private int getTheme(String themePref) {
@@ -225,23 +245,6 @@ public class EditEntriesActivity extends AppCompatActivity {
             default:
                 return R.style.AppTheme_NoActionBar;
         }
-    }
-
-
-    //closes FAB submenus delete & edit
-    private void closeSubMenusFabDeleteSave() {
-        layoutFabDelete.setVisibility(View.INVISIBLE);
-        layoutFabSave.setVisibility(View.INVISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
-        fabExpanded = false;
-    }
-
-    //Opens FAB submenus
-    private void openSubMenusFabDeleteSave() {
-        layoutFabDelete.setVisibility(View.VISIBLE);
-        layoutFabSave.setVisibility(View.VISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_close_white);
-        fabExpanded = true;
     }
 
     /* Request updates at startup */

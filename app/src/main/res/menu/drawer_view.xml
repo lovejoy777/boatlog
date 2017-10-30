@@ -49,7 +49,7 @@
                 android:id="@+id/nav_weather_lkl"
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_gps_fixed"
-                android:title="Current Location" />
+                android:title="Automatic" />
             <item
                 android:id="@+id/nav_weather_name"
                 android:icon="@drawable/ic_label_outline_white_48dp"

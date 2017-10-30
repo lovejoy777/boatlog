@@ -147,7 +147,7 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
 
             currentTemperatureField.setText(
-                    String.format(Locale.UK,"%.2f",main.getDouble("temp")) + " ℃");
+                    String.format(Locale.UK,"%.0f",main.getDouble("temp")) + " ℃");
 
             DateFormat df = DateFormat.getDateTimeInstance();
             String updatedOn = df.format(new Date(json.getLong("dt")*1000));

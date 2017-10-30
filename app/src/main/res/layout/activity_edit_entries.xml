@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".MainActivityEntries">
+        tools:context=".EditEntriesActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -25,8 +33,7 @@
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_marginTop="3dp" />
 
 
         <TextView
@@ -37,7 +44,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:padding="12dp"
-            android:text="Edit Entry"
+            android:text=""
             android:textColor="?attr/colorLightTextPrimary"
             android:textSize="25sp" />
 
@@ -212,8 +219,17 @@
             android:orientation="vertical"
             android:weightSum="1">
 
-            <include layout="@layout/layout_fabdeletesave" />
-
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
+
+<android.support.design.widget.NavigationView
+android:id="@+id/nav_view"
+android:layout_width="wrap_content"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+android:fitsSystemWindows="true"
+app:headerLayout="@layout/nav_header"
+app:menu="@menu/drawer_edit_entries" />
+
+    </android.support.v4.widget.DrawerLayout>

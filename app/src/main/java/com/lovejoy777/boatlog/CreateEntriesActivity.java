@@ -13,14 +13,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -44,6 +45,8 @@ import java.util.Locale;
 
 public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
 
+    private DrawerLayout mDrawerLayout;
+
     private BoatLogDBHelper dbHelper;
 
     // GOOGLE MAPS/LOCATION SERVICES
@@ -52,13 +55,8 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
     long FASTEST_INTERVAL = 2000; // 2 sec
     long FALLBACK_INTERVAL = 4000; // 7 seconds
 
-    FloatingActionButton fabSave; //fabMainDeleteEditSave
-    FloatingActionButton fabSavefav; //fabMainDeleteEditSave
-    FrameLayout fabFrame;
-
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    Toolbar toolBar;
 
     TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
@@ -84,6 +82,8 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_entries);
 
+        loadToolbarNavDrawer();
+
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
@@ -91,8 +91,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
@@ -106,8 +104,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         dateEditText = (EditText) findViewById(R.id.editTextDate);
         locationEditText = (EditText) findViewById(R.id.editTextLocation);
 
-        fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
-        fabSavefav = (FloatingActionButton) this.findViewById(R.id.fabSavefav);
         trip_idText = (TextView) findViewById(R.id.TextViewTrip_ID);
         titleTextView.setText(R.string.create_entry);
 
@@ -140,53 +136,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         timeEditText.setText("" + formattedTime + "");
         dateEditText.setText("" + formattedDate + "");
         locationEditText.setText(R.string.no_gps);
-
-        // SAVE ENTRY FAB BUTTON
-        fabSave.setImageResource(R.drawable.ic_save_white);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                persistEntry();
-            }
-        });
-
-        // FAVOURITES LIST FAB BUTTON
-        fabSavefav.setImageResource(R.drawable.ic_favorite_border);
-        fabSavefav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Cursor rs = dbHelper.getAllFavEntry();
-                ArrayList<String> favArray = new ArrayList<>();
-                while (rs.moveToNext()) {
-                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
-                    favArray.add(fav);
-                }
-                if (!rs.isClosed()) {
-                    rs.close();
-                }
-                final String[] favnames = favArray.toArray(new String[favArray.size()]);
-
-                android.support.v7.app.AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
-                }
-                builder.setTitle("      Select a Favourite");
-                builder.setIcon(R.drawable.ic_favorite_border);
-                if (favnames == null) {
-                    builder.create();
-                }
-                builder.setItems(favnames, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String mChosenFavourite = favnames[which];
-                        nameEditText.setText(mChosenFavourite);
-                    }
-                });
-
-                builder.show();
-            }
-        });
 
         // EASYLOCATION SETUP
         LocationRequest locationRequest = new LocationRequest()
@@ -363,6 +312,194 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         }
     }
 
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+    }
+
+    //navigationDrawerIcon Onclick
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home_create_entries:
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_save_entry:
+                                saveEntry();
+                                break;
+                            case R.id.nav_add_favourite:
+                                addFavourite();
+                                break;
+                            case R.id.nav_create_favourites:
+                                createFavourite();
+                                break;
+                            case R.id.nav_delete_favourites:
+                                deleteFavourite();
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
+    }
+
+    public void saveEntry() {
+        persistEntry();
+    }
+
+    public void addFavourite() {
+        Cursor rs = dbHelper.getAllFavEntry();
+        ArrayList<String> favArray = new ArrayList<>();
+        while (rs.moveToNext()) {
+            String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
+            favArray.add(fav);
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("      Select a Favourite");
+        builder.setIcon(R.drawable.ic_favorite_border);
+        if (favnames == null) {
+            builder.create();
+        }
+        builder.setItems(favnames, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String mChosenFavourite = favnames[which];
+                nameEditText.setText(mChosenFavourite);
+            }
+        });
+
+        builder.show();
+    }
+
+    // Create Favourite
+    private void createFavourite() {
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        }
+
+        builder.setTitle("      Create a Favourite");
+        final EditText input = new EditText(CreateEntriesActivity.this);
+        input.setTextColor(getResources().getColor(R.color.white));
+        input.setTextSize(20);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        builder.setView(input);
+        builder.setIcon(R.drawable.ic_favorite_border);
+        builder.setPositiveButton("SAVE",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (dbHelper.insertFavEntry(input.getText().toString())) {
+                            Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        builder.setNegativeButton("CANCEL",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        builder.show();
+    }
+
+    // Delete Favourite
+    private void deleteFavourite() {
+        Cursor rs = dbHelper.getAllFavEntry();
+        ArrayList<String> favArray = new ArrayList<String>();
+        while (rs.moveToNext()) {
+            String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
+            favArray.add(fav);
+        }
+        if (!rs.isClosed()) {
+            rs.close();
+        }
+        final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+        android.support.v7.app.AlertDialog.Builder builder1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder1 = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder1 = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+        }
+
+        builder1.setTitle("      Select a Favourite");
+        builder1.setIcon(R.drawable.ic_favorite_border);
+        if (favnames == null) {
+            builder1.create();
+        }
+
+        builder1.setItems(favnames, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                final String mChosenFavourite = favnames[which];
+                android.support.v7.app.AlertDialog.Builder builder2;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder2 = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                } else {
+                    builder2 = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                }
+                builder2.setTitle("   Delete Favourite")
+                        .setMessage("    " + mChosenFavourite)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbHelper.deleteFavEntry(mChosenFavourite);
+                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
+                            }
+                        })
+                        .setIcon(R.drawable.ic_delete_white)
+                        .show();
+            }
+        });
+        builder1.show();
+    }
+
     private int getTheme(String themePref) {
         switch (themePref) {
             case "dark":
@@ -371,7 +508,6 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
                 return R.style.AppTheme_NoActionBar;
         }
     }
-
 
     /* Request updates at startup */
     @Override

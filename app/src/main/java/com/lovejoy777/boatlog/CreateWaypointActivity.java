@@ -12,14 +12,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -40,6 +40,8 @@ import java.util.Locale;
 
 public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
 
+    private DrawerLayout mDrawerLayout;
+
     private BoatLogDBHelper dbHelper;
 
     // GOOGLE MAPS/LOCATION SERVICES
@@ -48,12 +50,8 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
     long FASTEST_INTERVAL = 2000; // 2 sec
     long FALLBACK_INTERVAL = 4000; // 7 seconds
 
-    FloatingActionButton fabSave;
-    FrameLayout fabFrame;
-
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    Toolbar toolBar;
 
     TextView textViewName;
     TextView textViewDescription;
@@ -90,10 +88,10 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
 
         setContentView(R.layout.activity_create_waypoint);
 
+        loadToolbarNavDrawer();
+
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
@@ -114,8 +112,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
 
         titleTextView.setText(R.string.create_waypoint);
 
-        fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
-
         // PERMISSIONS
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -127,13 +123,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         //   showAlert();
 
         dbHelper = new BoatLogDBHelper(this);
-        fabSave.setImageResource(R.drawable.ic_save_white);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                persistWaypoint();
-            }
-        });
 
         // EASYLOCATION SETUP
         LocationRequest locationRequest = new LocationRequest()
@@ -349,6 +338,59 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         } else {
             return true;
         }
+    }
+
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+    }
+
+    //navigationDrawerIcon Onclick
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home_create_waypoints:
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_save_waypoint:
+                                saveTrip();
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
+    }
+
+    public void saveTrip() {
+        persistWaypoint();
     }
 
     private int getTheme(String themePref) {

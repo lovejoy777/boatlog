@@ -8,13 +8,12 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -26,17 +25,12 @@ import android.widget.Toast;
 
 public class EditWaypointActivity extends AppCompatActivity {
 
-    private BoatLogDBHelper dbHelper;
+    private DrawerLayout mDrawerLayout;
 
-    private boolean fabExpanded = false;
-    private FloatingActionButton fabDeleteSave; //fabMainDeleteSave
-    FrameLayout fabFrame;
-    private LinearLayout layoutFabDelete;
-    private LinearLayout layoutFabSave;
+    private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    Toolbar toolBar;
 
     TextView textViewName;
     TextView textViewDescription;
@@ -73,10 +67,10 @@ public class EditWaypointActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_edit_waypoint);
 
+        loadToolbarNavDrawer();
+
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
@@ -94,10 +88,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         longminEditText = (EditText) findViewById(R.id.editTextLongMin);
         longsecEditText = (EditText) findViewById(R.id.editTextLongSec);
         longewEditText = (EditText) findViewById(R.id.editTextLongEW);
-
-        fabDeleteSave = (FloatingActionButton) this.findViewById(R.id.fabDeleteSave);
-        layoutFabDelete = (LinearLayout) this.findViewById(R.id.layoutFabDelete);
-        layoutFabSave = (LinearLayout) this.findViewById(R.id.layoutFabSave);
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -128,71 +118,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         longminEditText.setText(waypointLongMin);
         longsecEditText.setText(waypointLongSec);
         longewEditText.setText(waypointLongEW);
-
-        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
-
-        fabDeleteSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (fabExpanded) {
-                    closeSubMenusFabDeleteSave();
-                } else {
-                    openSubMenusFabDeleteSave();
-                }
-            }
-        });
-
-        // DELETE subFab button
-        layoutFabDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                android.support.v7.app.AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
-                }
-                builder.setTitle("Delete Waypoint?")
-                        // .setMessage(waypointName)
-
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dbHelper.deleteWaypoint(waypointID);
-                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                Bundle bndlanimation =
-                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                                startActivity(intent, bndlanimation);
-                            }
-                        })
-
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // cancelled by user
-                            }
-                        })
-
-                        .setIcon(R.drawable.ic_delete_white)
-                        .show();
-
-            }
-        });
-
-        // ADD NEW subFab button
-        layoutFabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                fabDeleteSave.setImageResource(R.drawable.ic_menu_white);
-                persistWaypoint();
-            }
-        });
-
-        //Only main FAB is visible in the beginning
-        closeSubMenusFabDeleteSave();
-
     }
 
     public void persistWaypoint() {
@@ -220,28 +145,94 @@ public class EditWaypointActivity extends AppCompatActivity {
         }
     }
 
+
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+    }
+
+    //navigationDrawerIcon Onclick
     @Override
-    protected void onResume() {
-        super.onResume();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home_edit_waypoints:
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_save_waypoint:
+                                saveWaypoint();
+                                break;
+                            case R.id.nav_delete_waypoint:
+                                deleteWaypoint();
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
     }
 
-    private void closeSubMenusFabDeleteSave() {
-        layoutFabDelete.setVisibility(View.INVISIBLE);
-        layoutFabSave.setVisibility(View.INVISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
-        fabExpanded = false;
+    public void saveWaypoint() {
+        persistWaypoint();
     }
 
-    private void openSubMenusFabDeleteSave() {
-        layoutFabDelete.setVisibility(View.VISIBLE);
-        layoutFabSave.setVisibility(View.VISIBLE);
-        fabDeleteSave.setImageResource(R.drawable.ic_action_menu);
-        fabExpanded = true;
+    public void deleteWaypoint() {
+        android.support.v7.app.AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
+        } else {
+            builder = new android.support.v7.app.AlertDialog.Builder(EditWaypointActivity.this, R.style.AlertDialogTheme);
+        }
+        builder.setTitle("Delete Waypoint?")
+                // .setMessage(waypointName)
+
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbHelper.deleteWaypoint(waypointID);
+                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), MainActivityWaypoint.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        Bundle bndlanimation =
+                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                        startActivity(intent, bndlanimation);
+                    }
+                })
+
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+
+                .setIcon(R.drawable.ic_delete_white)
+                .show();
+
     }
 
     private int getTheme(String themePref) {
@@ -253,6 +244,15 @@ public class EditWaypointActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     @Override
     public void onBackPressed() {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home_create_maintenance"
+            android:icon="@drawable/ic_settings"
+            android:title="Maintenance Log" />
+    </group>
+
+    <item android:title="New Task">
+        <menu>
+            <item
+                android:id="@+id/nav_save_maintenance"
+                android:icon="@drawable/ic_save_white"
+                android:title="Save Task" />
+        </menu>
+    </item>
+
+</menu>

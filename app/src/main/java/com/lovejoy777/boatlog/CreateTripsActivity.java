@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -22,14 +22,12 @@ import android.widget.Toast;
 
 public class CreateTripsActivity extends AppCompatActivity {
 
+    private DrawerLayout mDrawerLayout;
+
     private BoatLogDBHelper dbHelper;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
-    Toolbar toolBar;
-
-    FloatingActionButton fabSave;
-    FrameLayout fabFrame;
 
     TextView titleTextView;
     TextView textViewName;
@@ -54,10 +52,10 @@ public class CreateTripsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_trips);
 
+        loadToolbarNavDrawer();
+
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        fabFrame = (FrameLayout) findViewById(R.id.fabFrame);
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
@@ -70,20 +68,10 @@ public class CreateTripsActivity extends AppCompatActivity {
         departureEditText = (EditText) findViewById(R.id.editTextDeparture);
         destinationEditText = (EditText) findViewById(R.id.editTextDestination);
 
-        fabSave = (FloatingActionButton) this.findViewById(R.id.fabSave);
-
         dbHelper = new BoatLogDBHelper(this);
 
         dbHelper = new BoatLogDBHelper(this);
 
-        fabSave.setImageResource(R.drawable.ic_save_white);
-        fabSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                persistTrip();
-                // closeSubMenusFabSave();
-            }
-        });
     }
 
     public void persistTrip() {
@@ -114,6 +102,59 @@ public class CreateTripsActivity extends AppCompatActivity {
                     ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
             startActivity(intent, bndlanimation);
         }
+    }
+
+    private void loadToolbarNavDrawer() {
+        //set Toolbar
+        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //set NavigationDrawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+    }
+
+    //navigationDrawerIcon Onclick
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //set NavigationDrawerContent
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        mDrawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        int id = menuItem.getItemId();
+                        switch (id) {
+                            case R.id.nav_home_create_trips:
+                                getSupportActionBar().setElevation(0);
+                                mDrawerLayout.closeDrawers();
+                                break;
+                            case R.id.nav_save_trip:
+                                saveTrip();
+                                break;
+                        }
+                        return false;
+                    }
+                }
+        );
+    }
+
+    public void saveTrip() {
+        persistTrip();
     }
 
     private int getTheme(String themePref) {

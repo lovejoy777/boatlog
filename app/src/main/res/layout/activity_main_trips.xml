@@ -1,4 +1,13 @@
-<RelativeLayout
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,7 +29,6 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"
         android:layout_marginTop="3dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
@@ -28,7 +36,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Trips"
+        android:text=""
         android:textSize="25sp"
         android:textColor="?attr/colorLightTextPrimary"
         android:id="@+id/titleTextView"
@@ -46,6 +54,15 @@
         android:layout_below="@+id/toolbar">
     </ListView>
 
-    <include layout="@layout/layout_fabtrips_submenu"/>
-
 </RelativeLayout>
+
+<android.support.design.widget.NavigationView
+android:id="@+id/nav_view"
+android:layout_width="wrap_content"
+android:layout_height="match_parent"
+android:layout_gravity="start"
+android:fitsSystemWindows="true"
+app:headerLayout="@layout/nav_header"
+app:menu="@menu/drawer_trips" />
+
+    </android.support.v4.widget.DrawerLayout>
