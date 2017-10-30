@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
@@ -29,6 +30,8 @@ public class MainActivityTrips extends AppCompatActivity {
 
     private ListView listView;
     BoatLogDBHelper dbHelper;
+
+    ImageView button_createNewTrip;
 
     RelativeLayout MRL1;
 
@@ -48,6 +51,7 @@ public class MainActivityTrips extends AppCompatActivity {
         setContentView(R.layout.activity_main_trips);
 
         loadToolbarNavDrawer();
+        button_createNewTrip = (ImageView) findViewById(R.id.button_createNewTrip);
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
@@ -56,6 +60,13 @@ public class MainActivityTrips extends AppCompatActivity {
         titleTextView.setText("Trips");
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_createNewTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTrip();
+            }
+        });
 
         populateListView();
 

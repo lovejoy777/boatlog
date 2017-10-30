@@ -19,7 +19,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -43,6 +45,8 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveWaypoint;
 
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
@@ -89,6 +93,7 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         setContentView(R.layout.activity_create_waypoint);
 
         loadToolbarNavDrawer();
+        button_saveWaypoint = (ImageView) findViewById(R.id.button_saveWaypoint);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -123,6 +128,13 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         //   showAlert();
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_saveWaypoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistWaypoint();
+            }
+        });
 
         // EASYLOCATION SETUP
         LocationRequest locationRequest = new LocationRequest()

@@ -148,6 +148,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
         }
 
+
+
         RL1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

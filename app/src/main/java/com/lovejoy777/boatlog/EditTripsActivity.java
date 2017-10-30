@@ -13,7 +13,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -28,6 +30,9 @@ public class EditTripsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveTrip;
+    ImageView button_deleteTrip;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -60,6 +65,8 @@ public class EditTripsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_trips);
 
         loadToolbarNavDrawer();
+        button_saveTrip = (ImageView) findViewById(R.id.button_saveTrip);
+        button_deleteTrip = (ImageView) findViewById(R.id.button_deleteTrip);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -76,6 +83,22 @@ public class EditTripsActivity extends AppCompatActivity {
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_saveTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistTrip();
+            }
+        });
+
+        button_deleteTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteTrip();
+            }
+        });
+
+
 
         nameEditText.setFocusableInTouchMode(true);
         nameEditText.setClickable(true);

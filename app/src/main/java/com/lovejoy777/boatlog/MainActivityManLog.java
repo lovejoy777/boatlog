@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
@@ -35,6 +36,8 @@ public class MainActivityManLog extends AppCompatActivity {
     private ListView listView;
     BoatLogDBHelper dbHelper;
 
+    ImageView button_createNewTask;
+
     RelativeLayout MRL1;
 
     ListView listViewManLog;
@@ -53,6 +56,7 @@ public class MainActivityManLog extends AppCompatActivity {
         setContentView(R.layout.activity_main_manlog);
 
         loadToolbarNavDrawer();
+        button_createNewTask = (ImageView) findViewById(R.id.button_createNewTask);
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
@@ -61,6 +65,13 @@ public class MainActivityManLog extends AppCompatActivity {
         titleTextView.setText("Maintenance Log");
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_createNewTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTask();
+            }
+        });
 
         populateListView();
 
@@ -151,7 +162,7 @@ public class MainActivityManLog extends AppCompatActivity {
                                 mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_create_maintenance:
-                                createMaintenance();
+                                createTask();
                                 break;
 
                         }
@@ -161,8 +172,8 @@ public class MainActivityManLog extends AppCompatActivity {
         );
     }
 
-    // Create a New Trip
-    private void createMaintenance() {
+    // Create a New Task
+    private void createTask() {
         Intent intent = new Intent(MainActivityManLog.this, CreateManLogActivity.class);
         intent.putExtra(KEY_EXTRA_MANLOG_ID, 0);
         Bundle bndlanimation =

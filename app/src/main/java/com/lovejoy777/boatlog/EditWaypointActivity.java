@@ -13,7 +13,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -28,6 +30,9 @@ public class EditWaypointActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveWaypoint;
+    ImageView button_deleteWaypoint;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -68,6 +73,8 @@ public class EditWaypointActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_waypoint);
 
         loadToolbarNavDrawer();
+        button_saveWaypoint = (ImageView) findViewById(R.id.button_saveWaypoint);
+        button_deleteWaypoint = (ImageView) findViewById(R.id.button_deleteWaypoint);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -90,6 +97,22 @@ public class EditWaypointActivity extends AppCompatActivity {
         longewEditText = (EditText) findViewById(R.id.editTextLongEW);
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_saveWaypoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistWaypoint();
+            }
+        });
+
+        button_deleteWaypoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteWaypoint();
+            }
+        });
+
+
 
         Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();

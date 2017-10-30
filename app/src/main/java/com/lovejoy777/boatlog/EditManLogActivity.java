@@ -13,8 +13,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -32,6 +34,9 @@ public class EditManLogActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveTask;
+    ImageView button_deleteTask;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -68,6 +73,8 @@ public class EditManLogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_manlog);
 
         loadToolbarNavDrawer();
+        button_saveTask = (ImageView) findViewById(R.id.button_saveTask);
+        button_deleteTask = (ImageView) findViewById(R.id.button_deleteTask);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -121,6 +128,21 @@ public class EditManLogActivity extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
+        button_saveTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistTask();
+            }
+        });
+
+        button_deleteTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteTask();
+            }
+        });
+
+
         nameEditText.setFocusableInTouchMode(true);
         nameEditText.setClickable(true);
 
@@ -147,7 +169,7 @@ public class EditManLogActivity extends AppCompatActivity {
 
     }
 
-    public void persistMaintenance() {
+    public void persistTask() {
         String progressString = valueOf(spinnerProgress.getSelectedItem());
         if (manlogID > 0) {
             if (dbHelper.updateManLog(manlogID,
@@ -221,10 +243,10 @@ public class EditManLogActivity extends AppCompatActivity {
                                 mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_save_maintenance:
-                                saveMaintenance();
+                                saveTask();
                                 break;
                             case R.id.nav_delete_maintenance:
-                                deleteMaintenance();
+                                deleteTask();
                                 break;
                         }
                         return false;
@@ -233,11 +255,11 @@ public class EditManLogActivity extends AppCompatActivity {
         );
     }
 
-    public void saveMaintenance() {
-        persistMaintenance();
+    public void saveTask() {
+        persistTask();
     }
 
-    public void deleteMaintenance() {
+    public void deleteTask() {
         Cursor rs = dbHelper.getManLog(manlogID);
         rs.moveToFirst();
         final String manlogName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.MANLOG_COLUMN_NAME));

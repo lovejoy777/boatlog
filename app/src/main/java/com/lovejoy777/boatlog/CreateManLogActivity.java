@@ -10,8 +10,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -29,6 +31,8 @@ public class CreateManLogActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveTask;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -61,6 +65,7 @@ public class CreateManLogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_manlog);
 
         loadToolbarNavDrawer();
+        button_saveTask = (ImageView) findViewById(R.id.button_saveTask);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -79,6 +84,13 @@ public class CreateManLogActivity extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
+        button_saveTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistTask();
+            }
+        });
+
         spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.progress_array, R.layout.progress_spinner_item);
@@ -88,7 +100,7 @@ public class CreateManLogActivity extends AppCompatActivity {
         dbHelper = new BoatLogDBHelper(this);
     }
 
-    public void persistMaintenance() {
+    public void persistTask() {
         String progressString = valueOf(spinnerProgress.getSelectedItem());
         if (manlogID > 0) {
             if (dbHelper.updateManLog(manlogID,
@@ -162,7 +174,7 @@ public class CreateManLogActivity extends AppCompatActivity {
                                 mDrawerLayout.closeDrawers();
                                 break;
                             case R.id.nav_save_maintenance:
-                                saveMaintenance();
+                                saveTask();
                                 break;
                         }
                         return false;
@@ -171,8 +183,8 @@ public class CreateManLogActivity extends AppCompatActivity {
         );
     }
 
-    public void saveMaintenance() {
-        persistMaintenance();
+    public void saveTask() {
+        persistTask();
     }
 
     private int getTheme(String themePref) {

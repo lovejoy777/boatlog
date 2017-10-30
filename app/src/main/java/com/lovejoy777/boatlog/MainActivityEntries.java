@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -64,6 +65,8 @@ public class MainActivityEntries extends AppCompatActivity {
     private ListView listView;
     BoatLogDBHelper dbHelper;
 
+    ImageView button_createNewEntry;
+
     RelativeLayout MRL1;
 
     ListView listViewEntries;
@@ -85,7 +88,8 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
 
-         loadToolbarNavDrawer();
+        loadToolbarNavDrawer();
+        button_createNewEntry = (ImageView) findViewById(R.id.button_createNewEntry);
 
         tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
@@ -103,7 +107,15 @@ public class MainActivityEntries extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
+        button_createNewEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createEntry();
+            }
+        });
+
         populateListView();
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

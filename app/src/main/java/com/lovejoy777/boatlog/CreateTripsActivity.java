@@ -10,7 +10,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ public class CreateTripsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveTrip;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -53,6 +57,7 @@ public class CreateTripsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_trips);
 
         loadToolbarNavDrawer();
+        button_saveTrip = (ImageView) findViewById(R.id.button_saveTrip);
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -70,7 +75,12 @@ public class CreateTripsActivity extends AppCompatActivity {
 
         dbHelper = new BoatLogDBHelper(this);
 
-        dbHelper = new BoatLogDBHelper(this);
+        button_saveTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistTrip();
+            }
+        });
 
     }
 

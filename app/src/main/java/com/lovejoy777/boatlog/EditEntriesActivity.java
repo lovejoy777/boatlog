@@ -13,7 +13,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,6 +31,9 @@ public class EditEntriesActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveEntry;
+    ImageView button_deleteEntry;
 
     ScrollView scrollView1;
     RelativeLayout MRL1;
@@ -57,6 +62,8 @@ public class EditEntriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_entries);
 
         loadToolbarNavDrawer();
+        button_saveEntry = (ImageView) findViewById(R.id.button_saveEntry);
+        button_deleteEntry = (ImageView) findViewById(R.id.button_deleteEntry);
 
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
@@ -112,6 +119,21 @@ public class EditEntriesActivity extends AppCompatActivity {
         dateEditText.setText(entryDate);
         locationEditText.setText("" + entryLocation + "");
         trip_idText.setText(entryTrip_ID);
+
+        button_saveEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistEntry();
+            }
+        });
+
+        button_deleteEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEntry();
+            }
+        });
+
     }
 
     public void persistEntry() {

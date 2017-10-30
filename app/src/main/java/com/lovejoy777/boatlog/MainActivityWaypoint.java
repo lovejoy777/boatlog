@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
@@ -34,6 +35,8 @@ public class MainActivityWaypoint extends AppCompatActivity {
     private ListView listView;
     BoatLogDBHelper dbHelper;
 
+    ImageView button_createNewWaypoint;
+
     RelativeLayout MRL1;
     ListView listViewWaypoint;
     TextView titleTextView;
@@ -51,6 +54,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
         setContentView(R.layout.activity_main_waypoint);
 
         loadToolbarNavDrawer();
+        button_createNewWaypoint = (ImageView) findViewById(R.id.button_createNewWaypoint);
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
@@ -60,6 +64,13 @@ public class MainActivityWaypoint extends AppCompatActivity {
         titleTextView.setText("Waypoints");
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_createNewWaypoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createWaypoint();
+            }
+        });
 
         populateListView();
 

@@ -20,7 +20,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -48,6 +50,9 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private BoatLogDBHelper dbHelper;
+
+    ImageView button_saveEntry;
+    ImageView button_useFavourite;
 
     // GOOGLE MAPS/LOCATION SERVICES
     final String TAG = "GPS";
@@ -83,6 +88,8 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         setContentView(R.layout.activity_create_entries);
 
         loadToolbarNavDrawer();
+        button_saveEntry = (ImageView) findViewById(R.id.button_saveEntry);
+        button_useFavourite = (ImageView) findViewById(R.id.button_useFavourite);
 
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
@@ -126,6 +133,20 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         //   showAlert();
 
         dbHelper = new BoatLogDBHelper(this);
+
+        button_saveEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                persistEntry();
+            }
+        });
+
+        button_useFavourite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFavourite();
+            }
+        });
 
         // pre fill text fields
         trip_idText.setText("" + tripID + "");
