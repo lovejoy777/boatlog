@@ -3,6 +3,7 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -52,6 +53,11 @@ public class MainActivityTrips extends AppCompatActivity {
 
         loadToolbarNavDrawer();
         button_createNewTrip = (ImageView) findViewById(R.id.button_createNewTrip);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_createNewTrip.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
@@ -90,6 +91,12 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
         loadToolbarNavDrawer();
         button_saveEntry = (ImageView) findViewById(R.id.button_saveEntry);
         button_useFavourite = (ImageView) findViewById(R.id.button_useFavourite);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_saveEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+            button_useFavourite.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         entryName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);

@@ -7,8 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,7 +35,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,8 +77,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     Toolbar toolBar;
     TextView titleTextView;
+    ImageView button_refresh;
 
-    ScrollView scrollView1;
     public RelativeLayout MRL1;
     public RelativeLayout RL1;
     public RelativeLayout RL2;
@@ -97,6 +99,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     int theme;
 
+    View appView;
+
     // ON CREATE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,12 +112,19 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appView = findViewById(R.id.viewApp);
 
         SharedPreferences prefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final String newloc = prefs.getString("current_locations", "Dover");
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         loadToolbarNavDrawer();
+        button_refresh = (ImageView) findViewById(R.id.button_refresh);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_refresh.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -123,7 +134,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
-        scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         RL1 = (RelativeLayout) findViewById(R.id.RL1);
         RL2 = (RelativeLayout) findViewById(R.id.RL2);
@@ -205,14 +215,30 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL);
-        EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
+        final EasyLocationRequest easyLocationRequest = new EasyLocationRequestBuilder()
                 .setLocationRequest(locationRequest)
                 .setFallBackToLastLocationTime(FALLBACK_INTERVAL)
                 .build();
         //requestLocationUpdates(easyLocationRequest);
-
         requestSingleLocationFix(easyLocationRequest);
 
+        button_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNetworkAvailable()) {
+                    requestSingleLocationFix(easyLocationRequest);
+                } else {
+                    Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
@@ -246,7 +272,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     // RESTORE
     private void WeatherLastKnownLocation(String weatherlocation) {
-
         changeLKL(weatherlocation);
         //Toast.makeText(WeatherMainActivity.this, "LKL is: " + weatherlocation, Toast.LENGTH_LONG).show();
     }
@@ -273,7 +298,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (navigationView != null) {
-
             SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
             Boolean switch1 = myPrefs.getBoolean("switch1", false);
             Boolean switch2 = myPrefs.getBoolean("switch2", false);
@@ -321,7 +345,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                     startActivity(intent, bndlanimation);
                     startActivity(intent);
 
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 
@@ -347,7 +371,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                     }
 
 
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 
@@ -372,7 +396,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                         myPrefse.apply();
                     }
 
-                    Snackbar.make(v, (switcher3.isChecked()) ? "Last Known Location is now On" : "Last Known Location is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher3.isChecked()) ? "Last Known Location is now On" : "Last Known Location is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 
@@ -570,10 +594,10 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_SHORT).show();
 
                     } else {
-                            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -647,13 +671,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                     e.printStackTrace();
                                 }
 
-                                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_SHORT).show();
 
                             } else {
-                                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_LONG).show();
+                                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_SHORT).show();
 
                         }
 

@@ -33,14 +33,23 @@
                 android:layout_height="56dp"
                 android:minHeight="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                 />
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <ImageView
+                    android:id="@+id/button_refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_refresh_white_24dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp" />
+
+            </android.support.v7.widget.Toolbar>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="22dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="6dp"
                 android:paddingTop="56dp"
                 android:baselineAligned="false">
@@ -119,10 +128,8 @@
                         android:id="@+id/todayIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:paddingEnd="42dp"
+                        android:layout_gravity="center_horizontal"
                         android:text=""
-                        android:textAlignment="viewEnd"
                         android:textSize="72sp"
                         android:textColor="?attr/colorLightTextPrimary" />
 
@@ -132,12 +139,12 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="bottom|end"
                         android:gravity="bottom|end"
-                        android:paddingEnd="24dp"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp"
                         android:textColor="?attr/colorLightTextPrimary"/>
                 </LinearLayout>
-
 
             </LinearLayout>
 
@@ -149,7 +156,8 @@
             android:layout_height="wrap_content"
             app:tabMode="fixed"
             app:tabGravity="fill"
-            />
+            app:tabPadding="1dp"
+            app:tabIndicatorHeight="2dp"/>
 
     </android.support.design.widget.AppBarLayout>
 

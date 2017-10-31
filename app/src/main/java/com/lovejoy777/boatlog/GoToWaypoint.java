@@ -175,9 +175,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         LLG9 = (LinearLayout) findViewById(R.id.LLG9);
         LLG10 = (LinearLayout) findViewById(R.id.LLG10);
 
-        // arrow = DIRECTION POINTER
         arrow = (ImageView) findViewById(R.id.arrow);
-
         textViewLat = (TextView) findViewById(R.id.textViewLat);
         textViewLon = (TextView) findViewById(R.id.textViewLon);
         textViewSpeed = (TextView) findViewById(R.id.textViewSpeed);
@@ -213,6 +211,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         if (!rs.isClosed()) {
             rs.close();
         }
+
         double intLatDeg = Double.parseDouble(waypointLatDeg);
         double intLatMin = Double.parseDouble(waypointLatMin);
         double intLatSec = Double.parseDouble(waypointLatSec);
@@ -235,18 +234,13 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         textViewHeading.setText("00 T");
         textViewCourseTo.setText("00 T");
 
-
-
         arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
         imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
-
-
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         Boolean ScreenOn = myPrefs.getBoolean("switch2", false);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-
         if (NightModeOn) {
-            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+            arrow.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
             imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
         }
 
@@ -677,7 +671,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                     startActivity(intent, bndlanimation);
                     startActivity(intent);
 
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 
@@ -703,7 +697,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                     }
 
 
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 
@@ -736,7 +730,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home:
-                                // mDrawerLayout.closeDrawers();
+                                mDrawerLayout.closeDrawers();
                                 getSupportActionBar().setElevation(0);
                                 mDrawerLayout.closeDrawers();
                                 break;

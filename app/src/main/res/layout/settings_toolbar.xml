@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.design.widget.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,4 +19,5 @@
         android:background="?attr/colorPrimary"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/action_settings" />
+
 </android.support.design.widget.AppBarLayout>

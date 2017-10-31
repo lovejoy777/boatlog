@@ -48,10 +48,7 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         cityField = (TextView)rootView.findViewById(R.id.city_field);
         updatedField = (TextView)rootView.findViewById(R.id.updated_field);
@@ -62,7 +59,6 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 Log.e("Onclick","Onclick");
-
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getActivity(), R.anim.anni1, R.anim.anni2).toBundle();
                 Intent intent = new Intent(getActivity(), WeatherMainActivity.class);
@@ -72,7 +68,6 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
         weatherIcon.setTypeface(weatherFont);
 
-
         return rootView;
     }
 
@@ -81,19 +76,16 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
             case R.id.weather_icon:
 
-
                 break;
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weather.ttf");
 
         updateWeatherData(new CurrentLocationPreference(getActivity()).getcurrent_location());
-
 
     }
 
@@ -144,7 +136,6 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
                             "\n" + "Wind Dir: " + wind.getString("deg") + " °" +
                             "\n" + "Wind Speed: " + result + " kts");
                            // "\n" + "Wind Gust: " + resultGust + " kts");
-
 
             currentTemperatureField.setText(
                     String.format(Locale.UK,"%.0f",main.getDouble("temp")) + " ℃");
@@ -219,5 +210,4 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
                 return R.style.AppTheme_NoActionBar;
         }
     }
-
 }

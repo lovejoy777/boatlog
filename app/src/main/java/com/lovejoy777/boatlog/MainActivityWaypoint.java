@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +56,11 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
         loadToolbarNavDrawer();
         button_createNewWaypoint = (ImageView) findViewById(R.id.button_createNewWaypoint);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_createNewWaypoint.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 

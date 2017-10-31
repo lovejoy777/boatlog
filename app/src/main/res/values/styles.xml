@@ -26,7 +26,7 @@
     <!-- Dark theme -->
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/darkTheme_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/darkTheme_colorBackground</item>
+        <item name="colorPrimaryDark">@color/darkTheme_colorPrimaryDark</item>
         <item name="colorAccent">@color/darkTheme_colorAccent</item>
         <item name="android:listDivider">@color/darkTheme_colorDivider</item>
         <item name="colorDivider">@color/darkTheme_colorAccent</item>
@@ -34,7 +34,7 @@
         <item name="colorTintedBackground">@color/darkTheme_colorTintedBackground</item>
         <item name="colorTextPrimary">@color/darkTheme_colorTextPrimary</item>
         <item name="colorTextSecondary">@color/darkTheme_colorTextSecondary</item>
-        <item name="colorLightTextPrimary">@color/darkTheme_colorTextPrimary</item>
+        <item name="colorLightTextPrimary">@color/darkTheme_colorLightTextPrimary</item>
         <item name="colorLightTextSecondary">@color/darkTheme_colorTextPrimary</item>
         <item name="android:textColorPrimary">@color/darkTheme_colorTextPrimary</item>
         <item name="android:textColorSecondary">@color/darkTheme_colorTextSecondary</item>

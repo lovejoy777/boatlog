@@ -21,7 +21,6 @@
         android:background="?attr/colorPrimary"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
@@ -31,14 +30,6 @@
         android:textColor="?attr/colorLightTextPrimary" />
 
     </android.support.v7.widget.Toolbar>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
 
     <TextView
         android:id="@+id/textViewGetTime"
@@ -76,9 +67,6 @@
         android:layout_centerHorizontal="true"
         android:padding="12dp" />
 
-
-
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/MLL1"
         android:layout_width="match_parent"
@@ -86,8 +74,6 @@
         android:orientation="horizontal"
         android:layout_below="@+id/textViewGoTo"
         android:baselineAligned="false">
-
-
 
         <LinearLayout
             android:orientation="horizontal"
@@ -424,8 +410,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textViewDist"

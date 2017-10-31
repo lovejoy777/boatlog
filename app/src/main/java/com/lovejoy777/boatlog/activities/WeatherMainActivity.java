@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -35,6 +36,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -67,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WeatherMainActivity extends AppCompatActivity implements LocationListener {
+
     protected static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
     // Time in milliseconds; only reload weather if last update is longer ago than this value
     private static final int NO_UPDATE_REQUIRED_THRESHOLD = 300000;
@@ -92,8 +95,9 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
     View appView;
 
-    Toolbar toolBar;
     private DrawerLayout mDrawerLayout;
+    Toolbar toolBar;
+    ImageView button_refresh;
 
     LocationManager locationManager;
     ProgressDialog progressDialog;
@@ -122,6 +126,24 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         loadToolbarNavDrawer();
+        button_refresh = (ImageView) findViewById(R.id.button_refresh);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_refresh.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
+
+        button_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isNetworkAvailable()) {
+                    getTodayWeather();
+                    getLongTermWeather();
+                } else {
+                    Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
 
         // Initialize textboxes
         todayTemperature = (TextView) findViewById(R.id.todayTemperature);
@@ -590,7 +612,17 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
         viewPagerAdapter.notifyDataSetChanged();
         viewPager.setAdapter(viewPagerAdapter);
+
         tabLayout.setupWithViewPager(viewPager);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.darkTheme_colorPrimaryDark));
+        } else {
+            tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
+            tabLayout.setSelectedTabIndicatorHeight(4);
+        }
 
         if (currentPage == 0 && longTermTodayWeather.isEmpty()) {
             currentPage = 1;

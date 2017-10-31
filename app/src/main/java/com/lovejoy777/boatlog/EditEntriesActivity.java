@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -64,6 +65,12 @@ public class EditEntriesActivity extends AppCompatActivity {
         loadToolbarNavDrawer();
         button_saveEntry = (ImageView) findViewById(R.id.button_saveEntry);
         button_deleteEntry = (ImageView) findViewById(R.id.button_deleteEntry);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_saveEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+            button_deleteEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
         tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);

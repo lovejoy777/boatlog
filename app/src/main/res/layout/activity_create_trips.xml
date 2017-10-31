@@ -29,7 +29,6 @@
             android:minHeight="?attr/actionBarSize"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-
             <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
@@ -44,8 +43,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_save_white_24dp"
                 android:layout_gravity="end"
-                android:layout_marginEnd="10dp"
-                />
+                android:layout_marginEnd="16dp" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -170,6 +168,7 @@
 
 
             </LinearLayout>
+
         </ScrollView>
 
         <LinearLayout
@@ -179,7 +178,9 @@
             android:weightSum="1">
 
         </LinearLayout>
+
     </RelativeLayout>
+
 </LinearLayout>
 
     <android.support.design.widget.NavigationView

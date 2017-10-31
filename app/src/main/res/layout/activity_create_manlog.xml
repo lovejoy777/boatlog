@@ -43,8 +43,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_save_white_24dp"
                 android:layout_gravity="end"
-                android:layout_marginEnd="10dp"
-                />
+                android:layout_marginEnd="16dp" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -54,7 +53,6 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="3dp" />
-
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/scrollView1"
@@ -71,7 +69,6 @@
                     android:id="@+id/fieldlayout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/toolbar"
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
@@ -163,7 +160,6 @@
 
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -189,11 +185,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:spinnerMode="dropdown"
-
                         android:popupTheme="@style/AlertDialogTheme"
                         android:entries="@array/progress_array"
                         android:prompt="@string/progress_prompt" />
-
 
                 </LinearLayout>
 
@@ -203,6 +197,7 @@
                     android:textSize="0sp" />
 
             </LinearLayout>
+
         </ScrollView>
 
         <LinearLayout
@@ -212,6 +207,7 @@
             android:weightSum="1">
 
         </LinearLayout>
+
     </RelativeLayout>
 
 </LinearLayout>

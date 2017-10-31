@@ -26,7 +26,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,7 +91,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     private SensorManager mSensorManager;
 
     // TOOLBAR & TITLE TEXT VIEW
-    Toolbar toolBar;
     TextView titleTextView;
 
     // MAIN LAYOUTS
@@ -137,8 +135,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         setContentView(R.layout.activity_main_logs);
 
         loadToolbarNavDrawer();
-
-        toolBar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         // MAPS ZOOM CONTROLS
@@ -603,7 +599,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                     }
 
 
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
                 }
             });
 

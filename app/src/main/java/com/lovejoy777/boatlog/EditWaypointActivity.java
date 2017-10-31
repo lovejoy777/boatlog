@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -75,6 +76,12 @@ public class EditWaypointActivity extends AppCompatActivity {
         loadToolbarNavDrawer();
         button_saveWaypoint = (ImageView) findViewById(R.id.button_saveWaypoint);
         button_deleteWaypoint = (ImageView) findViewById(R.id.button_deleteWaypoint);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_saveWaypoint.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+            button_deleteWaypoint.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -111,8 +118,6 @@ public class EditWaypointActivity extends AppCompatActivity {
                 deleteWaypoint();
             }
         });
-
-
 
         Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();

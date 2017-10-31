@@ -25,7 +25,6 @@
         android:background="?attr/colorPrimary"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,8 +39,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_circle_outline_white_24dp"
             android:layout_gravity="end"
-            android:layout_marginEnd="10dp"
-            />
+            android:layout_marginEnd="16dp" />
 
     </android.support.v7.widget.Toolbar>
 

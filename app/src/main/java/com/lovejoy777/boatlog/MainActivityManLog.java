@@ -3,6 +3,7 @@ package com.lovejoy777.boatlog;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -57,6 +58,11 @@ public class MainActivityManLog extends AppCompatActivity {
 
         loadToolbarNavDrawer();
         button_createNewTask = (ImageView) findViewById(R.id.button_createNewTask);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_createNewTask.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -90,6 +91,11 @@ public class MainActivityEntries extends AppCompatActivity {
 
         loadToolbarNavDrawer();
         button_createNewEntry = (ImageView) findViewById(R.id.button_createNewEntry);
+        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
+        if (NightModeOn) {
+            button_createNewEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+        }
 
         tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
         tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
@@ -214,18 +220,18 @@ public class MainActivityEntries extends AppCompatActivity {
                     BackgroundTaskPDFimage taskPDFimage = new BackgroundTaskPDFimage(MainActivityEntries.this);
                     taskPDFimage.execute();
                 } else {
-                    Toast.makeText(this, "Something went wrong.",
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Ooop! Something went wrong.",
+                            Toast.LENGTH_SHORT).show();
                 }
 
             } else {
 
-                Toast.makeText(this, "No Image Selected",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Cancelled",
+                        Toast.LENGTH_SHORT).show();
 
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Incompatible Image", Toast.LENGTH_LONG)
+            Toast.makeText(this, "Incompatible Image", Toast.LENGTH_SHORT)
 
                     .show();
         }

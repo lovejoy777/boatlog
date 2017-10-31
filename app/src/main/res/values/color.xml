@@ -21,6 +21,7 @@
     <color name="card_background">@color/grey800</color>
     <color name="night_text">@color/accent</color>
     <color name="grey800">#424242</color>
+    <color name="blue_grey800">#37474F</color>
 
 
     <!-- other colors -->
@@ -41,10 +42,12 @@
     <color name="colorSplashBackground">@color/primary_dark</color>
 
     <color name="darkTheme_colorPrimary">@color/card_background</color>
+    <color name="darkTheme_colorPrimaryDark">@color/blue_grey800</color>
     <color name="darkTheme_colorAccent">@color/accent</color>
     <color name="darkTheme_colorDivider">@color/accent</color>
     <color name="darkTheme_colorBackground">@color/card_background</color>
     <color name="darkTheme_colorTintedBackground">#424242</color>
+    <color name="darkTheme_colorLightTextPrimary">@color/accent</color>
     <color name="darkTheme_colorTextPrimary">@color/accent</color>
     <color name="darkTheme_colorTextSecondary">@color/accent</color>
     <color name="darkTheme_colorCardBackground">@color/card_background</color>
