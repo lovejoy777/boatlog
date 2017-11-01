@@ -50,7 +50,7 @@
                 android:id="@+id/nav_weather_lkl"
                 app:actionLayout="@layout/action_view_switch"
                 android:icon="@drawable/ic_gps_fixed"
-                android:title="Automatic" />
+                android:title="Auto Updates" />
             <item
                 android:id="@+id/nav_weather_name"
                 android:icon="@drawable/ic_label_outline_white_48dp"
@@ -59,6 +59,10 @@
                 android:id="@+id/nav_weather_latlong"
                 android:icon="@drawable/ic_public_white_48dp"
                 android:title="Enter lat long" />
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/Settings" />
 
         </menu>
     </item>
@@ -73,10 +77,6 @@
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_help_outline_white_48dp"
                 android:title="@string/About" />
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_settings"
-                android:title="@string/Settings" />
         </menu>
     </item>
 

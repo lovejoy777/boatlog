@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
 /**
  * Created by lovejoy777 on 13/10/15.
@@ -40,7 +41,6 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
     RelativeLayout MRL1;
     ListView listViewWaypoint;
-    TextView titleTextView;
 
     int theme;
 
@@ -64,10 +64,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
         listViewWaypoint = (ListView) findViewById(R.id.listViewWaypoint);
-
-        titleTextView.setText("Waypoints");
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -97,7 +94,6 @@ public class MainActivityWaypoint extends AppCompatActivity {
                 }
                 builder.setTitle("       GoTo Waypoint")
                         .setMessage(waypointName)
-
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
@@ -116,7 +112,6 @@ public class MainActivityWaypoint extends AppCompatActivity {
                         })
                         .setIcon(R.drawable.ic_location_on_white)
                         .show();
-
             }
         });
 
@@ -128,8 +123,10 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
                 int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
+                String waypointName = itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
                 Intent intent = new Intent(getApplicationContext(), EditWaypointActivity.class);
                 intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
+                intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
                 Bundle bndlanimation =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                 startActivity(intent, bndlanimation);
@@ -153,8 +150,22 @@ public class MainActivityWaypoint extends AppCompatActivity {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Waypoints");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

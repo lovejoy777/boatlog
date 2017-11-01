@@ -57,6 +57,15 @@ public class GraphActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.graph_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Graphs");
         if (darkTheme) {
             toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
         }

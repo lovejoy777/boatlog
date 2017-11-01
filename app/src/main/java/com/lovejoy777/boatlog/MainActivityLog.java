@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -90,9 +91,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     // COMPASS
     private SensorManager mSensorManager;
 
-    // TOOLBAR & TITLE TEXT VIEW
-    TextView titleTextView;
-
     // MAIN LAYOUTS
     LinearLayout MLL1;
     LinearLayout MLL2;
@@ -118,6 +116,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     TextView textViewHeading;
     TextView textViewCompass;
     TextView textViewGetTime;
+    TextView textViewGetTimeAbbr;
 
     // GPS INDICATOR
     ImageView imageViewAccu;
@@ -135,7 +134,6 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         setContentView(R.layout.activity_main_logs);
 
         loadToolbarNavDrawer();
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         // MAPS ZOOM CONTROLS
         zoomBtn = (ImageView) findViewById(R.id.zoomBtn);
@@ -181,6 +179,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         textViewComp = (TextView) findViewById(R.id.textViewComp);
 
         textViewGetTime = (TextView) findViewById(R.id.textViewGetTime);
+        textViewGetTimeAbbr = (TextView) findViewById(R.id.textViewGetTimeAbbr);
         imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
         imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
 
@@ -301,7 +300,8 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             long locationAge = SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos();
             long newLocationAge = locationAge / DEVIDE_NUMBER;
             String locAge = String.valueOf(newLocationAge);
-            textViewGetTime.setText(locAge);
+            textViewGetTime.setText("" + locAge);
+            textViewGetTimeAbbr.setText(" 10th\\s");
 
             //GREEN < 1 sec
             if (newLocationAge < INDICATOR1_INTERVAL) {
@@ -517,9 +517,22 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Log");
 
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

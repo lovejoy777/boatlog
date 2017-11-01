@@ -11,7 +11,9 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -309,18 +311,14 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
                     }
                 });
-
         builder.setNegativeButton(R.string.dialog_cancel,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
-
         builder.show();
-
     }
-
 
     private String setWeatherIcon(int actualId, int hourOfDay) {
         int id = actualId / 100;
@@ -950,9 +948,21 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(4);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(theme = getTheme(prefs.getString("theme", "")));
@@ -967,9 +977,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (navigationView != null) {
-
             setupDrawerContent(navigationView);
-
         }
     }
 
@@ -992,8 +1000,6 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
                         menuItem.setChecked(true);
                         Bundle bndlanimation =

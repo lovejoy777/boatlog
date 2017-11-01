@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -76,7 +78,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     int ACCESS_FINE_LOCATION_CODE = 23;
 
     Toolbar toolBar;
-    TextView titleTextView;
     ImageView button_refresh;
 
     public RelativeLayout MRL1;
@@ -131,8 +132,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                     .add(R.id.container, new WeatherFragment())
                     .commit();
         }
-
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         RL1 = (RelativeLayout) findViewById(R.id.RL1);
@@ -282,8 +281,22 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Boat Log");
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
@@ -708,6 +721,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         builder.setTitle("Enter a Place Name");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setTextColor(getResources().getColor(R.color.white));
+        input.setTextSize(20);
         builder.setView(input);
                         builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -739,6 +754,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         builder.setMessage("example:\nlat=52.95&lon=-0.84");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setTextColor(getResources().getColor(R.color.white));
+        input.setTextSize(20);
         builder.setView(input);
         builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

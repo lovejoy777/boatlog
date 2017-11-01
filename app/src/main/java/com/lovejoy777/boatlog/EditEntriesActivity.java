@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -39,7 +41,7 @@ public class EditEntriesActivity extends AppCompatActivity {
     ScrollView scrollView1;
     RelativeLayout MRL1;
 
-    TextView titleTextView, textViewName, textViewTime, textViewDate, textViewLocation;
+    TextView textViewName, textViewTime, textViewDate, textViewLocation;
     EditText nameEditText, timeEditText, dateEditText, locationEditText;
     TextView trip_idText;
 
@@ -47,6 +49,7 @@ public class EditEntriesActivity extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
     int entryID;
+    String entryNam;
     int tripID;
     String tripName;
 
@@ -62,7 +65,12 @@ public class EditEntriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_entries);
 
-        loadToolbarNavDrawer();
+        entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
+        entryNam = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_ENTRY_NAME);
+        tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_TRIPS_NAME);
+
+        loadToolbarNavDrawer(entryNam);
         button_saveEntry = (ImageView) findViewById(R.id.button_saveEntry);
         button_deleteEntry = (ImageView) findViewById(R.id.button_deleteEntry);
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -72,13 +80,8 @@ public class EditEntriesActivity extends AppCompatActivity {
             button_deleteEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
         }
 
-        entryID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_ENTRIES_ID, 0);
-        tripID = getIntent().getIntExtra(MainActivityEntries.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(MainActivityEntries.KEY_EXTRA_TRIPS_NAME);
-
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         textViewName = (TextView) findViewById(R.id.textViewName);
         textViewTime = (TextView) findViewById(R.id.textViewTime);
@@ -120,7 +123,6 @@ public class EditEntriesActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + entryName + "");
         nameEditText.setText(entryName);
         timeEditText.setText(entryTime);
         dateEditText.setText(entryDate);
@@ -170,12 +172,26 @@ public class EditEntriesActivity extends AppCompatActivity {
         }
     }
 
-    private void loadToolbarNavDrawer() {
+    private void loadToolbarNavDrawer(String entryNam) {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Edit " + entryNam + "");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

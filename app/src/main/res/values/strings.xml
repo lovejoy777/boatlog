@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Boat Log</string>
 
-    <string name="Settings">Settings</string>
+    <string name="Settings">Weather Settings</string>
     <string name="developed">Developed by S Lovejoy</string>
     <string name="splashTitle">Boat Log</string>
 

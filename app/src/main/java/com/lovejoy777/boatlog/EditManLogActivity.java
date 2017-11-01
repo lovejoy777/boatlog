@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -52,9 +54,8 @@ public class EditManLogActivity extends AppCompatActivity {
     EditText partsEditText;
     private Spinner spinnerProgress;
 
-    TextView titleTextView;
-
     int manlogID;
+    String manlogNam;
     String manlogProgress;
 
     int theme;
@@ -69,11 +70,12 @@ public class EditManLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         manlogID = getIntent().getIntExtra(MainActivityManLog.KEY_EXTRA_MANLOG_ID, 0);
+        manlogNam = getIntent().getStringExtra(MainActivityManLog.KEY_EXTRA_MANLOG_NAME);
         manlogProgress = getIntent().getStringExtra(MainActivityManLog.KEY_EXTRA_MANLOG_PROGRESS);
 
         setContentView(R.layout.activity_edit_manlog);
 
-        loadToolbarNavDrawer();
+        loadToolbarNavDrawer(manlogNam);
         button_saveTask = (ImageView) findViewById(R.id.button_saveTask);
         button_deleteTask = (ImageView) findViewById(R.id.button_deleteTask);
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -86,7 +88,6 @@ public class EditManLogActivity extends AppCompatActivity {
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
         textViewParts = (TextView) findViewById(R.id.textViewParts);
@@ -96,8 +97,6 @@ public class EditManLogActivity extends AppCompatActivity {
         descriptionEditText = (EditText) findViewById(R.id.editTextDescription);
         partsEditText = (EditText) findViewById(R.id.editTextParts);
         spinnerProgress = (Spinner) findViewById(R.id.spinnerProgress);
-
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         if (manlogProgress.equals("Not Started")) {
             String[] progressArray = {
@@ -168,7 +167,6 @@ public class EditManLogActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + manlogName + "");
         nameEditText.setText(manlogName);
         descriptionEditText.setText(manlogDescription);
         partsEditText.setText(manlogParts);
@@ -210,12 +208,26 @@ public class EditManLogActivity extends AppCompatActivity {
         }
     }
 
-    private void loadToolbarNavDrawer() {
+    private void loadToolbarNavDrawer(String manlogNam) {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Edit " + manlogNam + "");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

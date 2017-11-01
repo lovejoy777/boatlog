@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -87,7 +89,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
     // TOOLBAR & TITLE TEXT VIEW
     Toolbar toolBar;
-    TextView titleTextView;
 
     // MAIN LAYOUTS
     RelativeLayout MainRL;
@@ -126,6 +127,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
     TextView textViewDistance;
     TextView textViewGoTo;
     TextView textViewGetTime;
+    TextView textViewGetTimeAbbr;
 
     // IMAGEVIEWS
     ImageView imageViewAccu;
@@ -154,7 +156,6 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         waypointName = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_NAME);
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
 
         MainRL = (RelativeLayout) findViewById(R.id.MainRL);
         MLL1 = (LinearLayout) findViewById(R.id.MLL1);
@@ -193,6 +194,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
         textViewGoTo = (TextView) findViewById(R.id.textViewGoTo);
         textViewGetTime = (TextView) findViewById(R.id.textViewGetTime);
+        textViewGetTimeAbbr = (TextView) findViewById(R.id.textViewGetTimeAbbr);
 
         // GET WAYPOINT DATA FROM DATABASE
         dbHelper = new BoatLogDBHelper(this);
@@ -280,7 +282,8 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
             long locationAge = SystemClock.elapsedRealtimeNanos() - location.getElapsedRealtimeNanos();
             long newLocationAge = locationAge / DEVIDE_NUMBER;
             String locAge = String.valueOf(newLocationAge);
-            textViewGetTime.setText(locAge);
+            textViewGetTime.setText("" + locAge);
+            textViewGetTimeAbbr.setText(" 10th\\s");
 
             //GREEN < 1 sec
             if (newLocationAge < INDICATOR1_INTERVAL) {
@@ -615,9 +618,22 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("GoTo");
 
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

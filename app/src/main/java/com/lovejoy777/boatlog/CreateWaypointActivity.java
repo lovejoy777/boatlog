@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -74,8 +76,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
     EditText longsecEditText;
     EditText longewEditText;
 
-    TextView titleTextView;
-
     int waypointID;
 
     int theme;
@@ -104,7 +104,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
         textViewLocationLat = (TextView) findViewById(R.id.textViewLocationLat);
@@ -120,8 +119,6 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         longminEditText = (EditText) findViewById(R.id.editTextLongMin);
         longsecEditText = (EditText) findViewById(R.id.editTextLongSec);
         longewEditText = (EditText) findViewById(R.id.editTextLongEW);
-
-        titleTextView.setText(R.string.create_waypoint);
 
         // PERMISSIONS
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -362,8 +359,22 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Create a Waypoint");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

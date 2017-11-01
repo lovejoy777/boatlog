@@ -271,7 +271,7 @@
 
         <activity
             android:name=".activities.GraphActivity"
-            android:label="@string/action_graphs"
+            android:label=""
             android:parentActivityName=".activities.WeatherMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 

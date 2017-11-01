@@ -10,6 +10,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -31,7 +33,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lowagie.text.Document;
@@ -72,10 +73,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
     ListView listViewEntries;
 
-    TextView titleTextView;
-
     int tripID;
     String tripName;
+    String entryName;
 
     int theme;
 
@@ -89,7 +89,14 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_entries);
 
-        loadToolbarNavDrawer();
+        tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
+        tripID = getIntent().getIntExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_NAME);
+        tripID = getIntent().getIntExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
+        tripName = getIntent().getStringExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_NAME);
+
+        loadToolbarNavDrawer(tripName);
         button_createNewEntry = (ImageView) findViewById(R.id.button_createNewEntry);
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
@@ -97,19 +104,8 @@ public class MainActivityEntries extends AppCompatActivity {
             button_createNewEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
         }
 
-        tripID = getIntent().getIntExtra(MainActivityTrips.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(MainActivityTrips.KEY_EXTRA_TRIPS_NAME);
-
-        tripID = getIntent().getIntExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(CreateEntriesActivity.KEY_EXTRA_TRIPS_NAME);
-
-        tripID = getIntent().getIntExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_ID, 0);
-        tripName = getIntent().getStringExtra(EditEntriesActivity.KEY_EXTRA_TRIPS_NAME);
-
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
-        titleTextView.setText("" + tripName + "");
 
         dbHelper = new BoatLogDBHelper(this);
 
@@ -122,16 +118,17 @@ public class MainActivityEntries extends AppCompatActivity {
 
         populateListView();
 
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
                                     int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
                 int entryID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_ID));
+                String entryName = itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
 
                 Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
+                intent.putExtra(KEY_EXTRA_ENTRY_NAME, entryName);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
 
@@ -148,8 +145,11 @@ public class MainActivityEntries extends AppCompatActivity {
                                            int position, long id) {
                 Cursor itemCursor = (Cursor) MainActivityEntries.this.listView.getItemAtPosition(position);
                 int entryID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_ID));
+                String entryName = itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+
                 Intent intent = new Intent(getApplicationContext(), EditEntriesActivity.class);
                 intent.putExtra(KEY_EXTRA_ENTRIES_ID, entryID);
+                intent.putExtra(KEY_EXTRA_ENTRY_NAME, entryName);
                 intent.putExtra(KEY_EXTRA_TRIPS_ID, tripID);
                 intent.putExtra(KEY_EXTRA_TRIPS_NAME, tripName);
 
@@ -482,12 +482,26 @@ public class MainActivityEntries extends AppCompatActivity {
         }
     }
 
-    private void loadToolbarNavDrawer() {
+    private void loadToolbarNavDrawer(String tripNam) {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("" + tripNam + "");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

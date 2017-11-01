@@ -16,7 +16,7 @@ public class CurrentLocationPreference {
     }
 
     String getcurrent_location(){
-        return myPrefs.getString("current_locations", "q=Dover");
+        return myPrefs.getString("current_locations", "q=London");
     }
 
     void setcurrent_location(String current_location){

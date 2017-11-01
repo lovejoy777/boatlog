@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -54,9 +56,8 @@ public class EditWaypointActivity extends AppCompatActivity {
     EditText longsecEditText;
     EditText longewEditText;
 
-    TextView titleTextView;
-
     int waypointID;
+    String waypointNam;
 
     int theme;
 
@@ -70,10 +71,11 @@ public class EditWaypointActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         waypointID = getIntent().getIntExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_ID, 0);
+        waypointNam = getIntent().getStringExtra(MainActivityWaypoint.KEY_EXTRA_WAYPOINT_NAME);
 
         setContentView(R.layout.activity_edit_waypoint);
 
-        loadToolbarNavDrawer();
+        loadToolbarNavDrawer(waypointNam);
         button_saveWaypoint = (ImageView) findViewById(R.id.button_saveWaypoint);
         button_deleteWaypoint = (ImageView) findViewById(R.id.button_deleteWaypoint);
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -86,7 +88,6 @@ public class EditWaypointActivity extends AppCompatActivity {
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
         textViewName = (TextView) findViewById(R.id.textViewName);
         textViewDescription = (TextView) findViewById(R.id.textViewDescription);
         textViewLocationLat = (TextView) findViewById(R.id.textViewLocationLat);
@@ -121,7 +122,7 @@ public class EditWaypointActivity extends AppCompatActivity {
 
         Cursor rs = dbHelper.getWaypoint(waypointID);
         rs.moveToFirst();
-        final String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
+        String waypointName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
         String waypointDescription = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_DESCRIPTION));
         String waypointLatDeg = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATDEG));
         String waypointLatMin = rs.getString(rs.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_LATMIN));
@@ -135,7 +136,6 @@ public class EditWaypointActivity extends AppCompatActivity {
             rs.close();
         }
 
-        titleTextView.setText("Edit " + waypointName + "");
         nameEditText.setText(waypointName);
         descriptionEditText.setText(waypointDescription);
         latdegEditText.setText(waypointLatDeg);
@@ -174,12 +174,26 @@ public class EditWaypointActivity extends AppCompatActivity {
     }
 
 
-    private void loadToolbarNavDrawer() {
+    private void loadToolbarNavDrawer(String waypointNam) {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setElevation(6);
+        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
+        if (NightModeOn) {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
+        } else {
+            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
+            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        getSupportActionBar().setTitle("Edit " + waypointNam + "");
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

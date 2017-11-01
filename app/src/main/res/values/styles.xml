@@ -121,10 +121,13 @@
     <style name="popupNew" parent="Theme.AppCompat.Light"/>
 
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/night_text</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
         <item name="android:background">@color/card_background</item>
-        <item name="colorAccent">@color/night_text</item>
+        <item name="colorTextPrimary">@color/night_text</item>
+        <item name="colorTextSecondary">@color/night_text</item>
+
 
     </style>
 

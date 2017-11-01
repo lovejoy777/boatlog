@@ -31,14 +31,6 @@
                 android:minHeight="?attr/actionBarSize"
                 android:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-                <TextView
-                    android:id="@+id/titleTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Entries"
-                    android:textColor="?attr/colorLightTextPrimary"
-                    android:textSize="25sp" />
-
             <ImageView
                 android:id="@+id/button_createNewEntry"
                 android:layout_width="wrap_content"
