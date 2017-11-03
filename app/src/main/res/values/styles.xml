@@ -65,6 +65,8 @@
         <item name="colorSplashBackground">@color/darkTheme_colorSplashBackground</item>
         <item name="android:textColorAlertDialogListItem">@color/night_text</item>
         <item name="textColorAlertDialogListItem">@color/night_text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle.Dark</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle.Dark</item>
     </style>
     <!-- Dialog Dark Theme -->
     <style name="darkTheme_AlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
@@ -164,8 +166,8 @@
 
     <style name="progressSpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
 
-        <item name="android:textColor">@color/night_text</item>
     </style>
+
 
     <style name="progressSpinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
 

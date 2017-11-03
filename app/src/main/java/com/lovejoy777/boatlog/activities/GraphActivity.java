@@ -62,7 +62,7 @@ public class GraphActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(4);
         TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
-        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_bak);
         Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(Btn);
         toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
