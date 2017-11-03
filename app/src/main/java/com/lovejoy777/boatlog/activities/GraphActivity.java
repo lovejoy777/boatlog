@@ -1,9 +1,12 @@
 package com.lovejoy777.boatlog.activities;
 
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
@@ -57,15 +60,16 @@ public class GraphActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.graph_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Graphs");
+        ta.recycle();
+
+
         if (darkTheme) {
             toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
         }

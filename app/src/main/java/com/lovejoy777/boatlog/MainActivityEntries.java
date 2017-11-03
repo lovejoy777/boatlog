@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +14,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -22,14 +21,15 @@ import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
@@ -76,6 +76,7 @@ public class MainActivityEntries extends AppCompatActivity {
     int tripID;
     String tripName;
     String entryName;
+    String[] mFileList;
 
     int theme;
 
@@ -98,11 +99,9 @@ public class MainActivityEntries extends AppCompatActivity {
 
         loadToolbarNavDrawer(tripName);
         button_createNewEntry = (ImageView) findViewById(R.id.button_createNewEntry);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_createNewEntry.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_createNewEntry.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
@@ -487,21 +486,14 @@ public class MainActivityEntries extends AppCompatActivity {
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("" + tripNam + "");
+        ta.recycle();
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -528,7 +520,7 @@ public class MainActivityEntries extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home_entries:
@@ -578,40 +570,36 @@ public class MainActivityEntries extends AppCompatActivity {
 
     // Create Favourite
     private void createFavourite() {
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-        }
+        AlertDialog.Builder builder;
 
-        builder.setTitle("      Create a Favourite");
-        final EditText input = new EditText(MainActivityEntries.this);
-        input.setTextColor(getResources().getColor(R.color.white));
-        input.setTextSize(20);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        builder.setView(input);
-        builder.setIcon(R.drawable.ic_favorite_border);
-        builder.setPositiveButton("SAVE",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (dbHelper.insertFavEntry(input.getText().toString())) {
-                            Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
+        builder = new AlertDialog.Builder(MainActivityEntries.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_favorite_border);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+            builder.setTitle("      Create a Favourite");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setTextColor(getResources().getColor(R.color.night_text));
+            input.setTextSize(20);
+            builder.setView(input);
+            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (dbHelper.insertFavEntry(input.getText().toString())) {
+                        Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // cancel
                         }
-                    }
-                });
-        builder.setNegativeButton("CANCEL",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        builder.show();
+                    })
+                    .show();
     }
 
     // Delete Favourite
@@ -625,48 +613,51 @@ public class MainActivityEntries extends AppCompatActivity {
         if (!rs.isClosed()) {
             rs.close();
         }
-        final String[] favnames = favArray.toArray(new String[favArray.size()]);
+        mFileList = favArray.toArray(new String[favArray.size()]);
 
-        android.support.v7.app.AlertDialog.Builder builder1;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder1 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-        } else {
-            builder1 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-        }
-
-        builder1.setTitle("      Select a Favourite");
-        builder1.setIcon(R.drawable.ic_favorite_border);
-        if (favnames == null) {
-            builder1.create();
-        }
-
-        builder1.setItems(favnames, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                final String mChosenFavourite = favnames[which];
-                android.support.v7.app.AlertDialog.Builder builder2;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder2 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                } else {
-                    builder2 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                }
-                builder2.setTitle("   Delete Favourite")
-                        .setMessage("    " + mChosenFavourite)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dbHelper.deleteFavEntry(mChosenFavourite);
-                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // cancelled by user
-                            }
-                        })
-                        .setIcon(R.drawable.ic_delete_white)
-                        .show();
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(MainActivityEntries.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_favorite_border);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+            builder.setTitle("      Select a Favourite");
+            if (mFileList == null) {
+                builder.create();
             }
-        });
-        builder1.show();
+            builder.setItems(mFileList, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+
+                    final String mChosenFavourite = mFileList[which];
+
+                        AlertDialog.Builder builder;
+                    builder = new AlertDialog.Builder(MainActivityEntries.this);
+                    TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+                    Drawable Btn = getResources().getDrawable(R.drawable.ic_delete_white);
+                    Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+                    builder.setIcon(Btn);
+                    ta.recycle();
+                        builder.setTitle("   Delete Favourite")
+                                .setMessage("    " + mChosenFavourite)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dbHelper.deleteFavEntry(mChosenFavourite);
+                                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // cancelled by user
+                                    }
+                                })
+                                .show();
+
+                }
+            });
+            builder.show();
+
     }
 
     private int getTheme(String themePref) {

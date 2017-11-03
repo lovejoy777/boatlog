@@ -7,7 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -119,13 +120,14 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         final String newloc = prefs.getString("current_locations", "Dover");
 
         toolBar = (Toolbar) findViewById(R.id.toolbar);
-        loadToolbarNavDrawer();
+        //loadToolbarNavDrawer();
         button_refresh = (ImageView) findViewById(R.id.button_refresh);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_refresh.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_refresh.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
+
+        loadToolbarNavDrawer();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -280,23 +282,16 @@ public class MainActivity extends EasyLocationAppCompatActivity {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+            getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Boat Log");
+        ta.recycle();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
@@ -437,7 +432,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
 
@@ -451,18 +446,13 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
                             case R.id.nav_weather_name:
                                 showNameInputDialog();
-                                //Intent weather = new Intent(WeatherMainActivity.this, WeatherActivity.class);
-                                //startActivity(weather, bndlanimation);
                                 break;
 
                             case R.id.nav_weather_latlong:
                                 showLatLongInputDialog();
-                                //Intent weather = new Intent(WeatherMainActivity.this, WeatherActivity.class);
-                                //startActivity(weather, bndlanimation);
                                 break;
 
                             case R.id.nav_weather_lkl:
-                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                           case R.id.nav_drive:
@@ -471,11 +461,9 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                 break;
 
                             case R.id.nav_night_switch:
-                                // Toast.makeText(WeatherMainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_screen_on_switch:
-                                // Toast.makeText(WeatherMainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
                                 break;
 
                             case R.id.nav_tutorial:
@@ -505,31 +493,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
                                 }
 
-                                File dir = new File(Environment.getExternalStorageDirectory() + Directory);
-
-                                mFileList = dir.list();
-
-                                AlertDialog.Builder builder;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-                                } else {
-                                    builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-                                }
-
-                                builder.setTitle("      Select a File to Restore");
-                                builder.setIcon(R.drawable.ic_save_white);
-                                if (mFileList == null) {
-                                    builder.create();
-                                }
-                                builder.setItems(mFileList, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String mChosenFile = mFileList[which];
-                                        Restore(mChosenFile);
-                                        // Toast.makeText(WeatherMainActivity.this, mChosenFile , Toast.LENGTH_LONG).show();
-                                    }
-                                });
-
-                                builder.show();
+                                getRestoreFile();
                                 //  return true;
                                 break;
                         }
@@ -542,221 +506,242 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     // BACKUP
     public void Backup() {
 
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle("Backup")
-                .setMessage("boatlog database")
-
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // Get Time and Date
-                        Calendar c = Calendar.getInstance();
-                        System.out.println("Current time => " + c.getTime());
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                        String formattedDate = df.format(c.getTime());
-                        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
-                        String formattedTime = dt.format(c.getTime());
-                        String fileDate = "_" + formattedDate;
-                        String fileTime = "_" + formattedTime;
-
-
-                        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-                        File dbFile = new File(inFileName);
-
-                        if (dbFile.exists()) {
-
-
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-                        File dir = new File(path);
-                        if (!dir.exists())
-                            dir.mkdirs();
-
-                        // Local database
-                        InputStream input = null;
-                        try {
-                            input = new FileInputStream(dbFile);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        // Path to the external backup
-                        OutputStream output = null;
-                        try {
-                            output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime + ".db");
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        // transfer bytes from the Input File to the Output File
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        try {
-                            while ((length = input.read(buffer)) > 0) {
-                                output.write(buffer, 0, length);
+                AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(MainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_save_white);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+                builder.setTitle("Backup")
+                        .setMessage("boatlog database")
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                BackupTask();
                             }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
+                            }
+                        })
+                        .show();
+    }
+    // BACKUP
+    private void BackupTask() {
+        // Get Time and Date
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c.getTime());
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedDate = df.format(c.getTime());
+        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
+        String formattedTime = dt.format(c.getTime());
+        String fileDate = "_" + formattedDate;
+        String fileTime = "_" + formattedTime;
 
-                            output.flush();
-                            output.close();
-                            input.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
+        File dbFile = new File(inFileName);
 
-                        Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_SHORT).show();
+        if (dbFile.exists()) {
 
-                    } else {
-                            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
+            File dir = new File(path);
+            if (!dir.exists())
+                dir.mkdirs();
 
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
-                    }
-                })
+            // Local database
+            InputStream input = null;
+            try {
+                input = new FileInputStream(dbFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-                .setIcon(R.drawable.ic_save_white)
-                .show();
+            // Path to the external backup
+            OutputStream output = null;
+            try {
+                output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime + ".db");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            // transfer bytes from the Input File to the Output File
+            byte[] buffer = new byte[1024];
+            int length;
+            try {
+                while ((length = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, length);
+                }
+
+                output.flush();
+                output.close();
+                input.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_SHORT).show();
+
+        } else {
+            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void getRestoreFile() {
+        File dir = new File(Environment.getExternalStorageDirectory() + Directory);
+        mFileList = dir.list();
+
+        AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(MainActivity.this);
+            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+            Drawable Btn = getResources().getDrawable(R.drawable.ic_restore);
+            Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+            builder.setIcon(Btn);
+        ta.recycle();
+        builder.setTitle("      Select a File to Restore");
+            if (mFileList == null) {
+                builder.create();
+            }
+            builder.setItems(mFileList, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    String mChosenFile = mFileList[which];
+                    RestoreDialog(mChosenFile);
+                }
+            });
+            builder.show();
 
     }
 
     // RESTORE
-    private void Restore(final String dbFileName) {
-
+    private void RestoreDialog(final String dbFileName) {
         AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle("Restore")
-                .setMessage(dbFileName)
 
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-                        File dir = new File(path);
-                        if (!dir.exists())
-                            dir.mkdirs();
-
-
-                        File dbOutFile = new File("/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db");
-                        File dbFile = new File(path + "/" + dbFileName);
-
-                        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-
-                        if (dbOutFile.exists()) {
-                            if (dbFile.exists()) {
-                                // Local database
-                                InputStream input = null;
-                                try {
-                                    input = new FileInputStream(path + "/" + dbFileName);
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-
-                                // Path to the external backup
-                                OutputStream output = null;
-                                try {
-                                    output = new FileOutputStream(outFilePath);
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                }
-
-                                // transfer bytes from the Input File to the Output File
-                                byte[] buffer = new byte[1024];
-                                int length;
-                                try {
-                                    while ((length = input.read(buffer)) > 0) {
-                                        output.write(buffer, 0, length);
-                                    }
-
-                                    output.flush();
-                                    output.close();
-                                    input.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_SHORT).show();
-
+            builder = new AlertDialog.Builder(MainActivity.this);
+            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+            Drawable Btn = getResources().getDrawable(R.drawable.ic_restore);
+            Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+            builder.setIcon(Btn);
+            ta.recycle();
+            builder.setTitle("Restore")
+            .setMessage(dbFileName)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            RestoreTask(dbFileName);
                         }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // cancelled by user
+                        }
+                    })
+                    .show();
 
+    }
+
+    private void RestoreTask(final String dbFileName) {
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
+        File dir = new File(path);
+        if (!dir.exists())
+            dir.mkdirs();
+        File dbOutFile = new File("/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db");
+        File dbFile = new File(path + "/" + dbFileName);
+        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
+        if (dbOutFile.exists()) {
+            if (dbFile.exists()) {
+                // Local database
+                InputStream input = null;
+                try {
+                    input = new FileInputStream(path + "/" + dbFileName);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                // Path to the external backup
+                OutputStream output = null;
+                try {
+                    output = new FileOutputStream(outFilePath);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                // transfer bytes from the Input File to the Output File
+                byte[] buffer = new byte[1024];
+                int length;
+                try {
+                    while ((length = input.read(buffer)) > 0) {
+                        output.write(buffer, 0, length);
                     }
-                })
-
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
-                    }
-                })
-
-                .setIcon(R.drawable.ic_save_white)
-                .show();
-
+                    output.flush();
+                    output.close();
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // WEATHER
     private void showNameInputDialog(){
-
         // WEATHER
         AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle("Enter a Place Name");
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setTextColor(getResources().getColor(R.color.white));
-        input.setTextSize(20);
-        builder.setView(input);
-                        builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                String tempString = "q=" + (input.getText().toString());
-                changeCity(tempString);
 
-            }
-        })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancel
-                    }
-                })
-                .setIcon(R.drawable.ic_location_on_white)
-                .show();
+        builder = new AlertDialog.Builder(MainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_label_outline_white_48dp);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+
+            builder.setTitle("Enter a Place Name");
+            builder.setMessage("example:\nLondon");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            input.setTextColor(ta.getColor(0, Color.WHITE));
+            input.setTextSize(20);
+            builder.setView(input);
+        ta.recycle();
+
+            builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    String tempString = "q=" + (input.getText().toString());
+                    changeCity(tempString);
+
+                }
+            })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // cancel
+                        }
+                    })
+                    .show();
+
+
     }
 
     // WEATHER
     private void showLatLongInputDialog(){
-
-        // WEATHER
         AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
+
+        builder = new AlertDialog.Builder(MainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable restoreBtn = getResources().getDrawable(R.drawable.ic_public_white_48dp);
+        restoreBtn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(restoreBtn);
+
         builder.setTitle("Enter Lat/Long");
         builder.setMessage("example:\nlat=52.95&lon=-0.84");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setTextColor(getResources().getColor(R.color.white));
+        input.setTextColor(ta.getColor(0, Color.WHITE));
         input.setTextSize(20);
         builder.setView(input);
+        ta.recycle();
+
         builder.setPositiveButton("Fetch Weather", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 changeLatLong(input.getText().toString());
@@ -768,8 +753,8 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                         // cancel
                     }
                 })
-                .setIcon(R.drawable.ic_location_on_white)
                 .show();
+
     }
 
     // WEATHER
@@ -847,11 +832,12 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     private void showAlert() {
         AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
+        builder = new AlertDialog.Builder(MainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_location_on_white);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
         builder.setTitle("Enable Location Services")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
                         "use this app")
@@ -869,7 +855,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                         // cancelled by user
                     }
                 })
-                .setIcon(R.drawable.ic_location_on_white)
                 .show();
     }
 

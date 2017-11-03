@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -331,13 +333,11 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 textViewLon.setText("for gps");
                 textViewSpeed.setText("0.0 KN");
                 textViewHeading.setText("00 T");
+
                 // NO INDICATOR
-                SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.primary)));
-                if (NightModeOn) {
-                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
-                }
+                    TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorPrimary});
+                    imageViewAccu.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+                    ta.recycle();
             }
         }
     }
@@ -518,21 +518,14 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Log");
+        ta.recycle();
 
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -638,7 +631,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();

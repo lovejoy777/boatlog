@@ -6,7 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -20,6 +21,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -94,12 +96,11 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         setContentView(R.layout.activity_create_waypoint);
 
         loadToolbarNavDrawer();
+
         button_saveWaypoint = (ImageView) findViewById(R.id.button_saveWaypoint);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_saveWaypoint.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_saveWaypoint.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -300,12 +301,13 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
     }
 
     private void showAlert() {
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(CreateWaypointActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(CreateWaypointActivity.this, R.style.AlertDialogTheme);
-        }
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(CreateWaypointActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_location_on_white);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
         builder.setTitle("Enable Location Services")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
                         "use this app")
@@ -316,14 +318,14 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         startActivity(myIntent, bndlanimation);
+                        dialog.cancel();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
+                        dialog.cancel();
                     }
                 })
-                .setIcon(R.drawable.ic_location_on_white)
                 .show();
     }
 
@@ -360,21 +362,14 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Create a Waypoint");
+        ta.recycle();
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -401,7 +396,7 @@ public class CreateWaypointActivity extends EasyLocationAppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home_create_waypoints:

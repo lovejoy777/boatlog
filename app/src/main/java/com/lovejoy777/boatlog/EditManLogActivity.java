@@ -4,16 +4,17 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,14 +77,13 @@ public class EditManLogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_manlog);
 
         loadToolbarNavDrawer(manlogNam);
+
         button_saveTask = (ImageView) findViewById(R.id.button_saveTask);
         button_deleteTask = (ImageView) findViewById(R.id.button_deleteTask);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_saveTask.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-            button_deleteTask.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_saveTask.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        button_deleteTask.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
 
         scrollView1 = (ScrollView) findViewById(R.id.scrollView1);
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
@@ -213,21 +213,14 @@ public class EditManLogActivity extends AppCompatActivity {
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Edit " + manlogNam + "");
+        ta.recycle();
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -254,7 +247,7 @@ public class EditManLogActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home_edit_maintenance:
@@ -285,32 +278,33 @@ public class EditManLogActivity extends AppCompatActivity {
         if (!rs.isClosed()) {
             rs.close();
         }
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(EditManLogActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(EditManLogActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle("Delete Entry?")
-                .setMessage(manlogName)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dbHelper.deleteManLog(manlogID);
-                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), MainActivityManLog.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        Bundle bndlanimation =
-                                ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                        startActivity(intent, bndlanimation);
-                    }
-                })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
-                    }
-                })
-                .setIcon(R.drawable.ic_delete_white)
-                .show();
+
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(EditManLogActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_delete_white_24dp);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+            builder.setTitle("Delete Task?")
+                    .setMessage(manlogName)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dbHelper.deleteManLog(manlogID);
+                            Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), MainActivityManLog.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Bundle bndlanimation =
+                                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                            startActivity(intent, bndlanimation);
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // cancelled by user
+                        }
+                    })
+                    .show();
     }
 
     private int getTheme(String themePref) {

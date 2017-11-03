@@ -4,16 +4,17 @@ import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,11 +57,9 @@ public class MainActivityWaypoint extends AppCompatActivity {
 
         loadToolbarNavDrawer();
         button_createNewWaypoint = (ImageView) findViewById(R.id.button_createNewWaypoint);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_createNewWaypoint.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_createNewWaypoint.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
 
         MRL1 = (RelativeLayout) findViewById(R.id.MRL1);
 
@@ -81,37 +80,11 @@ public class MainActivityWaypoint extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> listView, View view,
                                     final int position, long id) {
-
                 Cursor itemCursor = (Cursor) MainActivityWaypoint.this.listView.getItemAtPosition(position);
                 final int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
                 final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
 
-                android.support.v7.app.AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
-                }
-                builder.setTitle("       GoTo Waypoint")
-                        .setMessage(waypointName)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
-                                intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
-                                intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
-                                Bundle bndlanimation =
-                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                                startActivity(intent, bndlanimation);
-                            }
-                        })
-
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // cancelled by user
-                            }
-                        })
-                        .setIcon(R.drawable.ic_location_on_white)
-                        .show();
+                LoadWaypoint(waypointID, waypointName);
             }
         });
 
@@ -146,26 +119,51 @@ public class MainActivityWaypoint extends AppCompatActivity {
         listView.setAdapter(cursorAdapter);
     }
 
+    private void LoadWaypoint(final int waypointID, final String waypointName) {
+
+            AlertDialog.Builder builder;
+            builder = new AlertDialog.Builder(MainActivityWaypoint.this);
+            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+            Drawable Btn = getResources().getDrawable(R.drawable.ic_location_on_white);
+            Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+            builder.setIcon(Btn);
+            ta.recycle();
+            builder.setTitle("       GoTo Waypoint")
+                    .setMessage(waypointName)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(getApplicationContext(), GoToWaypoint.class);
+                            intent.putExtra(KEY_EXTRA_WAYPOINT_ID, waypointID);
+                            intent.putExtra(KEY_EXTRA_WAYPOINT_NAME, waypointName);
+                            Bundle bndlanimation =
+                                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                            startActivity(intent, bndlanimation);
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // cancelled by user
+                        }
+                    })
+                    .show();
+
+
+
+    }
+
     private void loadToolbarNavDrawer() {
         //set Toolbar
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(6);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(4);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
         getSupportActionBar().setTitle("Waypoints");
+        ta.recycle();
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -192,7 +190,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         int id = menuItem.getItemId();
                         switch (id) {
                             case R.id.nav_home_waypoints:

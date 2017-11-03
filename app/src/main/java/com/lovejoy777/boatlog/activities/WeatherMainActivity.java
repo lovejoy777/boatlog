@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -19,7 +18,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -31,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -129,11 +128,9 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         toolBar = (Toolbar) findViewById(R.id.toolbar);
         loadToolbarNavDrawer();
         button_refresh = (ImageView) findViewById(R.id.button_refresh);
-        SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
-        if (NightModeOn) {
-            button_refresh.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
-        }
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        button_refresh.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        ta.recycle();
 
         button_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,49 +206,43 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         new LongTermWeatherTask(this, this, progressDialog).execute();
     }
 
-
     private void searchCities() {
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle(this.getString(R.string.search_title));
 
-        final EditText input = new EditText(WeatherMainActivity.this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            input.setTextColor(getBaseContext().getResources().getColor(R.color.white, getBaseContext().getTheme()));
-        }else {
-            input.setTextColor(getResources().getColor(R.color.white));
-        }
-        input.setTextSize(20);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        builder.setView(input);
-        builder.setIcon(R.drawable.ic_location_on_white);
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(WeatherMainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_location_on_white);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
 
-        builder.setPositiveButton(R.string.dialog_ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String result = input.getText().toString();
-                        if (!result.isEmpty()) {
-                            saveLocation(result);
+            builder.setTitle(this.getString(R.string.search_title));
+            final EditText input = new EditText(WeatherMainActivity.this);
+            input.setTextColor(ta.getColor(0, Color.WHITE));
+            input.setTextSize(20);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            builder.setView(input);
+        ta.recycle();
+            builder.setPositiveButton(R.string.dialog_ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String result = input.getText().toString();
+                            if (!result.isEmpty()) {
+                                saveLocation(result);
+                            }
                         }
-                    }
-                });
+                    });
 
-        builder.setNegativeButton(R.string.dialog_cancel,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+            builder.setNegativeButton(R.string.dialog_cancel,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
 
-        builder.show();
-
+            builder.show();
     }
 
     private void saveLocation(String result) {
@@ -269,23 +260,23 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         }
     }
 
-    private void aboutDialog() {
 
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        }
+    private void AboutDialog() {
 
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(WeatherMainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_help_outline_white_48dp);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
         builder.setTitle("About");
         final WebView webView = new WebView(this);
         String about = "<p>1.5</p>" +
                 "<p>Data provided by <a href='http://openweathermap.org/'>OpenWeatherMap</a>, under the <a href='http://creativecommons.org/licenses/by-sa/2.0/'>Creative Commons license</a>" +
                 "<p>Icons are <a href='https://erikflowers.github.io/weather-icons/'>Weather Icons</a>, by <a href='http://www.twitter.com/artill'>Lukas Bischoff</a> and <a href='http://www.twitter.com/Erik_UX'>Erik Flowers</a>, under the <a href='http://scripts.sil.org/OFL'>SIL OFL 1.1</a> licence.";
-         TypedArray ta = obtainStyledAttributes(new int[]{R.color.white, R.color.white});
+
          String textColor = String.format("#%06X", (0xFFFFFF & ta.getColor(0, Color.WHITE)));
-         String accentColor = String.format("#%06X", (0xFFFFFF & ta.getColor(1, Color.WHITE)));
+         String accentColor = String.format("#%06X", (0xFFFFFF & ta.getColor(0, Color.WHITE)));
           ta.recycle();
         about = "<style media=\"screen\" type=\"text/css\">" +
                 "body {\n" +
@@ -296,14 +287,11 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 about;
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.loadData(about, "text/html", "UTF-8");
-
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-
         webView.setLayoutParams(lp);
         builder.setView(webView);
-        builder.setIcon(R.drawable.ic_help_outline_white_48dp);
 
         builder.setPositiveButton(R.string.dialog_ok,
                 new DialogInterface.OnClickListener() {
@@ -585,7 +573,6 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         if (destroyed) {
             return;
         }
-
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
         Bundle bundleToday = new Bundle();
@@ -612,15 +599,24 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         viewPager.setAdapter(viewPagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setSelectedTabIndicatorHeight(4);
+
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
+        int backgroundcolor = ta.getColor(0, Color.WHITE);
+        tabLayout.setBackgroundColor(backgroundcolor);
+        ta.recycle();
+
+        /**
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         final Boolean NightModeOn = myPrefs.getBoolean("switch1", false);
         if (NightModeOn) {
-            tabLayout.setBackgroundColor(getResources().getColor(R.color.darkTheme_colorPrimaryDark));
+
+
+            tabLayout.setBackgroundColor();
+
         } else {
             tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-
-            tabLayout.setSelectedTabIndicatorHeight(4);
-        }
+        } */
 
         if (currentPage == 0 && longTermTodayWeather.isEmpty()) {
             currentPage = 1;
@@ -697,7 +693,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Explanation not needed, since user requests this themmself
+                // Explanation not needed, since user requests this themself
 
             } else {
                 ActivityCompat.requestPermissions(this,
@@ -734,27 +730,27 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
     private void showLocationSettingsDialog() {
 
-        android.support.v7.app.AlertDialog.Builder alertDialog;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            alertDialog = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            alertDialog = new android.support.v7.app.AlertDialog.Builder(WeatherMainActivity.this, R.style.AlertDialogTheme);
-        }
-        //AlertDialog.Builder alertDialog = new AlertDialog.Builder(this, );
-        alertDialog.setTitle(R.string.location_settings);
-        alertDialog.setMessage(R.string.location_settings_message);
-        alertDialog.setPositiveButton(R.string.location_settings_button, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(WeatherMainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_location_on_white);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+        builder.setTitle(R.string.location_settings);
+        builder.setMessage(R.string.location_settings_message);
+        builder.setPositiveButton(R.string.location_settings_button, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
         });
-        alertDialog.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
-        alertDialog.show();
+        builder.show();
     }
 
     @Override
@@ -949,20 +945,13 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
         final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(4);
-        SharedPreferences myNightPref = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-        final Boolean NightModeOn = myNightPref.getBoolean("switch1", false);
-        if (NightModeOn) {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.accent));
-        } else {
-            final Drawable menuBtn = getResources().getDrawable(R.drawable.ic_action_menu);
-            menuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            getSupportActionBar().setHomeAsUpIndicator(menuBtn);
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
+        getSupportActionBar().setElevation(2);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(Btn);
+        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
+        ta.recycle();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         setTheme(theme = getTheme(prefs.getString("theme", "")));
@@ -1001,7 +990,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         mDrawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
+                        menuItem.setChecked(false);
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();
@@ -1038,7 +1027,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                                 startActivity(intentSetting, bndlanimation);
                                 break;
                             case R.id.action_about:
-                                aboutDialog();
+                                AboutDialog();
                                 break;
                         }
                         return false;
@@ -1046,6 +1035,8 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 });
 
     }
+
+
 
     private int getTheme(String themePref) {
         switch (themePref) {

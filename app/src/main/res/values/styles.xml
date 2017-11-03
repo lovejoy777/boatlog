@@ -19,8 +19,30 @@
         <item name="colorLightTextSecondary">@color/colorLightTextSecondary</item>
         <item name="android:textColorPrimary">@color/colorTextPrimary</item>
         <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="colorCardBackground">@color/colorCardBackground</item>
         <item name="colorSplashBackground">@color/colorSplashBackground</item>
+        <item name="textColorAlertDialogListItem">@color/colorTextPrimary</item>
+        <item name="android:textColorAlertDialogListItem">@color/colorTextPrimary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+    <!-- Dialog App Theme -->
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/night_text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="android:background">@color/background</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextPrimary</item>
+        <item name="textColorAlertDialogListItem">@color/colorTextPrimary</item>
+    </style>
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorTextPrimary</item>
     </style>
 
     <!-- Dark theme -->
@@ -38,8 +60,28 @@
         <item name="colorLightTextSecondary">@color/darkTheme_colorTextPrimary</item>
         <item name="android:textColorPrimary">@color/darkTheme_colorTextPrimary</item>
         <item name="android:textColorSecondary">@color/darkTheme_colorTextSecondary</item>
+        <item name="android:textColor">@color/accent</item>
         <item name="colorCardBackground">@color/darkTheme_colorCardBackground</item>
         <item name="colorSplashBackground">@color/darkTheme_colorSplashBackground</item>
+        <item name="android:textColorAlertDialogListItem">@color/night_text</item>
+        <item name="textColorAlertDialogListItem">@color/night_text</item>
+    </style>
+    <!-- Dialog Dark Theme -->
+    <style name="darkTheme_AlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/night_text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle.Dark</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle.Dark</item>
+        <item name="android:background">@color/card_background</item>
+        <item name="android:textColor">@color/night_text</item>
+        <item name="textColorAlertDialogListItem">@color/night_text</item>
+        <item name="android:textColorPrimary">@color/night_text</item>
+        <item name="android:textColorSecondary">@color/night_text</item>
+    </style>
+    <style name="NegativeButtonStyle.Dark" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/accent</item>
+    </style>
+    <style name="PositiveButtonStyle.Dark" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/accent</item>
     </style>
 
     <!-- For themes -->
@@ -119,25 +161,6 @@
 
     <!-- Main Activity - Overflow Menu -->
     <style name="popupNew" parent="Theme.AppCompat.Light"/>
-
-    <style name="AlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorAccent">@color/night_text</item>
-        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
-        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
-        <item name="android:background">@color/card_background</item>
-        <item name="colorTextPrimary">@color/night_text</item>
-        <item name="colorTextSecondary">@color/night_text</item>
-
-
-    </style>
-
-    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/night_text</item>
-    </style>
-
-    <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/night_text</item>
-    </style>
 
     <style name="progressSpinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
 
