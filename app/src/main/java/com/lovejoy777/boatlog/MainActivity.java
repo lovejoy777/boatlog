@@ -2,27 +2,25 @@ package com.lovejoy777.boatlog;
 
 import android.Manifest;
 import android.app.ActivityOptions;
-import android.content.DialogInterface;
 import android.content.Intent;
-//import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-//import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+import android.net.Uri;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,18 +30,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.android.gms.common.ConnectionResult;
-//import com.google.android.gms.common.GooglePlayServicesUtil;
-//import com.google.android.gms.common.api.GoogleApiClient;
-//import com.google.android.gms.drive.Drive;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingsActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -55,16 +47,11 @@ import java.util.Calendar;
  */
 public class MainActivity extends AppCompatActivity  {
 
-            // implements GoogleApiClient.ConnectionCallbacks
-
-   // public static final int RESOLVE_CONNECTION_REQUEST_CODE = 99;
-
     private DrawerLayout mDrawerLayout;
     private SwitchCompat switcher1, switcher2;
 
     private int WRITE_EXTERNAL_STORAGE_CODE = 25;
     int ACCESS_FINE_LOCATION_CODE = 23;
-    //private GoogleApiClient mGoogleApiClient;
 
     Toolbar toolBar;
     TextView titleTextView;
@@ -114,10 +101,10 @@ public class MainActivity extends AppCompatActivity  {
         textView4 = (TextView) findViewById(R.id.textView4);
         img_thumbnail4 = (ImageView) findViewById(R.id.img_thumbnail4);
 
-        textView1.setText("Ships LogBook");
-        textView2.setText("Log");
+        textView1.setText("Log Book");
+        textView2.setText("Dashboard");
         textView3.setText("Navigation");
-        textView4.setText("Maintenance Log");
+        textView4.setText("Maintenance");
 
         img_thumbnail1.setImageResource(R.drawable.book);
         img_thumbnail2.setImageResource(R.drawable.log);
@@ -182,20 +169,9 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    /**
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    } */
-
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
@@ -311,90 +287,30 @@ public class MainActivity extends AppCompatActivity  {
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
                         int id = menuItem.getItemId();
-                        switch (id) {
-                            case R.id.nav_home:
-                                // mDrawerLayout.closeDrawers();
-                                getSupportActionBar().setElevation(0);
-                                mDrawerLayout.closeDrawers();
-                                break;
-
-                    /**        case R.id.nav_drive:
-                                mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                                        .addApi(Drive.API)
-                                        .addScope(Drive.SCOPE_FILE)
-                                        .addScope(Drive.SCOPE_APPFOLDER)
-                                        .addConnectionCallbacks(MainActivity.this)
-                                        .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) MainActivity.this)
-                                        .build();
-                                 Toast.makeText(MainActivity.this, "Google Drive client built" , Toast.LENGTH_LONG).show();
-
-                                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(this, DriveScopes.DRIVE);
-                                credential.setSelectedAccountName(accountName);
-                                Drive service = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
-                                break; */
-
-                            case R.id.nav_night_switch:
-                                // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
-                                break;
-
-                            case R.id.nav_screen_on_switch:
-                                // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
-                                break;
-
-                            case R.id.nav_tutorial:
-                                Intent tutorial = new Intent(MainActivity.this, Tutorial.class);
-                                startActivity(tutorial, bndlanimation);
-                                break;
-
-                            case R.id.nav_about:
-                                Intent about = new Intent(MainActivity.this, AboutActivity.class);
-                                startActivity(about, bndlanimation);
-                                break;
-
-                            case R.id.nav_settings:
-                                Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
-                                startActivity(settings, bndlanimation);
-                                break;
-
-                            case R.id.nav_backup:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-                                }
-                                Backup();
-                                break;
-
-                            case R.id.nav_restore:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-                                }
-
-                                File dir = new File(Environment.getExternalStorageDirectory() + Directory);
-
-                                mFileList = dir.list();
-
-                                android.support.v7.app.AlertDialog.Builder builder;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-                                } else {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-                                }
-
-                                builder.setTitle("      Select a File to Restore");
-                                builder.setIcon(R.drawable.ic_save_white);
-                                if (mFileList == null) {
-                                    builder.create();
-                                }
-                                builder.setItems(mFileList, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String mChosenFile = mFileList[which];
-                                        Restore(mChosenFile);
-                                        // Toast.makeText(MainActivity.this, mChosenFile , Toast.LENGTH_LONG).show();
-                                    }
-                                });
-
-                                builder.show();
-                                //  return true;
-                                break;
+                        if (id == R.id.nav_home) {
+                            // mDrawerLayout.closeDrawers();
+                            getSupportActionBar().setElevation(0);
+                            mDrawerLayout.closeDrawers();
+                        } else if (id == R.id.nav_night_switch) {
+                            // Toast.makeText(MainActivity.this, "Night Mode" , Toast.LENGTH_LONG).show();
+                        } else if (id == R.id.nav_screen_on_switch) {
+                            // Toast.makeText(MainActivity.this, "Screen on Mode" , Toast.LENGTH_LONG).show();
+                        } else if (id == R.id.nav_tutorial) {
+                            Intent tutorial = new Intent(MainActivity.this, Tutorial.class);
+                            startActivity(tutorial, bndlanimation);
+                        } else if (id == R.id.nav_about) {
+                            Intent about = new Intent(MainActivity.this, AboutActivity.class);
+                            startActivity(about, bndlanimation);
+                        } else if (id == R.id.nav_settings) {
+                            Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
+                            startActivity(settings, bndlanimation);
+                        } else if (id == R.id.nav_backup) {
+                            if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                            }
+                            Backup();
+                        } else if (id == R.id.nav_restore) {
+                            Restore();
                         }
                         return false;
                     }
@@ -402,191 +318,84 @@ public class MainActivity extends AppCompatActivity  {
 
     }
 
-    /**
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
+    private static final int CREATE_BACKUP_REQUEST_CODE = 1001;
+    private static final int RESTORE_BACKUP_REQUEST_CODE = 1002;
+
+    public void Backup() {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
+        String fileName = "SQLiteBoatLog_" + df.format(c.getTime()) + "_" + dt.format(c.getTime()) + ".db";
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/octet-stream");
+        intent.putExtra(Intent.EXTRA_TITLE, fileName);
+        startActivityForResult(intent, CREATE_BACKUP_REQUEST_CODE);
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
-            } catch (IntentSender.SendIntentException e) {
-                // Unable to resolve, message user appropriately
-            }
-        } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
-        }
+    public void Restore() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        startActivityForResult(intent, RESTORE_BACKUP_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        switch (requestCode) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            case RESOLVE_CONNECTION_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    mGoogleApiClient.connect();
-                }
-                break;
-        }
-    }
-    */
-
-    public void Backup() {
-
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        }
-        builder.setTitle("Backup")
-                .setMessage("boatlog database")
-
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // Get Time and Date
-                        Calendar c = Calendar.getInstance();
-                        System.out.println("Current time => " + c.getTime());
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-                        String formattedDate = df.format(c.getTime());
-                        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
-                        String formattedTime = dt.format(c.getTime());
-                        String fileDate = "_" + formattedDate;
-                        String fileTime = "_" + formattedTime;
-
-
-                        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-                        File dbFile = new File(inFileName);
-
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-                        File dir = new File(path);
-                        if (!dir.exists())
-                            dir.mkdirs();
-
-                        // Local database
-                        InputStream input = null;
-                        try {
-                            input = new FileInputStream(dbFile);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        // Path to the external backup
-                        OutputStream output = null;
-                        try {
-                            output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime + ".db");
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        // transfer bytes from the Input File to the Output File
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            if (requestCode == CREATE_BACKUP_REQUEST_CODE) {
+                try {
+                    File dbFile = new File("/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db");
+                    InputStream input = new FileInputStream(dbFile);
+                    OutputStream output = getContentResolver().openOutputStream(uri);
+                    if (output != null) {
                         byte[] buffer = new byte[1024];
                         int length;
-                        try {
-                            while ((length = input.read(buffer)) > 0) {
-                                output.write(buffer, 0, length);
-                            }
-
-                            output.flush();
-                            output.close();
-                            input.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        while ((length = input.read(buffer)) > 0) {
+                            output.write(buffer, 0, length);
                         }
-
-                        Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_LONG).show();
+                        output.flush();
+                        output.close();
+                        input.close();
+                        Toast.makeText(this, "backup completed", Toast.LENGTH_LONG).show();
                     }
-                })
+                } catch (Exception e) {
+                    Log.e("BackupRestore", "Backup failed", e);
+                    Toast.makeText(this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            } else if (requestCode == RESTORE_BACKUP_REQUEST_CODE) {
+                try {
+                    InputStream input = getContentResolver().openInputStream(uri);
+                    String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
+                    OutputStream output = new FileOutputStream(outFilePath);
+                    if (input != null) {
+                        byte[] buffer = new byte[1024];
+                        int length;
+                        while ((length = input.read(buffer)) > 0) {
+                            output.write(buffer, 0, length);
+                        }
+                        output.flush();
+                        output.close();
+                        input.close();
+                        Toast.makeText(this, "restore completed. Restarting app...", Toast.LENGTH_LONG).show();
 
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
+                        Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                        if (intent != null) {
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
-                })
-
-                .setIcon(R.drawable.ic_save_white)
-                .show();
-
-    }
-
-    private void Restore(final String dbFileName) {
-
-        android.support.v7.app.AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
+                } catch (Exception e) {
+                    Log.e("BackupRestore", "Restore failed", e);
+                    Toast.makeText(this, "Restore failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
         }
-        builder.setTitle("Restore")
-                .setMessage(dbFileName)
-
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-                        File dir = new File(path);
-                        if (!dir.exists())
-                            dir.mkdirs();
-
-
-                        File dbFile = new File(path + "/" + dbFileName);
-
-                        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-
-                        if (dbFile.exists()) {
-                            // Local database
-                            InputStream input = null;
-                            try {
-                                input = new FileInputStream(path + "/" + dbFileName);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-
-                            // Path to the external backup
-                            OutputStream output = null;
-                            try {
-                                output = new FileOutputStream(outFilePath);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-
-                            // transfer bytes from the Input File to the Output File
-                            byte[] buffer = new byte[1024];
-                            int length;
-                            try {
-                                while ((length = input.read(buffer)) > 0) {
-                                    output.write(buffer, 0, length);
-                                }
-
-                                output.flush();
-                                output.close();
-                                input.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_LONG).show();
-
-                        } else {
-                            Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                })
-
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // cancelled by user
-                    }
-                })
-
-                .setIcon(R.drawable.ic_save_white)
-                .show();
-
     }
 
     private void NightMode() {

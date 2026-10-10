@@ -1,7 +1,7 @@
 package com.lovejoy777.boatlog.helper;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by steve on 11/09/17.

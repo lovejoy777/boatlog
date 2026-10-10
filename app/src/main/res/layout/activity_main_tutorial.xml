@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar4"
         android:layout_height="160dp"
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         tools:context="com.lovejoy777.boatlog.Tutorial"
         android:elevation="5dp">
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
 
     <ImageView
@@ -76,7 +76,7 @@
                 android:layout_centerHorizontal="true"
                 android:elevation="5dp"
                 android:layout_marginTop="16dp"
-                android:contentDescription="@string/cast_expanded_controller_ad_image_description" />
+                android:contentDescription="@string/Tutorial" />
 
 
         </RelativeLayout>

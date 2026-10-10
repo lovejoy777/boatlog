@@ -9,25 +9,28 @@ import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -35,18 +38,10 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -62,11 +57,8 @@ public class MainActivityEntries extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
     private static int RESULT_LOAD_IMG = 1;
-    String imgDecodableString;
-
     private boolean fabExpanded = false;
     private FloatingActionButton fabEntries; //fabMain
-    private LinearLayout layoutFabPrintPdf;
     private LinearLayout layoutFabAddNew;
 
     private ListView listView;
@@ -78,6 +70,7 @@ public class MainActivityEntries extends AppCompatActivity {
     ListView listViewEntries;
 
     TextView titleTextView;
+
 
     int tripID;
     String tripName;
@@ -104,10 +97,10 @@ public class MainActivityEntries extends AppCompatActivity {
         listViewEntries = (ListView) findViewById(R.id.listViewEntries);
         titleTextView.setText("" + tripName + "");
 
+
         dbHelper = new BoatLogDBHelper(this);
 
         fabEntries = (FloatingActionButton) this.findViewById(R.id.fabEntries);
-        layoutFabPrintPdf = (LinearLayout) this.findViewById(R.id.layoutFabPrintPdf);
         layoutFabAddNew = (LinearLayout) this.findViewById(R.id.layoutFabAddNew);
 
 
@@ -124,39 +117,7 @@ public class MainActivityEntries extends AppCompatActivity {
 
 
 
-        // PRINT PDF subFab button
-        layoutFabPrintPdf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder;
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                } else {
-                    builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                }
-                builder.setTitle("Add an Image")
-                        .setMessage("do you want to add an image to your trip?")
-                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // creat pdf with image
-                                loadImagefromGallery();
-
-                            }
-                        })
-                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // create pdf no image
-                                BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this);
-                                taskPDF.execute();
-
-                            }
-                        })
-                        .setIcon(R.drawable.ic_photo_white)
-                        .show();
-                closeSubMenusFab();
-            }
-        });
 
         // ADD NEW subFab button
         layoutFabAddNew.setOnClickListener(new View.OnClickListener() {
@@ -274,16 +235,15 @@ public class MainActivityEntries extends AppCompatActivity {
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.entries_info1,
                 cursor, columns, widgets, 0);
         listView = (ListView) findViewById(R.id.listViewEntries);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
+        listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
     }
 
     public void loadImagefromGallery() {
-        // Create intent to Open Image applications like Gallery, Google Photos
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Start the Intent
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
 
@@ -296,22 +256,10 @@ public class MainActivityEntries extends AppCompatActivity {
             if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
                     && null != data) {
 
-                // Get the Image from data
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                // Get the cursor
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                if (cursor != null) {
-                    // Move to first row
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imgDecodableString = cursor.getString(columnIndex);
-                    cursor.close();
-
-                    BackgroundTaskPDFimage taskPDFimage = new BackgroundTaskPDFimage(MainActivityEntries.this);
+                if (selectedImage != null) {
+                    BackgroundTaskPDF taskPDFimage =
+                            new BackgroundTaskPDF(MainActivityEntries.this, selectedImage);
                     taskPDFimage.execute();
                 } else {
                     Toast.makeText(this, "Something went wrong.",
@@ -331,8 +279,7 @@ public class MainActivityEntries extends AppCompatActivity {
         }
     }
 
-    public void createPDFimage(String image_path) {
-
+    public boolean generatePdf(Uri imageUri) {
         Cursor rs = dbHelper.getTrip(tripID);
         rs.moveToFirst();
         String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
@@ -341,245 +288,158 @@ public class MainActivityEntries extends AppCompatActivity {
         if (!rs.isClosed()) {
             rs.close();
         }
-        Document doc = new Document();
-        try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
-            File dir = new File(path);
-            if (!dir.exists())
-                dir.mkdirs();
-            Log.d("PDFCreator", "PDF Path: " + path);
 
-            File file = new File(dir, "" + tripName + ".pdf");
-            FileOutputStream fOut = new FileOutputStream(file);
-            PdfWriter.getInstance(doc, fOut);
+        PdfDocument document = new PdfDocument();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
 
-            //open the document
-            doc.open();
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
 
-            //add image
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            Bitmap bitmap = BitmapFactory.decodeFile(image_path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            //Bitmap resized = Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*0.5), (int)(bitmap.getHeight()*0.5), true);
-            Image myImg = Image.getInstance(stream.toByteArray());
-            myImg.setAlignment(Image.MIDDLE);
-            myImg.scaleAbsolute(100, 100);
-            //add image to document
-            doc.add(myImg);
+        float y = 50f;
+        float margin = 50f;
 
-            Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
-            Paragraph p1 = new Paragraph("" + tripName, paraFont);
-            p1.setAlignment(Paragraph.ALIGN_CENTER);
-            //add paragraph 1 to document
-            doc.add(p1);
-
-            Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-            Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
-            p2.setAlignment(Paragraph.ALIGN_LEFT);
-            p2.setFont(paraFont2);
-            //add paragraph 2 to document
-            doc.add(p2);
-
-            // SPACE
-            Paragraph p3 = new Paragraph(" ");
-            Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
-            p3.setAlignment(Paragraph.ALIGN_CENTER);
-            p3.setFont(paraFont3);
-            //add space to document
-            doc.add(p3);
-
-            // TABLE
-            final Cursor cursor = dbHelper.getTripEntry(tripID);
-
-            // define table
-            PdfPTable table = new PdfPTable(4);
-            table.setHorizontalAlignment(0);
-
-            // add cells to table
-            table.addCell("Description");
-            table.addCell("Time");
-            table.addCell("Date");
-            table.addCell("Location");
-
-            while (cursor.moveToNext()) {
-
-                // get strings for table cells
-                String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
-                String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
-                String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
-                String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
-
-                // input data into table cells
-                table.addCell(description);
-                table.addCell(time);
-                table.addCell(date);
-                table.addCell(location);
-            }
-
-            if (!cursor.isClosed()) {
-                cursor.close();
-            }
-
-            //add table to document
-            doc.add(table);
-
-        } catch (DocumentException de) {
-            Log.e("PDFCreator", "DocumentException:" + de);
-        } catch (IOException e) {
-            Log.e("PDFCreator", "ioException:" + e);
-        } finally {
-            doc.close();
-        }
-    }
-
-    // CREATE PDF IN BACKGROUND TASK WITH PROGRESS SPINNER
-    private class BackgroundTaskPDF extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog dialog;
-
-        public BackgroundTaskPDF(MainActivityEntries activity) {
-            dialog = new ProgressDialog(MainActivityEntries.this, R.style.AlertDialogTheme);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setTitle("Creating PDF");
-            dialog.setIcon(R.drawable.ic_picture_as_pdf_white);
-            dialog.setMessage("please wait.");
-            dialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Cursor rs = dbHelper.getTrip(tripID);
-            rs.moveToFirst();
-            String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
-            String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
-            String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
-            if (!rs.isClosed()) {
-                rs.close();
-            }
-            Document doc = new Document();
+        // 1. Draw Image if provided
+        if (imageUri != null) {
             try {
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
-                File dir = new File(path);
-                if (!dir.exists())
-                    dir.mkdirs();
-                Log.d("PDFCreator", "PDF Path: " + path);
+                InputStream is = getContentResolver().openInputStream(imageUri);
+                if (is != null) {
+                    Bitmap bmp = BitmapFactory.decodeStream(is);
+                    is.close();
+                    if (bmp != null) {
+                        float imgWidth = 350f;
+                        float imgHeight = (float) bmp.getHeight() / bmp.getWidth() * imgWidth;
+                        float left = (595 - imgWidth) / 2f;
 
-                File file = new File(dir, "" + tripName + ".pdf");
-                FileOutputStream fOut = new FileOutputStream(file);
-                PdfWriter.getInstance(doc, fOut);
+                        android.graphics.RectF destRect = new android.graphics.RectF(left, y, left + imgWidth, y + imgHeight);
 
-                //open the document
-                doc.open();
+                        Paint imgPaint = new Paint();
+                        imgPaint.setAntiAlias(true);
+                        imgPaint.setFilterBitmap(true);
+                        imgPaint.setDither(true);
 
-                //R.color.accent
-                //Font myFont = FontFactory.getFont(FUTURA_LIGHT, BaseFont.IDENTITY_H);
-                Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
-                Paragraph p1 = new Paragraph("" + tripName, paraFont);
-                p1.setAlignment(Paragraph.ALIGN_CENTER);
-                //add paragraph 1 to document
-                doc.add(p1);
-
-                Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-                Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
-                p2.setAlignment(Paragraph.ALIGN_LEFT);
-                p2.setFont(paraFont2);
-                //add paragraph 2 to document
-                doc.add(p2);
-
-                // SPACE
-                Paragraph p3 = new Paragraph(" ");
-                Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
-                p3.setAlignment(Paragraph.ALIGN_CENTER);
-                p3.setFont(paraFont3);
-                //add space to document
-                doc.add(p3);
-
-                // TABLE
-                final Cursor cursor = dbHelper.getTripEntry(tripID);
-
-                // define table
-                PdfPTable table = new PdfPTable(4);
-                table.setHorizontalAlignment(0);
-
-                // add cells to table
-                table.addCell("Description");
-                table.addCell("Time");
-                table.addCell("Date");
-                table.addCell("Location");
-
-                while (cursor.moveToNext()) {
-
-                    // get strings for table cells
-                    String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
-                    String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
-                    String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
-                    String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
-
-                    // input data into table cells
-                    table.addCell(description);
-                    table.addCell(time);
-                    table.addCell(date);
-                    table.addCell(location);
+                        canvas.drawBitmap(bmp, null, destRect, imgPaint);
+                        y += imgHeight + 25;
+                        bmp.recycle();
+                    }
                 }
-
-                if (!cursor.isClosed()) {
-                    cursor.close();
-                }
-                //add table to document
-                doc.add(table);
-            } catch (DocumentException de) {
-                Log.e("PDFCreator", "DocumentException:" + de);
-            } catch (IOException e) {
-                Log.e("PDFCreator", "ioException:" + e);
-            } finally {
-                doc.close();
+            } catch (Exception e) {
+                Log.e("PDFCreator", "Failed to load image for PDF", e);
             }
-            return null;
+        }
+
+        // 2. Trip Name
+        paint.setTextSize(22f);
+        paint.setFakeBoldText(true);
+        paint.setColor(Color.RED);
+        canvas.drawText(tripName != null ? tripName : "", margin, y, paint);
+        y += 30;
+
+        // 3. Departure to Destination
+        paint.setTextSize(14f);
+        paint.setFakeBoldText(false);
+        paint.setColor(Color.parseColor("#008000"));
+        canvas.drawText((tripDeparture != null ? tripDeparture : "") + " To " + (tripDestination != null ? tripDestination : ""), margin, y, paint);
+        y += 35;
+
+        // 4. Table Headers
+        paint.setTextSize(12f);
+        paint.setFakeBoldText(true);
+        paint.setColor(Color.BLACK);
+        canvas.drawText("Description", margin, y, paint);
+        canvas.drawText("Time", margin + 180, y, paint);
+        canvas.drawText("Date", margin + 280, y, paint);
+        canvas.drawText("Location", margin + 380, y, paint);
+        y += 8;
+
+        paint.setStrokeWidth(1f);
+        canvas.drawLine(margin, y, 595 - margin, y, paint);
+        y += 20;
+
+        // 5. Table Rows
+        paint.setTextSize(11f);
+        paint.setFakeBoldText(false);
+        final Cursor cursor = dbHelper.getTripEntry(tripID);
+        while (cursor.moveToNext()) {
+            String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
+            String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
+            String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
+            String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
+
+            canvas.drawText(description != null ? description : "", margin, y, paint);
+            canvas.drawText(time != null ? time : "", margin + 180, y, paint);
+            canvas.drawText(date != null ? date : "", margin + 280, y, paint);
+            canvas.drawText(location != null ? location : "", margin + 380, y, paint);
+            y += 22;
+
+            if (y > 780) {
+                break;
+            }
+        }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+
+        document.finishPage(page);
+
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog");
+        if (!dir.exists()) dir.mkdirs();
+        File file = new File(dir, tripName + ".pdf");
+
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            document.writeTo(fos);
+            document.close();
+            return true;
+        } catch (Exception e) {
+            Log.e("PDFCreator", "Failed to write native PDF", e);
+            if (file.exists()) {
+                file.delete();
+            }
+            document.close();
+            return false;
         }
     }
 
-    // CREATE PDF WITH IMAGE BACKGROUND TASK WITH PROGRESS SPINNER
-    private class BackgroundTaskPDFimage extends AsyncTask<Void, Void, Void> {
+    // UNIFIED BACKGROUND TASK FOR PDF CREATION (WITH OR WITHOUT IMAGE)
+    private class BackgroundTaskPDF extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog dialog;
+        private final Uri imageUri;
 
-        public BackgroundTaskPDFimage(MainActivityEntries activity) {
-            dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
+        public BackgroundTaskPDF(MainActivityEntries activity, Uri imageUri) {
+            dialog = new ProgressDialog(MainActivityEntries.this, R.style.AlertDialogTheme);
+            this.imageUri = imageUri;
         }
 
         @Override
         protected void onPreExecute() {
             dialog.setTitle("Creating PDF");
-            dialog.setMessage("please wait.");
             dialog.setIcon(R.drawable.ic_picture_as_pdf_white);
+            dialog.setMessage("please wait.");
             dialog.show();
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean success) {
             if (dialog.isShowing()) {
                 dialog.dismiss();
+            }
+            if (success != null && success) {
+                Toast.makeText(MainActivityEntries.this, "PDF Created", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivityEntries.this, "Failed to create PDF", Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            createPDFimage(imgDecodableString);
-            return null;
+        protected Boolean doInBackground(Void... params) {
+            return generatePdf(imageUri);
         }
     }
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
@@ -631,122 +491,143 @@ public class MainActivityEntries extends AppCompatActivity {
                         mDrawerLayout.closeDrawers();
                         menuItem.setChecked(true);
                         int id = menuItem.getItemId();
-                        switch (id) {
-                            case R.id.nav_home_create_entries:
-                                // mDrawerLayout.closeDrawers();
-                                getSupportActionBar().setElevation(0);
-                                mDrawerLayout.closeDrawers();
-                                break;
+                        if (id == R.id.nav_home_create_entries) {
+                            // mDrawerLayout.closeDrawers();
+                            getSupportActionBar().setElevation(0);
+                            mDrawerLayout.closeDrawers();
+                        } else if (id == R.id.nav_create_favourites) {
 
-                            case R.id.nav_create_favourites:
+                            AlertDialog.Builder builder;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            } else {
+                                builder = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            }
 
-                                android.support.v7.app.AlertDialog.Builder builder;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                                } else {
-                                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                                }
+                            builder.setTitle("      Create a Favourite");
 
-                                builder.setTitle("      Create a Favourite");
+                            final EditText input = new EditText(MainActivityEntries.this);
+                            input.setTextColor(getResources().getColor(R.color.white));
+                            input.setTextSize(20);
 
-                                final EditText input = new EditText(MainActivityEntries.this);
-                                input.setTextColor(getResources().getColor(R.color.white));
-                                input.setTextSize(20);
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.MATCH_PARENT);
+                            input.setLayoutParams(lp);
+                            builder.setView(input);
+                            builder.setIcon(R.drawable.ic_favorite_border);
 
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                                        LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.MATCH_PARENT);
-                                input.setLayoutParams(lp);
-                                builder.setView(input);
-                                builder.setIcon(R.drawable.ic_favorite_border);
+                            builder.setPositiveButton("SAVE",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
 
-                                builder.setPositiveButton("SAVE",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                                if (dbHelper.insertFavEntry(input.getText().toString())) {
-                                                    Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
-                                                }
+                                            if (dbHelper.insertFavEntry(input.getText().toString())) {
+                                                Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
                                             }
-                                        });
-
-                                builder.setNegativeButton("CANCEL",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.cancel();
-                                            }
-                                        });
-
-                                builder.show();
-                                break;
-
-                            // ************************************************************************************
-
-                            case R.id.nav_delete_favourites:
-
-                                Cursor rs = dbHelper.getAllFavEntry();
-                                ArrayList<String> favArray = new ArrayList<String>();
-                                while (rs.moveToNext()) {
-
-                                    String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
-                                    favArray.add(fav);
-
-                                }
-                                if (!rs.isClosed()) {
-                                    rs.close();
-                                }
-                                final String[] favnames = favArray.toArray(new String[favArray.size()]);
-
-                                android.support.v7.app.AlertDialog.Builder builder1;
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    builder1 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                                } else {
-                                    builder1 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                                }
-
-                                builder1.setTitle("      Select a Favourite");
-                                builder1.setIcon(R.drawable.ic_favorite_border);
-                                if (favnames == null) {
-                                    builder1.create();
-                                }
-
-                                builder1.setItems(favnames, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        final String mChosenFavourite = favnames[which];
-
-                                        android.support.v7.app.AlertDialog.Builder builder2;
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            builder2 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
-                                        } else {
-                                            builder2 = new android.support.v7.app.AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
                                         }
-                                        builder2.setTitle("   Delete Favourite")
-                                                .setMessage("    " + mChosenFavourite)
+                                    });
 
-                                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
+                            builder.setNegativeButton("CANCEL",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
 
-                                                        dbHelper.deleteFavEntry(mChosenFavourite);
-                                                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            builder.show();
 
-                                                    }
-                                                })
+                        } else if (id == R.id.nav_create_pdf) {
+                            AlertDialog.Builder builder3;
 
-                                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        // cancelled by user
-                                                    }
-                                                })
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                builder3 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            } else {
+                                builder3 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            }
+                            builder3.setTitle("Add an Image")
+                                    .setMessage("do you want to add an image to your trip?")
+                                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // creat pdf with image
+                                            loadImagefromGallery();
 
-                                                .setIcon(R.drawable.ic_delete_white)
-                                                .show();
+                                        }
+                                    })
+                                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // create pdf no image
+                                            BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this, null);
+                                            taskPDF.execute();
+
+                                        }
+                                    });
+
+                            builder3.show();
+
+
+                        } else if (id == R.id.nav_delete_favourites) {
+
+                            Cursor rs = dbHelper.getAllFavEntry();
+                            ArrayList<String> favArray = new ArrayList<String>();
+                            while (rs.moveToNext()) {
+
+                                String fav = rs.getString(rs.getColumnIndex(BoatLogDBHelper.FAVENTRY_COLUMN_NAME));
+                                favArray.add(fav);
+
+                            }
+                            if (!rs.isClosed()) {
+                                rs.close();
+                            }
+                            final String[] favnames = favArray.toArray(new String[favArray.size()]);
+
+                            AlertDialog.Builder builder1;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                builder1 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            } else {
+                                builder1 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                            }
+
+                            builder1.setTitle("      Select a Favourite");
+                            builder1.setIcon(R.drawable.ic_favorite_border);
+                            if (favnames == null) {
+                                builder1.create();
+                            }
+
+                            builder1.setItems(favnames, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    final String mChosenFavourite = favnames[which];
+
+                                    AlertDialog.Builder builder2;
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        builder2 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
+                                    } else {
+                                        builder2 = new AlertDialog.Builder(MainActivityEntries.this, R.style.AlertDialogTheme);
                                     }
-                                });
-                                builder1.show();
-                                break;
+                                    builder2.setTitle("   Delete Favourite")
+                                            .setMessage("    " + mChosenFavourite)
 
+                                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    dbHelper.deleteFavEntry(mChosenFavourite);
+                                                    Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+
+                                                }
+                                            })
+
+                                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    // cancelled by user
+                                                }
+                                            })
+
+                                            .setIcon(R.drawable.ic_delete_white)
+                                            .show();
+                                }
+                            });
+                            builder1.show();
                         }
                         return false;
                     }
@@ -767,7 +648,6 @@ public class MainActivityEntries extends AppCompatActivity {
 
     //closes FAB submenus
     private void closeSubMenusFab() {
-        layoutFabPrintPdf.setVisibility(View.INVISIBLE);
         layoutFabAddNew.setVisibility(View.INVISIBLE);
         fabEntries.setImageResource(R.drawable.ic_menu_white);
         fabExpanded = false;
@@ -775,7 +655,6 @@ public class MainActivityEntries extends AppCompatActivity {
 
     //Opens FAB submenus
     private void openSubMenusFab() {
-        layoutFabPrintPdf.setVisibility(View.VISIBLE);
         layoutFabAddNew.setVisibility(View.VISIBLE);
         fabEntries.setImageResource(R.drawable.ic_close_white);
         fabExpanded = true;

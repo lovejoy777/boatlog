@@ -7,9 +7,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -139,11 +140,11 @@ public class EditEntriesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                android.support.v7.app.AlertDialog.Builder builder;
+                AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(EditEntriesActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("Delete Entry?")
                         .setMessage(entryName)

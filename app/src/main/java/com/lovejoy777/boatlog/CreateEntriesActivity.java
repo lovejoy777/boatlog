@@ -12,10 +12,11 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -165,11 +166,11 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
                 }
                 final String[] favnames = favArray.toArray(new String[favArray.size()]);
 
-                android.support.v7.app.AlertDialog.Builder builder;
+                AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("      Select a Favourite");
                 builder.setIcon(R.drawable.ic_favorite_border);
@@ -307,11 +308,11 @@ public class CreateEntriesActivity extends EasyLocationAppCompatActivity {
     }
 
     private void showAlert() {
-        android.support.v7.app.AlertDialog.Builder builder;
+        AlertDialog.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
         } else {
-            builder = new android.support.v7.app.AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
+            builder = new AlertDialog.Builder(CreateEntriesActivity.this, R.style.AlertDialogTheme);
         }
         builder.setTitle("Enable Location Services")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +

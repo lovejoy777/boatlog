@@ -7,9 +7,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -104,11 +105,11 @@ public class MainActivityWaypoint extends AppCompatActivity {
                 final int waypointID = itemCursor.getInt(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_ID));
                 final String waypointName = "" + itemCursor.getString(itemCursor.getColumnIndex(BoatLogDBHelper.WAYPOINT_COLUMN_NAME));
 
-                android.support.v7.app.AlertDialog.Builder builder;
+                AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
                 } else {
-                    builder = new android.support.v7.app.AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
+                    builder = new AlertDialog.Builder(MainActivityWaypoint.this, R.style.AlertDialogTheme);
                 }
                 builder.setTitle("       GoTo Waypoint")
                         .setMessage(waypointName)
@@ -171,7 +172,7 @@ public class MainActivityWaypoint extends AppCompatActivity {
         int[] widgets = new int[]{R.id.waypointID, R.id.waypointName};
         SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(this, R.layout.waypoint_info1, cursor, columns, widgets, 0);
         listView = (ListView) findViewById(R.id.listViewWaypoint);
-        listView.setDivider(this.getResources().getDrawable(R.drawable.list_dividered));
+        listView.setDivider(this.getResources().getDrawable(R.drawable.list_divide));
         listView.setDividerHeight(2);
         listView.setAdapter(cursorAdapter);
     }

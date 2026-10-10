@@ -29,7 +29,6 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/night_text</item>
-        <item name="mcab_contentinset_start">60dp</item>
     </style>
 
     <!-- Navigation Drawer Text Sytle -->
