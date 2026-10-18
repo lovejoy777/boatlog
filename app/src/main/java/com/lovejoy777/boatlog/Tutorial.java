@@ -7,7 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,7 +48,7 @@ public class Tutorial extends AppCompatActivity {
         tv_version = (TextView) findViewById(R.id.tv_Version);
 
         //set Toolbar
-        android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar4);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar4);
         toolbar.setNavigationIcon(R.drawable.ic_action_bak);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

@@ -9,20 +9,23 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,18 +38,9 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.Image;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -62,7 +56,6 @@ public class MainActivityEntries extends AppCompatActivity {
     public final static String KEY_EXTRA_TRIPS_NAME = "KEY_EXTRA_TRIPS_NAME";
 
     private static int RESULT_LOAD_IMG = 1;
-    String imgDecodableString;
 
     private ListView listView;
     BoatLogDBHelper dbHelper;
@@ -185,10 +178,9 @@ public class MainActivityEntries extends AppCompatActivity {
     }
 
     public void loadImagefromGallery() {
-        // Create intent to Open Image applications like Gallery, Google Photos
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Start the Intent
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
     }
 
@@ -197,293 +189,223 @@ public class MainActivityEntries extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         try {
-            // When an Image is picked
-            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK
-                    && null != data) {
-
-                // Get the Image from data
+            if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK && data != null) {
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                // Get the cursor
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                if (cursor != null) {
-                    // Move to first row
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    imgDecodableString = cursor.getString(columnIndex);
-                    cursor.close();
-
-                    BackgroundTaskPDFimage taskPDFimage = new BackgroundTaskPDFimage(MainActivityEntries.this);
+                if (selectedImage != null) {
+                    BackgroundTaskPDF taskPDFimage = new BackgroundTaskPDF(MainActivityEntries.this, selectedImage);
                     taskPDFimage.execute();
                 } else {
-                    Toast.makeText(this, "Ooop! Something went wrong.",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
-
             } else {
-
-                Toast.makeText(this, "Cancelled",
-                        Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Incompatible Image", Toast.LENGTH_SHORT)
-
-                    .show();
+            Toast.makeText(this, "Error picking image", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void createPDFimage(String image_path) {
-        Cursor rs = dbHelper.getTrip(tripID);
-        rs.moveToFirst();
-        String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
-        String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
-        String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
-        if (!rs.isClosed()) {
-            rs.close();
-        }
-        Document doc = new Document();
+    public boolean generatePdf(Uri imageUri) {
+        Cursor rs = null;
         try {
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
-            File dir = new File(path);
-            if (!dir.exists())
-                dir.mkdirs();
-            Log.d("PDFCreator", "PDF Path: " + path);
-
-            File file = new File(dir, "" + tripName + ".pdf");
-            FileOutputStream fOut = new FileOutputStream(file);
-            PdfWriter.getInstance(doc, fOut);
-
-            //open the document
-            doc.open();
-
-            //add image
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            Bitmap bitmap = BitmapFactory.decodeFile(image_path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            //Bitmap resized = Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*0.5), (int)(bitmap.getHeight()*0.5), true);
-            Image myImg = Image.getInstance(stream.toByteArray());
-            myImg.setAlignment(Image.MIDDLE);
-            myImg.scaleAbsolute(100, 100);
-            //add image to document
-            doc.add(myImg);
-
-            Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
-            Paragraph p1 = new Paragraph("" + tripName, paraFont);
-            p1.setAlignment(Paragraph.ALIGN_CENTER);
-            //add paragraph 1 to document
-            doc.add(p1);
-
-            Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-            Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
-            p2.setAlignment(Paragraph.ALIGN_LEFT);
-            p2.setFont(paraFont2);
-            //add paragraph 2 to document
-            doc.add(p2);
-
-            // SPACE
-            Paragraph p3 = new Paragraph(" ");
-            Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
-            p3.setAlignment(Paragraph.ALIGN_CENTER);
-            p3.setFont(paraFont3);
-            //add space to document
-            doc.add(p3);
-
-            // TABLE
-            final Cursor cursor = dbHelper.getTripEntry(tripID);
-
-            // define table
-            PdfPTable table = new PdfPTable(4);
-            table.setHorizontalAlignment(0);
-
-            // add cells to table
-            table.addCell("Description");
-            table.addCell("Time");
-            table.addCell("Date");
-            table.addCell("Location");
-
-            while (cursor.moveToNext()) {
-
-                // get strings for table cells
-                String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
-                String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
-                String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
-                String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
-
-                // input data into table cells
-                table.addCell(description);
-                table.addCell(time);
-                table.addCell(date);
-                table.addCell(location);
-            }
-
-            if (!cursor.isClosed()) {
-                cursor.close();
-            }
-
-            //add table to document
-            doc.add(table);
-
-        } catch (DocumentException de) {
-            Log.e("PDFCreator", "DocumentException:" + de);
-        } catch (IOException e) {
-            Log.e("PDFCreator", "ioException:" + e);
-        } finally {
-            doc.close();
-        }
-    }
-
-    // CREATE PDF IN BACKGROUND TASK WITH PROGRESS SPINNER
-    private class BackgroundTaskPDF extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog dialog;
-
-        public BackgroundTaskPDF(MainActivityEntries activity) {
-            dialog = new ProgressDialog(MainActivityEntries.this, R.style.AlertDialogTheme);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setTitle("Creating PDF");
-            dialog.setIcon(R.drawable.ic_picture_as_pdf_white);
-            dialog.setMessage("please wait.");
-            dialog.show();
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Cursor rs = dbHelper.getTrip(tripID);
-            rs.moveToFirst();
-            String tripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
-            String tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
-            String tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
-            if (!rs.isClosed()) {
+            rs = dbHelper.getTrip(tripID);
+            String rawTripName = "Trip_" + tripID;
+            String tripDeparture = "";
+            String tripDestination = "";
+            if (rs != null && rs.moveToFirst()) {
+                rawTripName = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_NAME));
+                tripDeparture = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DEPARTURE));
+                tripDestination = rs.getString(rs.getColumnIndex(BoatLogDBHelper.TRIPS_COLUMN_DESTINATION));
                 rs.close();
+                rs = null;
             }
-            Document doc = new Document();
-            try {
-                String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog";
-                File dir = new File(path);
-                if (!dir.exists())
-                    dir.mkdirs();
-                Log.d("PDFCreator", "PDF Path: " + path);
 
-                File file = new File(dir, "" + tripName + ".pdf");
-                FileOutputStream fOut = new FileOutputStream(file);
-                PdfWriter.getInstance(doc, fOut);
+            if (rawTripName == null || rawTripName.trim().isEmpty()) {
+                rawTripName = "Trip_" + tripID;
+            }
+            String safeTripName = rawTripName.replaceAll("[\\\\/:*?\"<>|]", "_");
 
-                //open the document
-                doc.open();
+            PdfDocument document = new PdfDocument();
+            int pageNumber = 1;
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
+            PdfDocument.Page page = document.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
 
-                //R.color.accent
-                //Font myFont = FontFactory.getFont(FUTURA_LIGHT, BaseFont.IDENTITY_H);
-                Font paraFont = new Font(Font.COURIER, 16.0f, Color.RED);
-                Paragraph p1 = new Paragraph("" + tripName, paraFont);
-                p1.setAlignment(Paragraph.ALIGN_CENTER);
-                //add paragraph 1 to document
-                doc.add(p1);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
 
-                Paragraph p2 = new Paragraph(tripDeparture + "To " + tripDestination);
-                Font paraFont2 = new Font(Font.COURIER, 14.0f, Color.GREEN);
-                p2.setAlignment(Paragraph.ALIGN_LEFT);
-                p2.setFont(paraFont2);
-                //add paragraph 2 to document
-                doc.add(p2);
+            float y = 50f;
+            float margin = 50f;
 
-                // SPACE
-                Paragraph p3 = new Paragraph(" ");
-                Font paraFont3 = new Font(Font.BOLDITALIC, 16.0f, R.color.accent);
-                p3.setAlignment(Paragraph.ALIGN_CENTER);
-                p3.setFont(paraFont3);
-                //add space to document
-                doc.add(p3);
+            // 1. Draw Image if provided (Page 1 only)
+            if (imageUri != null) {
+                try {
+                    InputStream is = getContentResolver().openInputStream(imageUri);
+                    if (is != null) {
+                        Bitmap bmp = BitmapFactory.decodeStream(is);
+                        is.close();
+                        if (bmp != null) {
+                            float imgWidth = 350f;
+                            float imgHeight = (float) bmp.getHeight() / (float) bmp.getWidth() * imgWidth;
+                            float left = (595 - imgWidth) / 2f;
 
-                // TABLE
-                final Cursor cursor = dbHelper.getTripEntry(tripID);
+                            android.graphics.RectF destRect = new android.graphics.RectF(left, y, left + imgWidth, y + imgHeight);
 
-                // define table
-                PdfPTable table = new PdfPTable(4);
-                table.setHorizontalAlignment(0);
+                            Paint imgPaint = new Paint();
+                            imgPaint.setAntiAlias(true);
+                            imgPaint.setFilterBitmap(true);
+                            imgPaint.setDither(true);
 
-                // add cells to table
-                table.addCell("Description");
-                table.addCell("Time");
-                table.addCell("Date");
-                table.addCell("Location");
+                            canvas.drawBitmap(bmp, null, destRect, imgPaint);
+                            y += imgHeight + 25;
+                            bmp.recycle();
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("PDFCreator", "Failed to load image for PDF", e);
+                }
+            }
 
+            // 2. Trip Name (Page 1)
+            paint.setTextSize(22f);
+            paint.setFakeBoldText(true);
+            paint.setColor(Color.RED);
+            canvas.drawText(rawTripName, margin, y, paint);
+            y += 30;
+
+            // 3. Departure to Destination (Page 1)
+            paint.setTextSize(14f);
+            paint.setFakeBoldText(false);
+            paint.setColor(Color.parseColor("#008000"));
+            canvas.drawText((tripDeparture != null ? tripDeparture : "") + " To " + (tripDestination != null ? tripDestination : ""), margin, y, paint);
+            y += 35;
+
+            // 4. Table Headers (Page 1)
+            paint.setTextSize(12f);
+            paint.setFakeBoldText(true);
+            paint.setColor(Color.BLACK);
+            canvas.drawText("Description", margin, y, paint);
+            canvas.drawText("Time", margin + 180, y, paint);
+            canvas.drawText("Date", margin + 280, y, paint);
+            canvas.drawText("Location", margin + 380, y, paint);
+            y += 8;
+
+            paint.setStrokeWidth(1f);
+            canvas.drawLine(margin, y, 595 - margin, y, paint);
+            y += 20;
+
+            // 5. Table Rows (Supports multi-page)
+            paint.setTextSize(11f);
+            paint.setFakeBoldText(false);
+            Cursor cursor = dbHelper.getTripEntry(tripID);
+            if (cursor != null) {
                 while (cursor.moveToNext()) {
+                    if (y > 780f) {
+                        document.finishPage(page);
+                        pageNumber++;
+                        pageInfo = new PdfDocument.PageInfo.Builder(595, 842, pageNumber).create();
+                        page = document.startPage(pageInfo);
+                        canvas = page.getCanvas();
+                        y = 50f;
 
-                    // get strings for table cells
+                        // Redraw table headers on the new page
+                        paint.setTextSize(12f);
+                        paint.setFakeBoldText(true);
+                        paint.setColor(Color.BLACK);
+                        canvas.drawText("Description", margin, y, paint);
+                        canvas.drawText("Time", margin + 180, y, paint);
+                        canvas.drawText("Date", margin + 280, y, paint);
+                        canvas.drawText("Location", margin + 380, y, paint);
+                        y += 8;
+
+                        paint.setStrokeWidth(1f);
+                        canvas.drawLine(margin, y, 595 - margin, y, paint);
+                        y += 20;
+
+                        // Reset paint for table rows
+                        paint.setTextSize(11f);
+                        paint.setFakeBoldText(false);
+                    }
+
                     String description = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_NAME));
                     String time = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_TIME));
                     String date = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_DATE));
                     String location = cursor.getString(cursor.getColumnIndex(BoatLogDBHelper.ENTRY_COLUMN_LOCATION));
 
-                    // input data into table cells
-                    table.addCell(description);
-                    table.addCell(time);
-                    table.addCell(date);
-                    table.addCell(location);
+                    canvas.drawText(description != null ? description : "", margin, y, paint);
+                    canvas.drawText(time != null ? time : "", margin + 180, y, paint);
+                    canvas.drawText(date != null ? date : "", margin + 280, y, paint);
+                    canvas.drawText(location != null ? location : "", margin + 380, y, paint);
+                    y += 22;
                 }
-
-                if (!cursor.isClosed()) {
-                    cursor.close();
-                }
-                //add table to document
-                doc.add(table);
-            } catch (DocumentException de) {
-                Log.e("PDFCreator", "DocumentException:" + de);
-            } catch (IOException e) {
-                Log.e("PDFCreator", "ioException:" + e);
-            } finally {
-                doc.close();
+                cursor.close();
             }
-            return null;
+
+            document.finishPage(page);
+
+            File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog");
+            if (!dir.exists()) dir.mkdirs();
+            File file = new File(dir, safeTripName + ".pdf");
+
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                document.writeTo(fos);
+                document.close();
+                Log.d("PDFCreator", "PDF Created successfully: " + file.getAbsolutePath());
+                return true;
+            } catch (Exception e) {
+                Log.e("PDFCreator", "Failed to write native PDF", e);
+                if (file.exists()) {
+                    file.delete();
+                }
+                document.close();
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("PDFCreator", "Error generating PDF", e);
+            return false;
+        } finally {
+            if (rs != null && !rs.isClosed()) rs.close();
         }
     }
 
-    // CREATE PDF WITH IMAGE BACKGROUND TASK WITH PROGRESS SPINNER
-    private class BackgroundTaskPDFimage extends AsyncTask<Void, Void, Void> {
+    private class BackgroundTaskPDF extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog dialog;
+        private final Uri imageUri;
 
-        public BackgroundTaskPDFimage(MainActivityEntries activity) {
+        public BackgroundTaskPDF(MainActivityEntries activity, Uri imageUri) {
             dialog = new ProgressDialog(activity, R.style.AlertDialogTheme);
+            this.imageUri = imageUri;
         }
 
         @Override
         protected void onPreExecute() {
             dialog.setTitle("Creating PDF");
-            dialog.setMessage("please wait.");
             dialog.setIcon(R.drawable.ic_picture_as_pdf_white);
+            dialog.setMessage("please wait.");
             dialog.show();
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean success) {
             if (dialog.isShowing()) {
                 dialog.dismiss();
+            }
+            if (success != null && success) {
+                Toast.makeText(MainActivityEntries.this, "PDF Saved to Documents/boatLog", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivityEntries.this, "Error saving PDF", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            createPDFimage(imgDecodableString);
-            return null;
+        protected Boolean doInBackground(Void... params) {
+            return generatePdf(imageUri);
         }
     }
 
     private void loadToolbarNavDrawer(String tripNam) {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(4);
@@ -531,7 +453,7 @@ public class MainActivityEntries extends AppCompatActivity {
                                 createEntry();
                                 break;
                             case R.id.nav_create_pdfimage:
-                                // creat pdf with image
+                                // create pdf with image
                                 loadImagefromGallery();
                                 break;
                             case R.id.nav_create_pdf:
@@ -551,13 +473,11 @@ public class MainActivityEntries extends AppCompatActivity {
         );
     }
 
-    // Create Favourite
     private void createPdf() {
-        BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this);
+        BackgroundTaskPDF taskPDF = new BackgroundTaskPDF(MainActivityEntries.this, null);
         taskPDF.execute();
     }
 
-    // Create Favourite
     private void createEntry() {
         Intent intent = new Intent(MainActivityEntries.this, CreateEntriesActivity.class);
         intent.putExtra(KEY_EXTRA_ENTRIES_ID, 0);
@@ -568,7 +488,6 @@ public class MainActivityEntries extends AppCompatActivity {
         startActivity(intent, bndlanimation);
     }
 
-    // Create Favourite
     private void createFavourite() {
         AlertDialog.Builder builder;
 
@@ -578,31 +497,29 @@ public class MainActivityEntries extends AppCompatActivity {
         Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
         builder.setIcon(Btn);
         ta.recycle();
-            builder.setTitle("      Create a Favourite");
-            final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            input.setTextColor(getResources().getColor(R.color.night_text));
-            input.setTextSize(20);
-            builder.setView(input);
-            builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    if (dbHelper.insertFavEntry(input.getText().toString())) {
-                        Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
-                    }
-
+        builder.setTitle("      Create a Favourite");
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setTextColor(getResources().getColor(R.color.night_text));
+        input.setTextSize(20);
+        builder.setView(input);
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (dbHelper.insertFavEntry(input.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "Favourite Saved", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Could not Save Favourite", Toast.LENGTH_SHORT).show();
                 }
-            })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // cancel
-                        }
-                    })
-                    .show();
+            }
+        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancel
+                    }
+                })
+                .show();
     }
 
-    // Delete Favourite
     private void deleteFavourite() {
         Cursor rs = dbHelper.getAllFavEntry();
         ArrayList<String> favArray = new ArrayList<String>();
@@ -622,42 +539,38 @@ public class MainActivityEntries extends AppCompatActivity {
         Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
         builder.setIcon(Btn);
         ta.recycle();
-            builder.setTitle("      Select a Favourite");
-            if (mFileList == null) {
-                builder.create();
+        builder.setTitle("      Select a Favourite");
+        if (mFileList == null) {
+            builder.create();
+        }
+        builder.setItems(mFileList, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                final String mChosenFavourite = mFileList[which];
+
+                AlertDialog.Builder builder;
+                builder = new AlertDialog.Builder(MainActivityEntries.this);
+                TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+                Drawable Btn = getResources().getDrawable(R.drawable.ic_delete_white);
+                Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+                builder.setIcon(Btn);
+                ta.recycle();
+                builder.setTitle("   Delete Favourite")
+                        .setMessage("    " + mChosenFavourite)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbHelper.deleteFavEntry(mChosenFavourite);
+                                Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // cancelled by user
+                            }
+                        })
+                        .show();
             }
-            builder.setItems(mFileList, new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface dialog, int which) {
-
-                    final String mChosenFavourite = mFileList[which];
-
-                        AlertDialog.Builder builder;
-                    builder = new AlertDialog.Builder(MainActivityEntries.this);
-                    TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
-                    Drawable Btn = getResources().getDrawable(R.drawable.ic_delete_white);
-                    Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
-                    builder.setIcon(Btn);
-                    ta.recycle();
-                        builder.setTitle("   Delete Favourite")
-                                .setMessage("    " + mChosenFavourite)
-                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dbHelper.deleteFavEntry(mChosenFavourite);
-                                        Toast.makeText(getApplicationContext(), "Deleted Successfully", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // cancelled by user
-                                    }
-                                })
-                                .show();
-
-                }
-            });
-            builder.show();
-
+        });
+        builder.show();
     }
 
     private int getTheme(String themePref) {
