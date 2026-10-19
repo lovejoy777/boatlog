@@ -15,9 +15,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -226,9 +226,9 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
     private int getTheme(String themePref) {
         switch (themePref) {
             case "dark":
-                return R.style.AppTheme_Dark;
+                return R.style.AppTheme_NoActionBar_Dark;
             default:
-                return R.style.AppTheme;
+                return R.style.AppTheme_NoActionBar;
         }
     }
 
