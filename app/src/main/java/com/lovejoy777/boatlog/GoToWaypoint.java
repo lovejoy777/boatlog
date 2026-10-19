@@ -23,16 +23,16 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -622,7 +622,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(4);
@@ -768,10 +768,7 @@ public class GoToWaypoint extends EasyLocationAppCompatActivity implements Senso
                                 startActivity(about, bndlanimation);
                                 break;
 
-                            case R.id.nav_settings:
-                                Intent settings = new Intent(GoToWaypoint.this, SettingActivity.class);
-                                startActivity(settings, bndlanimation);
-                                break;
+
 
                         }
                         return false;

@@ -1,6 +1,7 @@
 package com.lovejoy777.boatlog;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -14,19 +15,22 @@ import java.net.URL;
  */
 
 public class RemoteFetch {
-    private static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?";
+    private static String BASE_URL = "https://api.openweathermap.org/data/2.5/weather?";
     private static String SEC_URL = "&units=metric";
-
-   // http://api.openweathermap.org/data/2.5/weather?id=lat=52.96&lon=-0.86&APPID=641cc2423fd5c5ed715a35362fe1ff73
 
     public static JSONObject getJSON(Context context, String chosen_location){
         try {
-            URL url = new URL(BASE_URL + chosen_location + SEC_URL);
+            String appId = context.getString(R.string.open_weather_maps_app_id);
+            String locationParam = chosen_location;
+            if (locationParam != null && !locationParam.startsWith("q=") && !locationParam.startsWith("lat=")) {
+                locationParam = "q=" + locationParam;
+            }
+            String urlStr = BASE_URL + locationParam + SEC_URL + "&appid=" + appId;
+            URL url = new URL(urlStr);
             HttpURLConnection connection =
                     (HttpURLConnection)url.openConnection();
 
-            connection.addRequestProperty("x-api-key",
-                    context.getString(R.string.open_weather_maps_app_id));
+            connection.addRequestProperty("x-api-key", appId);
 
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
@@ -44,7 +48,8 @@ public class RemoteFetch {
             }
 
             return data;
-        }catch(Exception e){
+        } catch(Exception e){
+            Log.e("RemoteFetch", "Error fetching weather data", e);
             return null;
         }
     }

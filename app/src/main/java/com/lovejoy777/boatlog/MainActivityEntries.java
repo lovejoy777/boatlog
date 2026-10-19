@@ -269,14 +269,14 @@ public class MainActivityEntries extends AppCompatActivity {
             // 2. Trip Name (Page 1)
             paint.setTextSize(22f);
             paint.setFakeBoldText(true);
-            paint.setColor(Color.RED);
+            paint.setColor(getResources().getColor(R.color.primary_dark));
             canvas.drawText(rawTripName, margin, y, paint);
             y += 30;
 
             // 3. Departure to Destination (Page 1)
             paint.setTextSize(14f);
             paint.setFakeBoldText(false);
-            paint.setColor(Color.parseColor("#008000"));
+            paint.setColor(getResources().getColor(R.color.primary_dark));
             canvas.drawText((tripDeparture != null ? tripDeparture : "") + " To " + (tripDestination != null ? tripDestination : ""), margin, y, paint);
             y += 35;
 

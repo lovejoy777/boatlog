@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -170,7 +170,7 @@ public abstract class GenericRequestTask extends AsyncTask<String, String, TaskO
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         String apiKey = sp.getString("apiKey", activity.getResources().getString(R.string.apiKey));
 
-        StringBuilder urlBuilder = new StringBuilder("http://api.openweathermap.org/data/2.5/");
+        StringBuilder urlBuilder = new StringBuilder("https://api.openweathermap.org/data/2.5/");
         urlBuilder.append(getAPIName()).append("?");
         if (coords.length == 2) {
             urlBuilder.append("lat=").append(coords[0]).append("&lon=").append(coords[1]);

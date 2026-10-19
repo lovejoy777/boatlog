@@ -2,6 +2,7 @@
 
     <!-- Normal app Theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -47,6 +48,7 @@
 
     <!-- Dark theme -->
     <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorPrimary">@color/darkTheme_colorPrimary</item>
         <item name="colorPrimaryDark">@color/darkTheme_colorPrimaryDark</item>
         <item name="colorAccent">@color/darkTheme_colorAccent</item>
@@ -119,7 +121,7 @@
     </style>
 
     <!-- Theme for menu Activity (transparent Statusbar)-->
-    <style name="Base.Theme.Toolbar.TransparentStatusBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.Theme.Toolbar.TransparentStatusBar" parent="AppTheme.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/night_text</item>
@@ -128,11 +130,11 @@
     </style>
 
     <!-- Main theme -->
-    <style name="Base.Theme.Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.Theme.Toolbar" parent="AppTheme.NoActionBar">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/night_text</item>
-        <item name="mcab_contentinset_start">60dp</item>
     </style>
 
     <!-- Navigation Drawer Text Sytle -->

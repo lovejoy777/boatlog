@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 
 /**
@@ -48,7 +48,7 @@ public class Splash extends AppCompatActivity {
                     Intent intent = new Intent(Splash.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     Bundle bndlanimation =
-                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                            ActivityOptions.makeCustomAnimation(Splash.this, R.anim.anni1, R.anim.anni2).toBundle();
                     startActivity(intent, bndlanimation);
                    // startActivity(intent);
                 }

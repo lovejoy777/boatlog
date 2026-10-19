@@ -21,14 +21,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +53,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.lovejoy777.boatlog.activities.AboutActivity;
 import com.lovejoy777.boatlog.activities.SettingActivity;
 
@@ -183,7 +185,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         textViewGetTime = (TextView) findViewById(R.id.textViewGetTime);
         textViewGetTimeAbbr = (TextView) findViewById(R.id.textViewGetTimeAbbr);
         imageViewAccu = (ImageView) findViewById(R.id.imageViewAccu);
-        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.card_background)));
+        if (imageViewAccu != null) {
+            imageViewAccu.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.card_background)));
+        }
 
         SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
         // SCREEN WAKELOCK
@@ -205,7 +209,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
     }
 
@@ -233,7 +239,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
             if (fromUser) {
                 seekBar.setThumb(getThumb(progress));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(seekBar.getProgress()), 500, null);
+                if (mMap != null) {
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(seekBar.getProgress()), 500, null);
+                }
             }
         }
         @Override
@@ -283,7 +291,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
     // EASYLOCATION METHODS
     protected synchronized void buildEasyLocationClient() {
-       // Toast.makeText(this, "Loading Map", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "Loading Map", Toast.LENGTH_SHORT).show();
         LocationRequest locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
@@ -310,35 +318,35 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 updateUI(location);
                 imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.light_green_500)));
             } else
-            // AMBER > 1 sec < 3
-            if (newLocationAge > INDICATOR1_INTERVAL  && newLocationAge < INDICATOR2_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
-            } else
-            // ORANGE < 4 > 3
-            if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR2_INTERVAL) {
-                updateUI(location);
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
-            } else
-            // RED > 4 < 7            LAST KNOWN LOCATION CALL
-            if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < INDICATORNOGPS_INTERVAL) {
-                updateUI(location);
-                showToast("WARNING !!!!! \nLost Satellites, now using your\nLast Known Location");
-                imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
-            } else
-                // NONE > 7              NO LOCATION
-                if (newLocationAge > INDICATORNOGPS_INTERVAL) {
-                showToast("WARNING !!!!! \nNO LOCATION FOUND");
-                textViewLat.setText("searching");
-                textViewLon.setText("for gps");
-                textViewSpeed.setText("0.0 KN");
-                textViewHeading.setText("00 T");
+                // AMBER > 1 sec < 3
+                if (newLocationAge > INDICATOR1_INTERVAL  && newLocationAge < INDICATOR2_INTERVAL) {
+                    updateUI(location);
+                    imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.amber_500)));
+                } else
+                    // ORANGE < 4 > 3
+                    if (newLocationAge < INDICATORFALLBACK_INTERVAL  && newLocationAge > INDICATOR2_INTERVAL) {
+                        updateUI(location);
+                        imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.orange_500)));
+                    } else
+                        // RED > 4 < 7            LAST KNOWN LOCATION CALL
+                        if (newLocationAge > INDICATORFALLBACK_INTERVAL && newLocationAge < INDICATORNOGPS_INTERVAL) {
+                            updateUI(location);
+                            showToast("WARNING !!!!! \nLost Satellites, now using your\nLast Known Location");
+                            imageViewAccu.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.night_text)));
+                        } else
+                            // NONE > 7              NO LOCATION
+                            if (newLocationAge > INDICATORNOGPS_INTERVAL) {
+                                showToast("WARNING !!!!! \nNO LOCATION FOUND");
+                                textViewLat.setText("searching");
+                                textViewLon.setText("for gps");
+                                textViewSpeed.setText("0.0 KN");
+                                textViewHeading.setText("00 T");
 
-                // NO INDICATOR
-                    TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorPrimary});
-                    imageViewAccu.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
-                    ta.recycle();
-            }
+                                // NO INDICATOR
+                                TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+                                imageViewAccu.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+                                ta.recycle();
+                            }
         }
     }
 
@@ -369,7 +377,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         // MOVE & POSITION THE CAMERA
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(zoomValue).bearing(heading).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        if (mMap != null) {
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
 
         // SPEED OVER GROUND
         if (location.hasSpeed()) {
@@ -505,7 +515,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         } else {
             result = Float.toString(degree);
         }
-        textViewCompass.setText("" + result + " M");
+        if (textViewCompass != null) {
+            textViewCompass.setText("" + result + " M");
+        }
     }
 
     @Override
@@ -515,17 +527,25 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setElevation(4);
-        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
-        Drawable Btn = getResources().getDrawable(R.drawable.ic_action_menu);
-        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(Btn);
-        toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
-        getSupportActionBar().setTitle("Log");
-        ta.recycle();
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setElevation(4);
+            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+            Drawable Btn = ContextCompat.getDrawable(this, R.drawable.ic_action_menu);
+            if (Btn != null) {
+                Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+                getSupportActionBar().setHomeAsUpIndicator(Btn);
+            }
+            if (toolbar != null) {
+                toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
+            }
+            getSupportActionBar().setTitle("Dashboard");
+            ta.recycle();
+        }
 
         //set NavigationDrawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -541,73 +561,88 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
             Menu menu = navigationView.getMenu();
 
             MenuItem nightSw = menu.findItem(R.id.nav_night_switch);
-            View actionViewNightSw = MenuItemCompat.getActionView(nightSw);
-
-            switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
-            switcher1.setChecked(switch1);
-            switcher1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher1.isChecked())) {
-                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
-                        SharedPreferences.Editor myPref = myPrefss.edit();
-                        myPref.putString("theme", "dark");
-                        myPref.apply();
-
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
-                        SharedPreferences.Editor myPref = myPrefss.edit();
-                        myPref.putString("theme", "fresh");
-                        myPref.apply();
-
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch1", false);
-                        myPrefse.apply();
-
-                    }
-                    // Restart app to load day/night modes
-                    Intent intent = new Intent(MainActivityLog.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    Bundle bndlanimation =
-                            ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
-                    startActivity(intent, bndlanimation);
-                    startActivity(intent);
-
-                    Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            if (nightSw != null) {
+                View actionViewNightSw = nightSw.getActionView();
+                if (actionViewNightSw == null) {
+                    actionViewNightSw = MenuItemCompat.getActionView(nightSw);
                 }
-            });
+                if (actionViewNightSw != null) {
+                    switcher1 = (SwitchCompat) actionViewNightSw.findViewById(R.id.switcher1);
+                    if (switcher1 != null) {
+                        switcher1.setChecked(switch1);
+                        switcher1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if ((switcher1.isChecked())) {
+                                    SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
+                                    SharedPreferences.Editor myPref = myPrefss.edit();
+                                    myPref.putString("theme", "dark");
+                                    myPref.apply();
+
+                                    SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                                    SharedPreferences.Editor myPrefse = myPrefs.edit();
+                                    myPrefse.putBoolean("switch1", true);
+                                    myPrefse.apply();
+                                } else {
+                                    SharedPreferences myPrefss = PreferenceManager.getDefaultSharedPreferences(MainActivityLog.this);
+                                    SharedPreferences.Editor myPref = myPrefss.edit();
+                                    myPref.putString("theme", "fresh");
+                                    myPref.apply();
+
+                                    SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                                    SharedPreferences.Editor myPrefse = myPrefs.edit();
+                                    myPrefse.putBoolean("switch1", false);
+                                    myPrefse.apply();
+
+                                }
+                                // Restart app to load day/night modes
+                                Intent intent = new Intent(MainActivityLog.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                Bundle bndlanimation =
+                                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
+                                startActivity(intent, bndlanimation);
+
+                                Snackbar.make(v, (switcher1.isChecked()) ? "Night Mode is now On" : "Night Mode is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                            }
+                        });
+                    }
+                }
+            }
 
             MenuItem screenOnSw = menu.findItem(R.id.nav_screen_on_switch);
-            View actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
-
-            switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
-            switcher2.setChecked(switch2);
-            switcher2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if ((switcher2.isChecked())) {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", true);
-                        myPrefse.apply();
-                    } else {
-                        SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                        SharedPreferences.Editor myPrefse = myPrefs.edit();
-                        myPrefse.putBoolean("switch2", false);
-                        myPrefse.apply();
-                    }
-
-
-                    Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            if (screenOnSw != null) {
+                View actionViewScreenOnSw = screenOnSw.getActionView();
+                if (actionViewScreenOnSw == null) {
+                    actionViewScreenOnSw = MenuItemCompat.getActionView(screenOnSw);
                 }
-            });
+                if (actionViewScreenOnSw != null) {
+                    switcher2 = (SwitchCompat) actionViewScreenOnSw.findViewById(R.id.switcher1);
+                    if (switcher2 != null) {
+                        switcher2.setChecked(switch2);
+                        switcher2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if ((switcher2.isChecked())) {
+                                    SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                                    SharedPreferences.Editor myPrefse = myPrefs.edit();
+                                    myPrefse.putBoolean("switch2", true);
+                                    myPrefse.apply();
+                                } else {
+                                    SharedPreferences myPrefs = MainActivityLog.this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                                    SharedPreferences.Editor myPrefse = myPrefs.edit();
+                                    myPrefse.putBoolean("switch2", false);
+                                    myPrefse.apply();
+                                }
+
+
+                                Snackbar.make(v, (switcher2.isChecked()) ? "Screen Wake is now On" : "Screen Wake is now Off", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                            }
+                        });
+                    }
+                }
+            }
 
         }
     }
@@ -617,7 +652,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
         switch (item.getItemId()) {
             case android.R.id.home:
 
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
 
                 return true;
         }
@@ -630,7 +667,9 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        mDrawerLayout.closeDrawers();
+                        if (mDrawerLayout != null) {
+                            mDrawerLayout.closeDrawers();
+                        }
                         menuItem.setChecked(false);
                         Bundle bndlanimation =
                                 ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.anni1, R.anim.anni2).toBundle();
@@ -638,8 +677,12 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                         switch (id) {
                             case R.id.nav_home:
                                 // mDrawerLayout.closeDrawers();
-                                getSupportActionBar().setElevation(0);
-                                mDrawerLayout.closeDrawers();
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar().setElevation(0);
+                                }
+                                if (mDrawerLayout != null) {
+                                    mDrawerLayout.closeDrawers();
+                                }
                                 break;
 
                             case R.id.nav_night_switch:
@@ -660,10 +703,7 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
                                 startActivity(about, bndlanimation);
                                 break;
 
-                            case R.id.nav_settings:
-                                Intent settings = new Intent(MainActivityLog.this, SettingActivity.class);
-                                startActivity(settings, bndlanimation);
-                                break;
+
 
                         }
                         return false;
@@ -691,25 +731,21 @@ public class MainActivityLog extends EasyLocationAppCompatActivity implements On
     protected void onResume() {
         super.onResume();
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
+        if (mSensorManager != null) {
+            Sensor orientationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+            if (orientationSensor != null) {
+                mSensorManager.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_GAME);
+            }
         }
-        // buildEasyLocationClient();
-        // LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_GAME);
     }
 
     /* Remove the locationlistener updates when Activity is paused */
     @Override
     protected void onPause() {
         super.onPause();
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
         }
-        // to stop the listener and save battery
-        mSensorManager.unregisterListener(this);
     }
 
     @Override

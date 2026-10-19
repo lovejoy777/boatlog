@@ -78,8 +78,12 @@ public class DashClockWeatherExtension extends DashClockExtension {
     }
 
     public static void updateDashClock(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        contentResolver.notifyChange(getUpdateUri(), null);
+        try {
+            ContentResolver contentResolver = context.getContentResolver();
+            contentResolver.notifyChange(getUpdateUri(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static Uri getUpdateUri() {

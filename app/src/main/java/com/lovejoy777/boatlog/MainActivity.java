@@ -15,21 +15,26 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
+import android.database.sqlite.SQLiteDatabase;
+import java.io.FilenameFilter;
+import java.util.Date;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
@@ -280,7 +285,7 @@ public class MainActivity extends EasyLocationAppCompatActivity {
     // TOOLBAR
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(4);
@@ -455,9 +460,12 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                             case R.id.nav_weather_lkl:
                                 break;
 
-                          case R.id.nav_drive:
-                              Intent drive = new Intent(MainActivity.this, BackupActivity.class);
-                              startActivity(drive, bndlanimation);
+                            case R.id.nav_backup:
+                                Backup();
+                                break;
+
+                            case R.id.nav_restore:
+                                getRestoreFile();
                                 break;
 
                             case R.id.nav_night_switch:
@@ -480,22 +488,6 @@ public class MainActivity extends EasyLocationAppCompatActivity {
                                 Intent settings = new Intent(MainActivity.this, SettingActivity.class);
                                 startActivity(settings, bndlanimation);
                                 break;
-
-                            case R.id.nav_backup:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-                                }
-                                Backup();
-                                break;
-
-                            case R.id.nav_restore:
-                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
-                                }
-
-                                getRestoreFile();
-                                //  return true;
-                                break;
                         }
                         return false;
                     }
@@ -503,186 +495,227 @@ public class MainActivity extends EasyLocationAppCompatActivity {
 
     }
 
-    // BACKUP
-    public void Backup() {
+    private static final int REQUEST_CODE_CREATE_BACKUP = 1001;
+    private static final int REQUEST_CODE_OPEN_BACKUP = 1002;
 
-                AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(MainActivity.this);
-        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
-        Drawable Btn = getResources().getDrawable(R.drawable.ic_save_white);
-        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
-        builder.setIcon(Btn);
-        ta.recycle();
-                builder.setTitle("Backup")
-                        .setMessage("boatlog database")
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                BackupTask();
-                            }
-                        })
-                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // cancelled by user
-                            }
-                        })
-                        .show();
-    }
-    // BACKUP
-    private void BackupTask() {
-        // Get Time and Date
-        Calendar c = Calendar.getInstance();
-        System.out.println("Current time => " + c.getTime());
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        String formattedDate = df.format(c.getTime());
-        SimpleDateFormat dt = new SimpleDateFormat("HH:mm");
-        String formattedTime = dt.format(c.getTime());
-        String fileDate = "_" + formattedDate;
-        String fileTime = "_" + formattedTime;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        final String inFileName = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-        File dbFile = new File(inFileName);
-
-        if (dbFile.exists()) {
-
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-            File dir = new File(path);
-            if (!dir.exists())
-                dir.mkdirs();
-
-            // Local database
-            InputStream input = null;
-            try {
-                input = new FileInputStream(dbFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            // Path to the external backup
-            OutputStream output = null;
-            try {
-                output = new FileOutputStream(path + "/SQLiteBoatLog" + fileDate + fileTime + ".db");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            // transfer bytes from the Input File to the Output File
-            byte[] buffer = new byte[1024];
-            int length;
-            try {
-                while ((length = input.read(buffer)) > 0) {
-                    output.write(buffer, 0, length);
-                }
-
-                output.flush();
-                output.close();
-                input.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Toast.makeText(MainActivity.this, "backup completed", Toast.LENGTH_SHORT).show();
-
-        } else {
-            Toast.makeText(MainActivity.this, "No database to backup?", Toast.LENGTH_SHORT).show();
+        if (resultCode != RESULT_OK || data == null || data.getData() == null) {
+            return;
         }
 
+        Uri uri = data.getData();
+
+        if (requestCode == REQUEST_CODE_CREATE_BACKUP) {
+            performBackupToUri(uri);
+        } else if (requestCode == REQUEST_CODE_OPEN_BACKUP) {
+            performRestoreFromUri(uri);
+        }
+    }
+
+    private void performBackupToUri(Uri targetUri) {
+        try {
+            BoatLogDBHelper dbHelper = new BoatLogDBHelper(this);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+
+            File dbFile = getDatabasePath("SQLiteBoatLog.db");
+            if (!dbFile.exists()) {
+                Toast.makeText(this, "No database found to backup!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try (InputStream in = new FileInputStream(dbFile);
+                 OutputStream out = getContentResolver().openOutputStream(targetUri)) {
+                if (out == null) {
+                    throw new IOException("Cannot open output stream for URI: " + targetUri);
+                }
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+                out.flush();
+            }
+
+            Toast.makeText(this, "Backup Saved Successfully!", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error backing up database", e);
+            Toast.makeText(this, "Backup Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void performRestoreFromUri(Uri sourceUri) {
+        try {
+            BoatLogDBHelper dbHelper = new BoatLogDBHelper(this);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+
+            File dbFile = getDatabasePath("SQLiteBoatLog.db");
+            File dbWal = new File(dbFile.getPath() + "-wal");
+            File dbShm = new File(dbFile.getPath() + "-shm");
+
+            if (dbWal.exists()) dbWal.delete();
+            if (dbShm.exists()) dbShm.delete();
+
+            try (InputStream in = getContentResolver().openInputStream(sourceUri);
+                 OutputStream out = new FileOutputStream(dbFile)) {
+                if (in == null) {
+                    throw new IOException("Cannot open input stream for URI: " + sourceUri);
+                }
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+                out.flush();
+            }
+
+            Toast.makeText(this, "Database Restored Successfully!", Toast.LENGTH_LONG).show();
+
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error restoring database", e);
+            Toast.makeText(this, "Restore Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void startDriveBackupPicker() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String dateStr = df.format(new Date());
+        intent.putExtra(Intent.EXTRA_TITLE, "BoatLog_Backup_" + dateStr + ".db");
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            File backupDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog/backups");
+            if (backupDir.exists()) {
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.fromFile(backupDir));
+            }
+        }
+
+        try {
+            startActivityForResult(intent, REQUEST_CODE_CREATE_BACKUP);
+        } catch (Exception e) {
+            Log.e("MainActivity", "File picker unavailable", e);
+            Toast.makeText(this, "Unable to open File Picker: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void startDriveRestorePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            File backupDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog/backups");
+            if (backupDir.exists()) {
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.fromFile(backupDir));
+            }
+        }
+
+        try {
+            startActivityForResult(intent, REQUEST_CODE_OPEN_BACKUP);
+        } catch (Exception e) {
+            Log.e("MainActivity", "File picker unavailable", e);
+            Toast.makeText(this, "Unable to open File Picker: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // BACKUP
+    public void Backup() {
+        startDriveBackupPicker();
     }
 
     private void getRestoreFile() {
-        File dir = new File(Environment.getExternalStorageDirectory() + Directory);
-        mFileList = dir.list();
+        File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog/backups");
+        if (!dir.exists()) {
+            dir = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "backups");
+        }
 
-        AlertDialog.Builder builder;
-            builder = new AlertDialog.Builder(MainActivity.this);
+        mFileList = dir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File d, String name) {
+                return name != null && name.toLowerCase(Locale.US).endsWith(".db");
+            }
+        });
+
+        if (mFileList != null && mFileList.length > 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
             Drawable Btn = getResources().getDrawable(R.drawable.ic_restore);
             Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
             builder.setIcon(Btn);
-        ta.recycle();
-        builder.setTitle("      Select a File to Restore");
-            if (mFileList == null) {
-                builder.create();
-            }
+            ta.recycle();
+            builder.setTitle("Select a File to Restore");
             builder.setItems(mFileList, new DialogInterface.OnClickListener() {
-
                 public void onClick(DialogInterface dialog, int which) {
                     String mChosenFile = mFileList[which];
                     RestoreDialog(mChosenFile);
                 }
             });
             builder.show();
-
+        } else {
+            startDriveRestorePicker();
+        }
     }
 
     // RESTORE
     private void RestoreDialog(final String dbFileName) {
-        AlertDialog.Builder builder;
-
-            builder = new AlertDialog.Builder(MainActivity.this);
-            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
-            Drawable Btn = getResources().getDrawable(R.drawable.ic_restore);
-            Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
-            builder.setIcon(Btn);
-            ta.recycle();
-            builder.setTitle("Restore")
-            .setMessage(dbFileName)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            RestoreTask(dbFileName);
-                        }
-                    })
-                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // cancelled by user
-                        }
-                    })
-                    .show();
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorTextPrimary});
+        Drawable Btn = getResources().getDrawable(R.drawable.ic_restore);
+        Btn.setColorFilter(ta.getColor(0, Color.WHITE), PorterDuff.Mode.SRC_ATOP);
+        builder.setIcon(Btn);
+        ta.recycle();
+        builder.setTitle("Restore")
+                .setMessage(dbFileName)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        RestoreTask(dbFileName);
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // cancelled by user
+                    }
+                })
+                .show();
     }
 
     private void RestoreTask(final String dbFileName) {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/boatLog/backups";
-        File dir = new File(path);
-        if (!dir.exists())
-            dir.mkdirs();
-        File dbOutFile = new File("/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db");
-        File dbFile = new File(path + "/" + dbFileName);
-        String outFilePath = "/data/data/com.lovejoy777.boatlog/databases/SQLiteBoatLog.db";
-        if (dbOutFile.exists()) {
-            if (dbFile.exists()) {
-                // Local database
-                InputStream input = null;
-                try {
-                    input = new FileInputStream(path + "/" + dbFileName);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // Path to the external backup
-                OutputStream output = null;
-                try {
-                    output = new FileOutputStream(outFilePath);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                // transfer bytes from the Input File to the Output File
-                byte[] buffer = new byte[1024];
+        File backupDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "boatLog/backups");
+        File backupFile = new File(backupDir, dbFileName);
+        if (!backupFile.exists()) {
+            backupDir = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "backups");
+            backupFile = new File(backupDir, dbFileName);
+        }
+
+        File dbFile = getDatabasePath("SQLiteBoatLog.db");
+
+        if (backupFile.exists()) {
+            try (InputStream input = new FileInputStream(backupFile);
+                 OutputStream output = new FileOutputStream(dbFile)) {
+                byte[] buffer = new byte[4096];
                 int length;
-                try {
-                    while ((length = input.read(buffer)) > 0) {
-                        output.write(buffer, 0, length);
-                    }
-                    output.flush();
-                    output.close();
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while ((length = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, length);
                 }
-                Toast.makeText(MainActivity.this, "restore completed", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "nothing to restore", Toast.LENGTH_SHORT).show();
+                output.flush();
+                Toast.makeText(MainActivity.this, "Restore completed", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Log.e("MainActivity", "Restore error", e);
+                Toast.makeText(MainActivity.this, "Restore failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(MainActivity.this, "Please make at least one entry before restoring a backup", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Backup file not found", Toast.LENGTH_SHORT).show();
         }
     }
 

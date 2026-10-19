@@ -2,7 +2,7 @@ package com.lovejoy777.boatlog.util;
 
 import android.app.Activity;
 import android.content.IntentSender;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 

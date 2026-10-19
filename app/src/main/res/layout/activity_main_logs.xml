@@ -1,302 +1,305 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="?attr/colorBackground"
     android:fitsSystemWindows="true">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorBackground"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <ImageView
-            android:id="@+id/imageViewAccu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_gps_fixed"
-            android:tint="@color/night_text"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp" />
-
-        <TextView
-            android:id="@+id/textViewGetTimeAbbr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="nil"
-            android:textSize="8sp"
-            android:textColor="?attr/colorLightTextPrimary"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"/>
-
-        <TextView
-            android:id="@+id/textViewGetTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="nil"
-            android:textSize="12sp"
-            android:textColor="?attr/colorLightTextPrimary"
-            android:layout_gravity="end"/>
-
-    </android.support.v7.widget.Toolbar>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/MLL1"
-    android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:orientation="horizontal"
-    android:layout_below="@+id/toolbar"
-    android:baselineAligned="false">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_weight="1">
-
-        <RelativeLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="56dp"
+            android:minHeight="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-            <TextView
-                android:id="@+id/textViewPos"
+
+            <ImageView
+                android:id="@+id/imageViewAccu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Current Location"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:textStyle="italic"
-                android:typeface="serif"
-                android:textColor="?attr/colorTextPrimary"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/textViewLat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No GPS Lat"
-            android:gravity="center_vertical"
-            android:textSize="20sp"
-            android:textColor="?attr/colorTextPrimary"
-            android:layout_gravity="center_vertical"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_gps_fixed"
+                app:tint="@color/night_text"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp" />
 
             <TextView
-                android:id="@+id/textViewLon"
+                android:id="@+id/textViewGetTimeAbbr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No GPS Long"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                android:textColor="?attr/colorTextPrimary"
-                android:layout_below="@id/textViewLat"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                android:text="nil"
+                android:textSize="8sp"
+                android:textColor="?attr/colorLightTextPrimary"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"/>
+
+            <TextView
+                android:id="@+id/textViewGetTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="nil"
+                android:textSize="12sp"
+                android:textColor="?attr/colorLightTextPrimary"
+                android:layout_gravity="end"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/MLL1"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:layout_below="@+id/toolbar"
+            android:baselineAligned="false">
 
             <LinearLayout
-                android:id="@+id/LLG3"
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="?attr/colorDivider"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true">
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textViewPos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Location"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        android:typeface="serif"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewLat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No GPS Lat"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:id="@+id/textViewLon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No GPS Long"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_below="@id/textViewLat"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <LinearLayout
+                        android:id="@+id/LLG3"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="?attr/colorDivider"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true">
+                    </LinearLayout>
+
+                </RelativeLayout>
+
             </LinearLayout>
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LLG1"
-        android:orientation="horizontal"
-        android:layout_width="2dp"
-        android:layout_height="80dp"
-        android:background="?attr/colorDivider">
-        </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:layout_weight="1">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textViewSped"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Speed Over Ground"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:textStyle="italic"
-                android:typeface="serif"
-                android:textColor="?attr/colorTextPrimary"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"/>
-
-            <TextView
-                android:id="@+id/textViewSpeed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No GPS"
-                android:gravity="center_vertical"
-                android:textSize="20sp"
-                android:textColor="?attr/colorTextPrimary"
-                android:layout_gravity="center_vertical"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
 
             <LinearLayout
-                android:id="@+id/LLG4"
+                android:id="@+id/LLG1"
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="?attr/colorDivider"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true">
+                android:layout_width="2dp"
+                android:layout_height="80dp"
+                android:background="?attr/colorDivider">
             </LinearLayout>
 
-        </RelativeLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1">
 
-    </LinearLayout>
-
-</LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/MLL2"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:layout_below="@+id/MLL1"
-        android:baselineAligned="false">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="0.9">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textViewHead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Track Over Ground"
-                    android:gravity="center_vertical"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:typeface="serif"
-                    android:textColor="?attr/colorTextPrimary"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:id="@+id/textViewHeading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No Heading"
-                    android:gravity="center_vertical"
-                    android:textSize="20sp"
-                    android:textColor="?attr/colorTextPrimary"
-                    android:layout_gravity="center_vertical"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true" />
-
-                <LinearLayout
-                    android:id="@+id/LLG5"
-                    android:orientation="horizontal"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="?attr/colorDivider"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true">
-                </LinearLayout>
+                    android:layout_height="match_parent">
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/textViewSped"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Speed Over Ground"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        android:typeface="serif"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No GPS"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <LinearLayout
+                        android:id="@+id/LLG4"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="?attr/colorDivider"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true">
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/LLG2"
-            android:orientation="horizontal"
-            android:layout_width="2dp"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/MLL2"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:background="?attr/colorDivider">
-        </LinearLayout>
-
-        <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="0.9">
+            android:layout_below="@+id/MLL1"
+            android:baselineAligned="false">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="0.9">
 
-                <TextView
-                    android:id="@+id/textViewComp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Compass"
-                    android:gravity="center_vertical"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:typeface="serif"
-                    android:textColor="?attr/colorTextPrimary"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="8dp"/>
-
-                <TextView
-                    android:id="@+id/textViewCompass"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No Compass"
-                    android:gravity="center_vertical"
-                    android:textSize="20sp"
-                    android:textColor="?attr/colorTextPrimary"
-                    android:layout_gravity="center_vertical"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true" />
-
-                <LinearLayout
-                    android:id="@+id/LLG6"
-                    android:orientation="horizontal"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="?attr/colorDivider"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true">
-                </LinearLayout>
+                    android:layout_height="match_parent">
 
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/textViewHead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Track Over Ground"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        android:typeface="serif"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewHeading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Heading"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <LinearLayout
+                        android:id="@+id/LLG5"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="?attr/colorDivider"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true">
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLG2"
+                android:orientation="horizontal"
+                android:layout_width="2dp"
+                android:layout_height="80dp"
+                android:background="?attr/colorDivider">
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="0.9">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textViewComp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Compass"
+                        android:gravity="center_vertical"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        android:typeface="serif"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewCompass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Compass"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:textColor="?attr/colorTextPrimary"
+                        android:layout_gravity="center_vertical"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true" />
+
+                    <LinearLayout
+                        android:id="@+id/LLG6"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="?attr/colorDivider"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true">
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/MLL3"
@@ -338,13 +341,13 @@
                     android:layout_marginBottom="18dp"
                     android:max="20"/>
 
-                            </RelativeLayout>
+            </RelativeLayout>
 
-                        </LinearLayout>
+        </LinearLayout>
 
-                    </RelativeLayout>
+    </RelativeLayout>
 
-    <android.support.design.widget.NavigationView
+    <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_height="match_parent"
         android:layout_width="wrap_content"
@@ -353,4 +356,4 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_log" />
 
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

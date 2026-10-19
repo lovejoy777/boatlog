@@ -1,23 +1,39 @@
 package com.lovejoy777.boatlog.activities;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
+
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.view.View;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.lovejoy777.boatlog.AlarmReceiver;
+import com.lovejoy777.boatlog.MainActivity;
+import com.lovejoy777.boatlog.MainActivityLog;
 import com.lovejoy777.boatlog.R;
 
 import java.text.SimpleDateFormat;
@@ -25,47 +41,74 @@ import java.util.Date;
 
 public class SettingActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+
+    int theme;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(getTheme(prefs1.getString("theme", "fresh")));
+        setTheme(theme = getCustomTheme(prefs1.getString("theme", "fresh")));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(R.string.action_settings);
-        }
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        loadToolbarNavDrawer();
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(R.id.content_frame, new SettingsPreferenceFragment())
                     .commit();
         }
     }
 
-    public static class SettingsPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-        Date SAMPLE_DATE = new Date(1452805200000l);
+    private void loadToolbarNavDrawer() {
+
+        //set Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar5);
+
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_action_bak);
+            setSupportActionBar(toolbar);
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setElevation(4);
+            TypedArray ta = obtainStyledAttributes(new int[]{R.attr.colorLightTextPrimary});
+
+            if (toolbar != null) {
+                toolbar.setTitleTextColor(ta.getColor(0, Color.WHITE));
+            }
+
+            getSupportActionBar().setTitle("Weather Settings");
+            ta.recycle();
+        }
+    }
+
+
+    public static class SettingsPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+        Date SAMPLE_DATE = new Date(1452805200000L);
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.prefs);
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.prefs, rootKey);
             updateDateFormatList();
         }
 
         @Override
         public void onResume() {
             super.onResume();
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+            if (getPreferenceManager() != null && getPreferenceManager().getSharedPreferences() != null) {
+                getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+            }
             setListPreferenceSummary("unit");
             setListPreferenceSummary("lengthUnit");
             setListPreferenceSummary("speedUnit");
@@ -78,11 +121,14 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
         @Override
         public void onPause() {
             super.onPause();
-            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+            if (getPreferenceManager() != null && getPreferenceManager().getSharedPreferences() != null) {
+                getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+            }
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key == null) return;
             switch (key) {
                 case "unit":
                 case "lengthUnit":
@@ -103,30 +149,32 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
         }
 
         private void setListPreferenceSummary(String preferenceKey) {
-            ListPreference preference = (ListPreference) findPreference(preferenceKey);
+            ListPreference preference = findPreference(preferenceKey);
             if (preference != null && preference.getEntry() != null) {
                 preference.setSummary(preference.getEntry());
             }
         }
 
         private void setCustomDateEnabled() {
-            SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-            Preference customDatePref = findPreference("dateFormatCustom");
-            if (customDatePref != null) {
+            SharedPreferences sp = getPreferenceManager() != null ? getPreferenceManager().getSharedPreferences() : null;
+            EditTextPreference customDatePref = findPreference("dateFormatCustom");
+            if (customDatePref != null && sp != null) {
                 customDatePref.setEnabled("custom".equals(sp.getString("dateFormat", "")));
             }
         }
 
         private void updateDateFormatList() {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            if (!isAdded()) return;
+            SharedPreferences sp = getPreferenceManager() != null ? getPreferenceManager().getSharedPreferences() : null;
+            if (sp == null) return;
             Resources res = getResources();
 
-            ListPreference dateFormatPref = (ListPreference) findPreference("dateFormat");
+            ListPreference dateFormatPref = findPreference("dateFormat");
             if (dateFormatPref == null) return;
             String[] dateFormatsValues = res.getStringArray(R.array.dateFormatsValues);
             String[] dateFormatsEntries = new String[dateFormatsValues.length];
 
-            EditTextPreference customDateFormatPref = (EditTextPreference) findPreference("dateFormatCustom");
+            EditTextPreference customDateFormatPref = findPreference("dateFormatCustom");
             if (customDateFormatPref != null) {
                 customDateFormatPref.setDefaultValue(dateFormatsValues[0]);
             }
@@ -146,8 +194,12 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
                             res.getString(R.string.setting_dateFormatCustom),
                             renderedCustom);
                 } else {
-                    sdformat.applyPattern(value);
-                    dateFormatsEntries[i] = sdformat.format(SAMPLE_DATE);
+                    try {
+                        sdformat.applyPattern(value);
+                        dateFormatsEntries[i] = sdformat.format(SAMPLE_DATE);
+                    } catch (IllegalArgumentException e) {
+                        dateFormatsEntries[i] = value;
+                    }
                 }
             }
 
@@ -172,6 +224,7 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key == null) return;
         switch (key) {
             case "refreshInterval":
                 AlarmReceiver.setRecurringAlarm(this);
@@ -199,18 +252,16 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
 
     private void checkKey(String key) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getString(key, "").equals("")) {
+        if (sp.getString(key, "").isEmpty()) {
             sp.edit().remove(key).apply();
         }
     }
 
-    private int getTheme(String themePref) {
-        switch (themePref) {
-            case "dark":
-                return R.style.AppTheme_NoActionBar_Dark;
-            default:
-                return R.style.Base_Theme_Toolbar;
+    private int getCustomTheme(String themePref) {
+        if ("dark".equals(themePref)) {
+            return R.style.AppTheme_NoActionBar_Dark;
         }
+        return R.style.AppTheme_NoActionBar;
     }
 
     @Override
@@ -219,3 +270,4 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
         overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }
+

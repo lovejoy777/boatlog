@@ -57,19 +57,19 @@ public class Weather {
         return direction % numberOfDirections;
     }
 
-    private String city;
-    private String country;
+    private String city = "";
+    private String country = "";
     private Date date;
-    private String temperature;
-    private String description;
-    private String wind;
+    private String temperature = "0";
+    private String description = "";
+    private String wind = "0";
     private Double windDirectionDegree;
-    private String pressure;
-    private String humidity;
-    private String rain;
-    private String id;
-    private String icon;
-    private String lastUpdated;
+    private String pressure = "0";
+    private String humidity = "0";
+    private String rain = "0";
+    private String id = "800";
+    private String icon = "";
+    private String lastUpdated = "";
     private Date sunrise;
     private Date sunset;
 
@@ -186,7 +186,7 @@ public class Weather {
         catch (Exception e) {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             try {
-                setSunrise(inputFormat.parse(dateString));
+                setSunset(inputFormat.parse(dateString));
             }
             catch (ParseException e2) {
                 setSunset(new Date()); // make the error somewhat obvious

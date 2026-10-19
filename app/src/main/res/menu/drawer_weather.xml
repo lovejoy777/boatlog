@@ -37,13 +37,14 @@
     <item android:title="General">
         <menu>
             <item
-                android:id="@+id/action_about"
-                android:icon="@drawable/ic_help_outline_white_24dp"
-                android:title="@string/action_about" />
-            <item
                 android:id="@+id/action_settings"
                 android:icon="@drawable/ic_settings_white_24dp"
                 android:title="Weather Settings" />
+
+            <item
+                android:id="@+id/action_about"
+                android:icon="@drawable/ic_help_outline_white_24dp"
+                android:title="@string/action_about" />
         </menu>
     </item>
 

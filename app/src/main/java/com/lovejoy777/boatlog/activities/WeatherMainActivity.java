@@ -21,17 +21,17 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -286,7 +286,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 "</style>" +
                 about;
         webView.setBackgroundColor(Color.TRANSPARENT);
-        webView.loadData(about, "text/html", "UTF-8");
+        webView.loadDataWithBaseURL(null, about, "text/html", "UTF-8", null);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -358,41 +358,60 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
             JSONObject reader = new JSONObject(result);
 
             final String code = reader.optString("cod");
-            if ("404".equals(code)) {
+            if ("404".equals(code) || 404 == reader.optInt("cod")) {
+                return ParseResult.CITY_NOT_FOUND;
+            }
+            if ("401".equals(code) || 401 == reader.optInt("cod")) {
+                Log.e("parseTodayJson", "401 Unauthorized API Key");
                 return ParseResult.CITY_NOT_FOUND;
             }
 
-            String city = reader.getString("name");
+            String city = reader.optString("name", "");
             String country = "";
             JSONObject countryObj = reader.optJSONObject("sys");
             if (countryObj != null) {
-                country = countryObj.getString("country");
-                todayWeather.setSunrise(countryObj.getString("sunrise"));
-                todayWeather.setSunset(countryObj.getString("sunset"));
+                country = countryObj.optString("country", "");
+                if (countryObj.has("sunrise")) {
+                    todayWeather.setSunrise(countryObj.optString("sunrise"));
+                }
+                if (countryObj.has("sunset")) {
+                    todayWeather.setSunset(countryObj.optString("sunset"));
+                }
             }
             todayWeather.setCity(city);
             todayWeather.setCountry(country);
 
-            JSONObject coordinates = reader.getJSONObject("coord");
+            JSONObject coordinates = reader.optJSONObject("coord");
             if (coordinates != null) {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-                sp.edit().putFloat("latitude", (float) coordinates.getDouble("lon")).putFloat("longitude", (float) coordinates.getDouble("lat")).apply();
+                sp.edit().putFloat("latitude", (float) coordinates.optDouble("lat", 0.0)).putFloat("longitude", (float) coordinates.optDouble("lon", 0.0)).apply();
             }
 
-            JSONObject main = reader.getJSONObject("main");
-
-            todayWeather.setTemperature(main.getString("temp"));
-            todayWeather.setDescription(reader.getJSONArray("weather").getJSONObject(0).getString("description"));
-            JSONObject windObj = reader.getJSONObject("wind");
-            todayWeather.setWind(windObj.getString("speed"));
-            if (windObj.has("deg")) {
-                todayWeather.setWindDirectionDegree(windObj.getDouble("deg"));
-            } else {
-                Log.e("parseTodayJson", "No wind direction available");
-                todayWeather.setWindDirectionDegree(null);
+            JSONObject main = reader.optJSONObject("main");
+            if (main != null) {
+                todayWeather.setTemperature(main.optString("temp", "0"));
+                todayWeather.setPressure(main.optString("pressure", "1013"));
+                todayWeather.setHumidity(main.optString("humidity", "0"));
             }
-            todayWeather.setPressure(main.getString("pressure"));
-            todayWeather.setHumidity(main.getString("humidity"));
+
+            JSONArray weatherArray = reader.optJSONArray("weather");
+            if (weatherArray != null && weatherArray.length() > 0) {
+                JSONObject weatherObj = weatherArray.getJSONObject(0);
+                todayWeather.setDescription(weatherObj.optString("description", ""));
+                final String idString = weatherObj.optString("id", "800");
+                todayWeather.setId(idString);
+                todayWeather.setIcon(setWeatherIcon(Integer.parseInt(idString), Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
+            }
+
+            JSONObject windObj = reader.optJSONObject("wind");
+            if (windObj != null) {
+                todayWeather.setWind(windObj.optString("speed", "0"));
+                if (windObj.has("deg")) {
+                    todayWeather.setWindDirectionDegree(windObj.optDouble("deg", 0.0));
+                } else {
+                    todayWeather.setWindDirectionDegree(null);
+                }
+            }
 
             JSONObject rainObj = reader.optJSONObject("rain");
             String rain;
@@ -408,17 +427,12 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
             }
             todayWeather.setRain(rain);
 
-            final String idString = reader.getJSONArray("weather").getJSONObject(0).getString("id");
-            todayWeather.setId(idString);
-            todayWeather.setIcon(setWeatherIcon(Integer.parseInt(idString), Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
-
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherMainActivity.this).edit();
             editor.putString("lastToday", result);
             editor.apply();
 
         } catch (JSONException e) {
-            Log.e("JSONException Data", result);
-            e.printStackTrace();
+            Log.e("JSONException Data", result, e);
             return ParseResult.JSON_EXCEPTION;
         }
 
@@ -427,62 +441,98 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
     private void updateTodayWeatherUI() {
         try {
-            if (todayWeather.getCountry().isEmpty()) {
-                preloadWeather();
-                return;
+            if (todayWeather == null) return;
+
+            String city = todayWeather.getCity() != null ? todayWeather.getCity() : "";
+            String country = todayWeather.getCountry() != null ? todayWeather.getCountry() : "";
+            if (getSupportActionBar() != null) {
+                if (!city.isEmpty()) {
+                    getSupportActionBar().setTitle(city + (country.isEmpty() ? "" : ", " + country));
+                }
+            }
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(WeatherMainActivity.this);
+
+            // Temperature
+            if (todayWeather.getTemperature() != null) {
+                try {
+                    float temperature = UnitConvertor.convertTemperature(Float.parseFloat(todayWeather.getTemperature()), sp);
+                    if (sp.getBoolean("temperatureInteger", false)) {
+                        temperature = Math.round(temperature);
+                    }
+                    todayTemperature.setText(new DecimalFormat("0.#").format(temperature) + " " + sp.getString("unit", "°C"));
+                } catch (Exception e) {
+                    todayTemperature.setText("0 " + sp.getString("unit", "°C"));
+                }
+            }
+
+            // Rain
+            String rainVal = todayWeather.getRain() != null ? todayWeather.getRain() : "0";
+            double rain = 0;
+            try {
+                rain = Double.parseDouble(rainVal);
+            } catch (Exception e) {
+                rain = 0;
+            }
+            String rainString = UnitConvertor.getRainString(rain, sp);
+
+            // Wind
+            double wind = 0;
+            if (todayWeather.getWind() != null) {
+                try {
+                    wind = Double.parseDouble(todayWeather.getWind());
+                } catch (Exception e) {
+                    wind = 0;
+                }
+            }
+            wind = UnitConvertor.convertWind(wind, sp);
+
+            // Pressure
+            if (todayWeather.getPressure() != null) {
+                try {
+                    double pressure = UnitConvertor.convertPressure((float) Double.parseDouble(todayWeather.getPressure()), sp);
+                    todayPressure.setText(getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
+                            localize(sp, "pressureUnit", "hPa"));
+                } catch (Exception e) {
+                    todayPressure.setText(getString(R.string.pressure) + ": 0 " + localize(sp, "pressureUnit", "hPa"));
+                }
+            }
+
+            // Description
+            if (todayWeather.getDescription() != null && !todayWeather.getDescription().isEmpty()) {
+                String desc = todayWeather.getDescription();
+                todayDescription.setText(desc.substring(0, 1).toUpperCase() + desc.substring(1) + rainString);
+            } else {
+                todayDescription.setText("No data" + rainString);
+            }
+
+            if (sp.getString("speedUnit", "m/s").equals("bft")) {
+                todayWind.setText(getString(R.string.wind) + ": " +
+                        UnitConvertor.getBeaufortName((int) wind) +
+                        (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
+            } else {
+                todayWind.setText(getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
+                        localize(sp, "speedUnit", "m/s") +
+                        (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
+            }
+
+            if (todayWeather.getHumidity() != null) {
+                todayHumidity.setText(getString(R.string.humidity) + ": " + todayWeather.getHumidity() + " %");
+            }
+
+            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext());
+            if (todayWeather.getSunrise() != null) {
+                todaySunrise.setText(getString(R.string.sunrise) + ": " + timeFormat.format(todayWeather.getSunrise()));
+            }
+            if (todayWeather.getSunset() != null) {
+                todaySunset.setText(getString(R.string.sunset) + ": " + timeFormat.format(todayWeather.getSunset()));
+            }
+            if (todayWeather.getIcon() != null) {
+                todayIcon.setText(todayWeather.getIcon());
             }
         } catch (Exception e) {
-            preloadWeather();
-            return;
+            Log.e("WeatherMainActivity", "Error in updateTodayWeatherUI", e);
         }
-        String city = todayWeather.getCity();
-        String country = todayWeather.getCountry();
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext());
-        getSupportActionBar().setTitle(city + (country.isEmpty() ? "" : ", " + country));
-
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(WeatherMainActivity.this);
-
-        // Temperature
-        float temperature = UnitConvertor.convertTemperature(Float.parseFloat(todayWeather.getTemperature()), sp);
-        if (sp.getBoolean("temperatureInteger", false)) {
-            temperature = Math.round(temperature);
-        }
-
-        // Rain
-        double rain = Double.parseDouble(todayWeather.getRain());
-        String rainString = UnitConvertor.getRainString(rain, sp);
-
-        // Wind
-        double wind;
-        try {
-            wind = Double.parseDouble(todayWeather.getWind());
-        } catch (Exception e) {
-            e.printStackTrace();
-            wind = 0;
-        }
-        wind = UnitConvertor.convertWind(wind, sp);
-
-        // Pressure
-        double pressure = UnitConvertor.convertPressure((float) Double.parseDouble(todayWeather.getPressure()), sp);
-
-        todayTemperature.setText(new DecimalFormat("0.#").format(temperature) + " " + sp.getString("unit", "°C"));
-        todayDescription.setText(todayWeather.getDescription().substring(0, 1).toUpperCase() +
-                todayWeather.getDescription().substring(1) + rainString);
-        if (sp.getString("speedUnit", "m/s").equals("bft")) {
-            todayWind.setText(getString(R.string.wind) + ": " +
-                    UnitConvertor.getBeaufortName((int) wind) +
-                    (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
-        } else {
-            todayWind.setText(getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
-                    localize(sp, "speedUnit", "m/s") +
-                    (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
-        }
-        todayPressure.setText(getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
-                localize(sp, "pressureUnit", "hPa"));
-        todayHumidity.setText(getString(R.string.humidity) + ": " + todayWeather.getHumidity() + " %");
-        todaySunrise.setText(getString(R.string.sunrise) + ": " + timeFormat.format(todayWeather.getSunrise()));
-        todaySunset.setText(getString(R.string.sunset) + ": " + timeFormat.format(todayWeather.getSunset()));
-        todayIcon.setText(todayWeather.getIcon());
     }
 
     public ParseResult parseLongTermJson(String result) {
@@ -491,7 +541,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
             JSONObject reader = new JSONObject(result);
 
             final String code = reader.optString("cod");
-            if ("404".equals(code)) {
+            if ("404".equals(code) || 404 == reader.optInt("cod")) {
                 if (longTermWeather == null) {
                     longTermWeather = new ArrayList<>();
                     longTermTodayWeather = new ArrayList<>();
@@ -499,28 +549,51 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 }
                 return ParseResult.CITY_NOT_FOUND;
             }
+            if ("401".equals(code) || 401 == reader.optInt("cod")) {
+                Log.e("parseLongTermJson", "401 Unauthorized API Key");
+                return ParseResult.CITY_NOT_FOUND;
+            }
 
             longTermWeather = new ArrayList<>();
             longTermTodayWeather = new ArrayList<>();
             longTermTomorrowWeather = new ArrayList<>();
 
-            JSONArray list = reader.getJSONArray("list");
+            JSONArray list = reader.optJSONArray("list");
+            if (list == null) {
+                return ParseResult.JSON_EXCEPTION;
+            }
             for (i = 0; i < list.length(); i++) {
                 Weather weather = new Weather();
 
                 JSONObject listItem = list.getJSONObject(i);
-                JSONObject main = listItem.getJSONObject("main");
+                JSONObject main = listItem.optJSONObject("main");
 
-                weather.setDate(listItem.getString("dt"));
-                weather.setTemperature(main.getString("temp"));
-                weather.setDescription(listItem.optJSONArray("weather").getJSONObject(0).getString("description"));
+                weather.setDate(listItem.optString("dt", "0"));
+                if (main != null) {
+                    weather.setTemperature(main.optString("temp", "0"));
+                    weather.setPressure(main.optString("pressure", "1013"));
+                    weather.setHumidity(main.optString("humidity", "0"));
+                }
+
+                JSONArray weatherArray = listItem.optJSONArray("weather");
+                if (weatherArray != null && weatherArray.length() > 0) {
+                    JSONObject weatherObj = weatherArray.getJSONObject(0);
+                    weather.setDescription(weatherObj.optString("description", ""));
+                    final String idString = weatherObj.optString("id", "800");
+                    weather.setId(idString);
+                    final String dateMsString = listItem.optString("dt", "0") + "000";
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTimeInMillis(Long.parseLong(dateMsString));
+                    weather.setIcon(setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
+                }
+
                 JSONObject windObj = listItem.optJSONObject("wind");
                 if (windObj != null) {
-                    weather.setWind(windObj.getString("speed"));
-                    weather.setWindDirectionDegree(windObj.getDouble("deg"));
+                    weather.setWind(windObj.optString("speed", "0"));
+                    if (windObj.has("deg")) {
+                        weather.setWindDirectionDegree(windObj.optDouble("deg", 0.0));
+                    }
                 }
-                weather.setPressure(main.getString("pressure"));
-                weather.setHumidity(main.getString("humidity"));
 
                 JSONObject rainObj = listItem.optJSONObject("rain");
                 String rain = "";
@@ -536,13 +609,9 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                 }
                 weather.setRain(rain);
 
-                final String idString = listItem.optJSONArray("weather").getJSONObject(0).getString("id");
-                weather.setId(idString);
-
-                final String dateMsString = listItem.getString("dt") + "000";
+                final String dateMsString = listItem.optString("dt", "0") + "000";
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(dateMsString));
-                weather.setIcon(setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
 
                 Calendar today = Calendar.getInstance();
 
@@ -561,8 +630,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
             editor.putString("lastLongterm", result);
             editor.apply();
         } catch (JSONException e) {
-            Log.e("JSONException Data", result);
-            e.printStackTrace();
+            Log.e("JSONException Data", result, e);
             return ParseResult.JSON_EXCEPTION;
         }
 
@@ -755,6 +823,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -942,7 +1011,7 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
 
     private void loadToolbarNavDrawer() {
         //set Toolbar
-        final android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setElevation(2);
@@ -1008,20 +1077,23 @@ public class WeatherMainActivity extends AppCompatActivity implements LocationLi
                                     Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
                                 }
                                 break;
-                            case R.id.action_map:
-                                Intent intentMap = new Intent(WeatherMainActivity.this, MapActivity.class);
-                                startActivity(intentMap, bndlanimation);
+
+                            case R.id.action_location:
+                                getCityByLocation();
+
                                 break;
                             case R.id.action_graphs:
                                 Intent intentGraph = new Intent(WeatherMainActivity.this, GraphActivity.class);
                                 startActivity(intentGraph, bndlanimation);
                                 break;
+                            case R.id.action_map:
+                                Intent intentMap = new Intent(WeatherMainActivity.this, MapActivity.class);
+                                startActivity(intentMap, bndlanimation);
+                                break;
                             case R.id.action_search:
                                 searchCities();
                                 break;
-                            case R.id.action_location:
-                                getCityByLocation();
-                                break;
+
                             case R.id.action_settings:
                                 Intent intentSetting = new Intent(WeatherMainActivity.this, SettingActivity.class);
                                 startActivity(intentSetting, bndlanimation);

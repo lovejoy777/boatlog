@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -104,7 +105,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 String language = Locale.getDefault().getLanguage();
                 if(language.equals("cs")) { language = "cz"; }
                 String apiKey = sp.getString("apiKey", context.getResources().getString(R.string.apiKey));
-                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=" + URLEncoder.encode(sp.getString("city", Constants.DEFAULT_CITY), "UTF-8") + "&lang="+ language +"&appid=" + apiKey);
+                URL url = new URL("https://api.openweathermap.org/data/2.5/weather?q=" + URLEncoder.encode(sp.getString("city", Constants.DEFAULT_CITY), "UTF-8") + "&lang="+ language +"&appid=" + apiKey);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
@@ -148,7 +149,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 String language = Locale.getDefault().getLanguage();
                 if(language.equals("cs")) { language = "cz"; }
                 String apiKey = sp.getString("apiKey", context.getResources().getString(R.string.apiKey));
-                URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?q=" + URLEncoder.encode(sp.getString("city", Constants.DEFAULT_CITY), "UTF-8") + "&lang="+ language +"&mode=json&appid=" + apiKey);
+                URL url = new URL("https://api.openweathermap.org/data/2.5/forecast?q=" + URLEncoder.encode(sp.getString("city", Constants.DEFAULT_CITY), "UTF-8") + "&lang="+ language +"&mode=json&appid=" + apiKey);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
@@ -283,7 +284,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             String apiKey = sp.getString("apiKey", context.getResources().getString(R.string.apiKey));
 
             try {
-                URL url = new URL("http://api.openweathermap.org/data/2.5/weather?q=&lat=" + lat + "&lon=" + lon + "&lang="+ language +"&appid=" + apiKey);
+                URL url = new URL("https://api.openweathermap.org/data/2.5/weather?q=&lat=" + lat + "&lon=" + lon + "&lang="+ language +"&appid=" + apiKey);
                 Log.d(TAG, "Request: " + url.toString());
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -355,8 +356,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         String intervalPref = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString("refreshInterval", "1");
         Intent refresh = new Intent(context, AlarmReceiver.class);
+        int flags = PendingIntent.FLAG_CANCEL_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
         PendingIntent recurringRefresh = PendingIntent.getBroadcast(context,
-                0, refresh, PendingIntent.FLAG_CANCEL_CURRENT);
+                0, refresh, flags);
         AlarmManager alarms = (AlarmManager) context.getSystemService(
                 Context.ALARM_SERVICE);
         long intervalMillis = intervalMillisForRecurringAlarm(intervalPref);

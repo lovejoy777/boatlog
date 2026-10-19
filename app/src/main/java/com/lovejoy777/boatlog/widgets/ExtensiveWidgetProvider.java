@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
@@ -23,13 +24,20 @@ public class ExtensiveWidgetProvider extends AbstractWidgetProvider {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.extensive_widget);
 
+            int flagsUpdate = PendingIntent.FLAG_UPDATE_CURRENT;
+            int flagsActivity = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                flagsUpdate |= PendingIntent.FLAG_IMMUTABLE;
+                flagsActivity |= PendingIntent.FLAG_IMMUTABLE;
+            }
+
             Intent intent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    0, intent, flagsUpdate);
             remoteViews.setOnClickPendingIntent(R.id.widgetButtonRefresh, pendingIntent);
 
             Intent intent2 = new Intent(context, WeatherMainActivity.class);
-            PendingIntent pendingIntent2 = PendingIntent.getActivity(context, 0, intent2, 0);
+            PendingIntent pendingIntent2 = PendingIntent.getActivity(context, 0, intent2, flagsActivity);
             remoteViews.setOnClickPendingIntent(R.id.widgetRoot, pendingIntent2);
 
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);

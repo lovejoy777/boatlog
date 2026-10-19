@@ -12,7 +12,7 @@
     <attr name="colorAccent" format="color" />
     <attr name="colorDivider" format="color" />
 
-
-
-
+    <declare-styleable name="ChartView">
+        <attr name="chart_axisBorderSpacing" format="dimension" />
+    </declare-styleable>
 </resources>

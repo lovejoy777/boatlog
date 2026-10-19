@@ -12,7 +12,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 
 public abstract class EasyLocationAppCompatActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
@@ -41,9 +40,10 @@ public abstract class EasyLocationAppCompatActivity extends AppCompatActivity {
             long interval = 2000;
             long fastestInterval = 1000;
 
-            LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval)
-                    .setMinUpdateIntervalMillis(fastestInterval)
-                    .build();
+            LocationRequest locationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(interval)
+                    .setFastestInterval(fastestInterval);
 
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
 
@@ -53,6 +53,10 @@ public abstract class EasyLocationAppCompatActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    protected void requestSingleLocationFix(EasyLocationRequest request) {
+        requestLocationUpdates(request);
     }
 
     public abstract void onLocationReceived(Location location);

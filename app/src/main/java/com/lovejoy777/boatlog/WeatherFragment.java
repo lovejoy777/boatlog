@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,19 +92,24 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
     private void updateWeatherData(final String chosen_location){
         new Thread(){
             public void run(){
+                if (!isAdded() || getActivity() == null) return;
                 final JSONObject json = RemoteFetch.getJSON(getActivity(), chosen_location);
                 if(json == null){
                     handler.post(new Runnable(){
                         public void run(){
-                            Toast.makeText(getActivity(),
-                                    getActivity().getString(R.string.place_not_found),
-                                    Toast.LENGTH_LONG).show();
+                            if (isAdded() && getActivity() != null) {
+                                Toast.makeText(getActivity(),
+                                        getActivity().getString(R.string.place_not_found),
+                                        Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 } else {
                     handler.post(new Runnable(){
                         public void run(){
-                            renderWeather(json);
+                            if (isAdded() && getActivity() != null) {
+                                renderWeather(json);
+                            }
                         }
                     });
                 }
@@ -114,42 +119,42 @@ public class WeatherFragment extends Fragment implements View.OnClickListener{
 
     private void renderWeather(JSONObject json){
         try {
-            cityField.setText(json.getString("name").toUpperCase(Locale.UK));
+            cityField.setText(json.optString("name", "").toUpperCase(Locale.UK));
 
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
             JSONObject main = json.getJSONObject("main");
 
             // WIND
-            JSONObject wind = json.getJSONObject("wind");
-
-            // COVERT WIND SPEED FROM MPS TO KNOTS
-            double doubleSpeed = Double.parseDouble(wind.getString("speed"));
+            JSONObject wind = json.optJSONObject("wind");
+            double doubleSpeed = wind != null ? Double.parseDouble(wind.optString("speed", "0")) : 0;
             float fspeed = (float)doubleSpeed;
             float newspeed = FormattedSpeed(fspeed);
-            BigDecimal result;
-            result=round(newspeed,1);
+            BigDecimal result = round(newspeed, 1);
+
+            String windDeg = (wind != null && wind.has("deg")) ? wind.optString("deg") : "N/A";
 
             detailsField.setText(
-                    details.getString("description").toUpperCase(Locale.UK) +
-                            "\n" + "Humidity: " + main.getString("humidity") + " %" +
-                            "\n" + "Pressure: " + main.getString("pressure") + " hPa" +
-                            "\n" + "Wind Dir: " + wind.getString("deg") + " °" +
+                    details.optString("description", "").toUpperCase(Locale.UK) +
+                            "\n" + "Humidity: " + main.optString("humidity", "0") + " %" +
+                            "\n" + "Pressure: " + main.optString("pressure", "0") + " hPa" +
+                            "\n" + "Wind Dir: " + windDeg + " °" +
                             "\n" + "Wind Speed: " + result + " kts");
-                           // "\n" + "Wind Gust: " + resultGust + " kts");
 
             currentTemperatureField.setText(
-                    String.format(Locale.UK,"%.0f",main.getDouble("temp")) + " ℃");
+                    String.format(Locale.UK, "%.0f", main.optDouble("temp", 0)) + " ℃");
 
             DateFormat df = DateFormat.getDateTimeInstance();
-            String updatedOn = df.format(new Date(json.getLong("dt")*1000));
-            updatedField.setText("Last update: " + updatedOn + "");
+            String updatedOn = df.format(new Date(json.optLong("dt", 0) * 1000));
+            updatedField.setText("Last update: " + updatedOn);
 
-            setWeatherIcon(details.getInt("id"),
-                    json.getJSONObject("sys").getLong("sunrise") * 1000,
-                    json.getJSONObject("sys").getLong("sunset") * 1000);
+            JSONObject sys = json.optJSONObject("sys");
+            long sunrise = sys != null ? sys.optLong("sunrise", 0) * 1000 : 0;
+            long sunset = sys != null ? sys.optLong("sunset", 0) * 1000 : 0;
 
-        }catch(Exception e){
-            Log.e("SimpleWeather", "One or more fields not found in the JSON data");
+            setWeatherIcon(details.optInt("id", 800), sunrise, sunset);
+
+        } catch(Exception e){
+            Log.e("SimpleWeather", "One or more fields not found in the JSON data", e);
         }
     }
 
