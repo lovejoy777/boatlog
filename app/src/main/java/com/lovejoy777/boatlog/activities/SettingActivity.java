@@ -36,11 +36,23 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
 
         // Thursday 2016-01-14 16:00:00
         Date SAMPLE_DATE = new Date(1452805200000l);
+    int theme;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
-            setTheme(getTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("theme", "fresh")));
+            // Initialize the associated SharedPreferences file with default values
+            PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+            SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+            setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
+
             super.onCreate(savedInstanceState);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                android.content.res.TypedArray typedArray = obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
+                int statusBarColor = typedArray.getColor(0, getResources().getColor(R.color.colorPrimaryDark));
+                typedArray.recycle();
+                getWindow().setStatusBarColor(statusBarColor);
+            }
 
             LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
             View bar = LayoutInflater.from(this).inflate(R.layout.settings_toolbar, root, false);
