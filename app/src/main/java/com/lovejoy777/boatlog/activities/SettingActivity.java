@@ -209,7 +209,7 @@ public class SettingActivity extends AppCompatActivity implements SharedPreferen
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
             default:
-                return R.style.AppTheme_NoActionBar;
+                return R.style.Base_Theme_Toolbar;
         }
     }
 
