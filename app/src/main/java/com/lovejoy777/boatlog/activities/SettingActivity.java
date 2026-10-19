@@ -51,7 +51,10 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
                 android.content.res.TypedArray typedArray = obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
                 int statusBarColor = typedArray.getColor(0, getResources().getColor(R.color.colorPrimaryDark));
                 typedArray.recycle();
-                getWindow().setStatusBarColor(statusBarColor);
+                android.view.Window window = getWindow();
+                window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(statusBarColor);
             }
 
             LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
