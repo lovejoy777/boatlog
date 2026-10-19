@@ -5,22 +5,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.lovejoy777.boatlog.AlarmReceiver;
 import com.lovejoy777.boatlog.R;
@@ -28,72 +23,62 @@ import com.lovejoy777.boatlog.R;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by steve on 23/10/17.
- */
+public class SettingActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-public class SettingActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(getTheme(prefs1.getString("theme", "fresh")));
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
-        // Thursday 2016-01-14 16:00:00
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.action_settings);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, new SettingsPreferenceFragment())
+                    .commit();
+        }
+    }
+
+    public static class SettingsPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
         Date SAMPLE_DATE = new Date(1452805200000l);
-    int theme;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
-            // Initialize the associated SharedPreferences file with default values
-            PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
-            SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(this);
-            setTheme(theme = getTheme(prefs1.getString("theme", "fresh")));
-
             super.onCreate(savedInstanceState);
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                android.content.res.TypedArray typedArray = obtainStyledAttributes(new int[]{R.attr.colorPrimaryDark});
-                int statusBarColor = typedArray.getColor(0, getResources().getColor(R.color.colorPrimaryDark));
-                typedArray.recycle();
-                android.view.Window window = getWindow();
-                window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.setStatusBarColor(statusBarColor);
-            }
-
-            LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();
-            View bar = LayoutInflater.from(this).inflate(R.layout.settings_toolbar, root, false);
-            root.addView(bar, 0);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-
             addPreferencesFromResource(R.xml.prefs);
+            updateDateFormatList();
         }
 
         @Override
-        public void onResume(){
+        public void onResume() {
             super.onResume();
             getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-
-            setCustomDateEnabled();
-            updateDateFormatList();
-
-            // Set summaries to current value
             setListPreferenceSummary("unit");
             setListPreferenceSummary("lengthUnit");
             setListPreferenceSummary("speedUnit");
             setListPreferenceSummary("pressureUnit");
             setListPreferenceSummary("refreshInterval");
             setListPreferenceSummary("windDirectionFormat");
-           // setListPreferenceSummary("theme");
+            setCustomDateEnabled();
         }
 
         @Override
-        public void onPause(){
+        public void onPause() {
             super.onPause();
-            getPreferenceScreen().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
+            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
 
         @Override
@@ -104,11 +89,8 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
                 case "speedUnit":
                 case "pressureUnit":
                 case "windDirectionFormat":
-                    setListPreferenceSummary(key);
-                    break;
                 case "refreshInterval":
                     setListPreferenceSummary(key);
-                    AlarmReceiver.setRecurringAlarm(this);
                     break;
                 case "dateFormat":
                     setCustomDateEnabled();
@@ -117,123 +99,107 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
                 case "dateFormatCustom":
                     updateDateFormatList();
                     break;
-
-              /**  case "theme":
-                    // Restart activity to apply theme
-                    overridePendingTransition(0, 0);
-                  //  finish();
-                    overridePendingTransition(0, 0);
-                   // startActivity(getIntent());
-
-                    // Restart app to load day/night modes
-                    Intent restart = getBaseContext().getPackageManager()
-                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                    restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(restart);
-                    break; **/
-
-                case "updateLocationAutomatically":
-                    if (sharedPreferences.getBoolean(key, false) == true) {
-                        requestReadLocationPermission();
-                    }
-                    break;
-                case "apiKey":
-                    checkKey(key);
             }
         }
 
-    private void requestReadLocationPermission() {
-        System.out.println("Calling request location permission");
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Explanation not needed, since user requests this themself
-
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        WeatherMainActivity.MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+        private void setListPreferenceSummary(String preferenceKey) {
+            ListPreference preference = (ListPreference) findPreference(preferenceKey);
+            if (preference != null && preference.getEntry() != null) {
+                preference.setSummary(preference.getEntry());
             }
-        } else {
-            privacyGuardWorkaround();
+        }
+
+        private void setCustomDateEnabled() {
+            SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+            Preference customDatePref = findPreference("dateFormatCustom");
+            if (customDatePref != null) {
+                customDatePref.setEnabled("custom".equals(sp.getString("dateFormat", "")));
+            }
+        }
+
+        private void updateDateFormatList() {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Resources res = getResources();
+
+            ListPreference dateFormatPref = (ListPreference) findPreference("dateFormat");
+            if (dateFormatPref == null) return;
+            String[] dateFormatsValues = res.getStringArray(R.array.dateFormatsValues);
+            String[] dateFormatsEntries = new String[dateFormatsValues.length];
+
+            EditTextPreference customDateFormatPref = (EditTextPreference) findPreference("dateFormatCustom");
+            if (customDateFormatPref != null) {
+                customDateFormatPref.setDefaultValue(dateFormatsValues[0]);
+            }
+
+            SimpleDateFormat sdformat = new SimpleDateFormat();
+            for (int i = 0; i < dateFormatsValues.length; i++) {
+                String value = dateFormatsValues[i];
+                if ("custom".equals(value)) {
+                    String renderedCustom;
+                    try {
+                        sdformat.applyPattern(sp.getString("dateFormatCustom", dateFormatsValues[0]));
+                        renderedCustom = sdformat.format(SAMPLE_DATE);
+                    } catch (IllegalArgumentException e) {
+                        renderedCustom = res.getString(R.string.error_dateFormat);
+                    }
+                    dateFormatsEntries[i] = String.format("%s:\n%s",
+                            res.getString(R.string.setting_dateFormatCustom),
+                            renderedCustom);
+                } else {
+                    sdformat.applyPattern(value);
+                    dateFormatsEntries[i] = sdformat.format(SAMPLE_DATE);
+                }
+            }
+
+            dateFormatPref.setDefaultValue(dateFormatsValues[0]);
+            dateFormatPref.setEntries(dateFormatsEntries);
+
+            setListPreferenceSummary("dateFormat");
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == WeatherMainActivity.MY_PERMISSIONS_ACCESS_FINE_LOCATION) {
-            boolean permissionGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            CheckBoxPreference checkBox = (CheckBoxPreference) findPreference("updateLocationAutomatically");
-            checkBox.setChecked(permissionGranted);
-            if (permissionGranted) {
-                privacyGuardWorkaround();
-            }
-        }
+    public void onResume() {
+        super.onResume();
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
-    private void privacyGuardWorkaround() {
-        // Workaround for CM privacy guard. Register for location updates in order for it to ask us for permission
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        try {
-            DummyLocationListener dummyLocationListener = new DummyLocationListener();
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, dummyLocationListener);
-            locationManager.removeUpdates(dummyLocationListener);
-        } catch (SecurityException e) {
-            // This will most probably not happen, as we just got granted the permission
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
-    private void setListPreferenceSummary(String preferenceKey) {
-        ListPreference preference = (ListPreference) findPreference(preferenceKey);
-        preference.setSummary(preference.getEntry());
-    }
-
-    private void setCustomDateEnabled() {
-        SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
-        Preference customDatePref = findPreference("dateFormatCustom");
-        customDatePref.setEnabled("custom".equals(sp.getString("dateFormat", "")));
-    }
-
-    private void updateDateFormatList() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        Resources res = getResources();
-
-        ListPreference dateFormatPref = (ListPreference) findPreference("dateFormat");
-        String[] dateFormatsValues = res.getStringArray(R.array.dateFormatsValues);
-        String[] dateFormatsEntries = new String[dateFormatsValues.length];
-
-        EditTextPreference customDateFormatPref = (EditTextPreference) findPreference("dateFormatCustom");
-        customDateFormatPref.setDefaultValue(dateFormatsValues[0]);
-
-        SimpleDateFormat sdformat = new SimpleDateFormat();
-        for (int i=0; i<dateFormatsValues.length; i++) {
-            String value = dateFormatsValues[i];
-            if ("custom".equals(value)) {
-                String renderedCustom;
-                try {
-                    sdformat.applyPattern(sp.getString("dateFormatCustom", dateFormatsValues[0]));
-                    renderedCustom = sdformat.format(SAMPLE_DATE);
-                } catch (IllegalArgumentException e) {
-                    renderedCustom = res.getString(R.string.error_dateFormat);
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case "refreshInterval":
+                AlarmReceiver.setRecurringAlarm(this);
+                break;
+            case "updateLocationAutomatically":
+                if (sharedPreferences.getBoolean(key, false)) {
+                    requestReadLocationPermission();
                 }
-                dateFormatsEntries[i] = String.format("%s:\n%s",
-                        res.getString(R.string.setting_dateFormatCustom),
-                        renderedCustom);
-            } else {
-                sdformat.applyPattern(value);
-                dateFormatsEntries[i] = sdformat.format(SAMPLE_DATE);
-            }
+                break;
+            case "apiKey":
+                checkKey(key);
+                break;
         }
-
-        dateFormatPref.setDefaultValue(dateFormatsValues[0]);
-        dateFormatPref.setEntries(dateFormatsEntries);
-
-        setListPreferenceSummary("dateFormat");
     }
 
-    private void checkKey(String key){
+    private void requestReadLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        WeatherMainActivity.MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+            }
+        }
+    }
+
+    private void checkKey(String key) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getString(key, "").equals("")){
+        if (sp.getString(key, "").equals("")) {
             sp.edit().remove(key).apply();
         }
     }
@@ -247,34 +213,9 @@ public class SettingActivity extends PreferenceActivity implements SharedPrefere
         }
     }
 
-    public class DummyLocationListener implements LocationListener {
-
-        @Override
-        public void onLocationChanged(Location location) {
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.back2, R.anim.back1);
     }
 }
-
-
